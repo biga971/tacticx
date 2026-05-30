@@ -1,0 +1,88 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+
+  deploy_server:
+    runs-on: ubuntu-latest
+    environment: production    # Spécifie l'environnement à utiliser
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          script: |
+            set -e  # Arrête le script à la première erreur
+
+            BASE_DIR="/home/debian"
+            REPO_DIR="$BASE_DIR/Leads-Management-dev"
+            COMPOSE_ARGS="-f docker-compose.dev.yml -p leads-dev"
+
+            mkdir -p "$BASE_DIR"
+
+            # Vérifier si le dépôt existe, sinon le cloner (branche dev)
+            if [ ! -d "$REPO_DIR/.git" ]; then
+                echo "📦 Premier déploiement - Clonage du dépôt..."
+                cd "$BASE_DIR"
+
+                if [ -d "Leads-Management-dev" ]; then
+                    echo "  Dossier existant trouvé, sauvegarde..."
+                    mv Leads-Management-dev Leads-Management-dev.backup.$(date +%Y%m%d_%H%M%S)
+                fi
+
+                git clone --branch dev --single-branch git@github.com:biga971/Leads-Management.git "Leads-Management-dev"
+                cd "$REPO_DIR"
+
+                echo "🔧 Permissions scripts backup..."
+                chmod +x "$REPO_DIR/backups/scripts/netzil_leads_backup_all.sh" 2>/dev/null || true
+                chmod +x "$REPO_DIR/backups/scripts/netzil_sync_prod_to_dev.sh" 2>/dev/null || true
+                chmod +x "$REPO_DIR/backups/scripts/netzil_leads_restore.sh" 2>/dev/null || true
+            else
+                echo " Dépôt existant trouvé"
+                cd "$REPO_DIR"
+
+                echo " Arrêt des conteneurs existants..."
+                docker compose $COMPOSE_ARGS down 2>/dev/null || true
+
+                echo "📥 Pull des modifications (branche dev)..."
+                git fetch origin dev
+                git checkout -f dev
+                git reset --hard origin/dev
+                echo "✅ Pull réussi"
+
+                echo "🔧 Permissions scripts backup..."
+                chmod +x "$REPO_DIR/backups/scripts/netzil_leads_backup_all.sh" 2>/dev/null || true
+                chmod +x "$REPO_DIR/backups/scripts/netzil_sync_prod_to_dev.sh" 2>/dev/null || true
+                chmod +x "$REPO_DIR/backups/scripts/netzil_leads_restore.sh" 2>/dev/null || true
+            fi
+
+            # Nettoyage des ressources Docker inutilisées
+            echo " Nettoyage..."
+            docker system prune -af 2>/dev/null || true
+
+            # Construction et démarrage avec docker-compose
+            echo " Construction de l'image..."
+            docker compose $COMPOSE_ARGS build --no-cache --pull
+            echo " Démarrage des conteneurs..."
+            docker compose $COMPOSE_ARGS up -d
+            
+            # Attente démarrage API
+            echo " Vérification de la santé (Adonis 2101)..."
+            for i in {1..15}; do
+                if curl -s http://localhost:2101 > /dev/null 2>&1; then
+                    echo " API démarrée"
+                    docker compose $COMPOSE_ARGS logs --tail 50 adonis-api || true
+                    exit 0
+                fi
+                echo "   Tentative $i/15..."
+                sleep 2
+            done
+            echo " L'API ne répond pas sur le port 2101"
+            docker compose $COMPOSE_ARGS logs --tail 100 adonis-api
+            exit 1

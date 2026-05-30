@@ -1,0 +1,2649 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>Tacticx — Pokédex · Wireframes annotés</title>
+<link rel="stylesheet" href="tokens.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Patrick+Hand&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@0.461.0/dist/umd/lucide.min.js"></script>
+<style>
+  /* ───── Paper / spec-sheet base ───── */
+  :root {
+    --paper:  #ECE6D6;
+    --ink:    #1A1A1A;
+    --ink-2:  #4A4A40;
+    --ink-3:  #87826F;
+    --hand:   "Caveat", "Patrick Hand", cursive;
+    --hand-2: "Patrick Hand", "Caveat", cursive;
+  }
+  html, body { margin: 0; }
+  body {
+    background: var(--paper);
+    background-image: radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+    background-size: 22px 22px;
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  * { box-sizing: border-box; }
+  .sheet { max-width: 1280px; margin: 0 auto; padding: 56px 48px 96px; }
+
+  /* ───── Doc header ───── */
+  .doc-head {
+    display: grid; grid-template-columns: 1fr auto;
+    align-items: end; gap: 32px;
+    border-bottom: 1.5px dashed var(--ink-2);
+    padding-bottom: 24px; margin-bottom: 40px;
+  }
+  .doc-eyebrow {
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 1.6px; text-transform: uppercase;
+    color: var(--ink-3); margin-bottom: 10px;
+  }
+  .doc-title {
+    font-family: var(--hand); font-size: 64px; font-weight: 700;
+    line-height: 0.95; letter-spacing: -1px; color: var(--ink); margin: 0;
+  }
+  .doc-title em {
+    font-style: normal; color: var(--accent);
+    background: linear-gradient(180deg, transparent 60%, rgba(91,141,239,0.25) 60%);
+    padding: 0 6px;
+  }
+  .doc-sub {
+    font-family: var(--hand-2); font-size: 22px; color: var(--ink-2);
+    margin-top: 8px; line-height: 1.3; max-width: 700px;
+  }
+  .doc-meta {
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-3);
+    line-height: 1.7; text-align: right;
+  }
+  .doc-meta strong { color: var(--ink); font-weight: 500; }
+
+  /* ───── Flow overview ───── */
+  .flow {
+    background: rgba(255,255,255,0.4);
+    border: 1.5px dashed var(--ink-2);
+    border-radius: 18px; padding: 28px 24px 32px;
+    margin-bottom: 64px;
+  }
+  .flow-title {
+    font-family: var(--hand); font-size: 28px; font-weight: 700;
+    color: var(--ink); margin: 0 0 6px; letter-spacing: -0.5px;
+  }
+  .flow-sub {
+    font-family: var(--hand-2); font-size: 16px;
+    color: var(--ink-3); margin-bottom: 22px;
+  }
+  .flow-rail {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 24px; align-items: start;
+  }
+  .flow-step { display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; }
+  .flow-step + .flow-step::before {
+    content: ""; position: absolute; left: -20px; top: 36%;
+    width: 16px; height: 2px;
+    background: repeating-linear-gradient(90deg, var(--ink-2) 0 4px, transparent 4px 8px);
+  }
+  .flow-mini {
+    width: 100%; aspect-ratio: 9 / 16;
+    background: var(--bg);
+    border: 1.5px solid var(--ink);
+    border-radius: 14px;
+    position: relative; overflow: hidden;
+    box-shadow: 4px 5px 0 rgba(0,0,0,0.12);
+  }
+  .flow-mini .m-head {
+    position: absolute; left: 8%; right: 8%; top: 9%; height: 16px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .flow-mini .m-head::before {
+    content: ""; width: 28%; height: 6px; background: var(--fg1); border-radius: 2px;
+  }
+  .flow-mini .m-search {
+    position: absolute; left: 8%; right: 26%; top: 22%; height: 16px;
+    background: var(--surface-sunken); border-radius: 999px;
+  }
+  .flow-mini .m-fbtn {
+    position: absolute; right: 8%; top: 22%; width: 15%; height: 16px;
+    background: var(--surface-high); border-radius: 6px;
+  }
+  .flow-mini .m-rows {
+    position: absolute; left: 8%; right: 8%; top: 33%;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .flow-mini .m-row {
+    height: 22px; background: var(--surface);
+    border-radius: 5px; position: relative;
+    display: flex; align-items: center; padding: 0 6px;
+  }
+  .flow-mini .m-row::before {
+    content: ""; width: 10px; height: 10px; border-radius: 999px;
+    background: var(--surface-high);
+  }
+  .flow-mini .m-row::after {
+    content: ""; position: absolute; right: 6px;
+    width: 8px; height: 5px; background: var(--tier-s);
+    border-radius: 2px;
+  }
+  .flow-mini.modal::after {
+    content: ""; position: absolute; inset: 0;
+    background: rgba(11,13,16,0.6);
+  }
+  .flow-mini.modal .m-sheet {
+    position: absolute; left: 4%; right: 4%; bottom: 0; height: 78%;
+    background: var(--surface-high);
+    border-radius: 14px 14px 0 0;
+    border: 1.5px solid var(--border);
+    padding: 8px;
+  }
+  .flow-mini.modal .grab {
+    width: 22px; height: 3px; border-radius: 2px;
+    background: var(--fg-faint); margin: 0 auto 8px;
+  }
+  .flow-mini.modal .typegrid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px;
+    margin-bottom: 6px;
+  }
+  .flow-mini.modal .typegrid span {
+    height: 9px; background: var(--surface); border-radius: 3px;
+  }
+  .flow-mini.modal .typegrid span.on { background: var(--accent); opacity: 0.7; }
+  .flow-mini.modal .tier-row {
+    display: flex; gap: 3px; margin-bottom: 6px;
+  }
+  .flow-mini.modal .tier-row span {
+    flex: 1; height: 9px; background: var(--surface); border-radius: 3px;
+  }
+  .flow-mini.modal .tier-row span.on { background: var(--tier-s); }
+  .flow-mini.modal .modal-btn {
+    position: absolute; left: 8px; right: 8px; bottom: 8px;
+    height: 14px; background: var(--accent); border-radius: 4px;
+  }
+
+  /* Fiche mini */
+  .flow-mini.fiche .navbar {
+    position: absolute; left: 8%; right: 8%; top: 9%; height: 10px;
+    display: flex; justify-content: space-between;
+  }
+  .flow-mini.fiche .navbar span {
+    width: 8px; height: 8px; background: var(--fg2); border-radius: 2px;
+  }
+  .flow-mini.fiche .hero {
+    position: absolute; left: 8%; right: 8%; top: 16%; height: 70px;
+    background: var(--surface); border-radius: 8px;
+    display: flex; flex-direction: column; align-items: center; padding-top: 6px;
+    gap: 3px;
+  }
+  .flow-mini.fiche .hero::before {
+    content: ""; width: 18px; height: 18px; background: var(--accent-soft);
+    border: 1px solid var(--accent); border-radius: 999px;
+  }
+  .flow-mini.fiche .hero::after {
+    content: ""; width: 36%; height: 5px; background: var(--fg1); border-radius: 2px;
+  }
+  .flow-mini.fiche .seg-fix {
+    position: absolute; left: 8%; right: 8%; top: 46%;
+    height: 12px; background: var(--surface-sunken);
+    border-radius: 999px; display: flex; padding: 2px;
+  }
+  .flow-mini.fiche .seg-fix span { flex: 1; border-radius: 999px; }
+  .flow-mini.fiche .seg-fix span.on { background: var(--accent); }
+  .flow-mini.fiche .bars {
+    position: absolute; left: 8%; right: 8%; top: 56%;
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .flow-mini.fiche .bars span {
+    height: 4px; background: var(--surface); border-radius: 2px; position: relative;
+  }
+  .flow-mini.fiche .bars span::before {
+    content: ""; position: absolute; inset: 0;
+    background: var(--accent); border-radius: 2px;
+    opacity: 0.6; width: 60%;
+  }
+  .flow-mini.fiche.bas .navbar { display: none; }
+  .flow-mini.fiche.bas .hero { display: none; }
+  .flow-mini.fiche.bas .seg-fix { top: 9%; }
+  .flow-mini.fiche.bas .sections {
+    position: absolute; left: 8%; right: 8%; top: 20%;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .flow-mini.fiche.bas .sec-block { padding: 4px; background: var(--surface); border-radius: 4px; }
+  .flow-mini.fiche.bas .sec-block::before {
+    content: ""; display: block; width: 30%; height: 3px;
+    background: var(--fg3); margin-bottom: 4px; border-radius: 2px;
+  }
+  .flow-mini.fiche.bas .sec-block .l {
+    height: 6px; background: var(--surface-high); border-radius: 2px; margin-bottom: 2px;
+  }
+  .flow-mini.fiche.bas .fab {
+    position: absolute; right: 8%; bottom: 6%;
+    width: 16px; height: 16px; border-radius: 999px; background: var(--accent);
+  }
+
+  .flow-num {
+    font-family: var(--hand); font-weight: 700; font-size: 22px;
+    color: var(--ink); background: #FFE680;
+    border: 1.5px solid var(--ink); border-radius: 999px;
+    width: 32px; height: 32px; display: grid; place-items: center;
+    transform: rotate(-3deg); box-shadow: 2px 2px 0 rgba(0,0,0,0.12);
+  }
+  .flow-label {
+    font-family: var(--hand); font-weight: 600; font-size: 18px;
+    color: var(--ink); text-align: center; line-height: 1.1;
+  }
+  .flow-label small {
+    display: block; font-family: var(--font-mono); font-size: 10px; font-weight: 400;
+    letter-spacing: 0.8px; text-transform: uppercase; color: var(--ink-3); margin-top: 2px;
+  }
+
+  /* ───── Spec sections ───── */
+  .spec {
+    display: grid; grid-template-columns: 380px 1fr;
+    gap: 56px; padding: 48px 0 56px;
+    border-top: 1.5px dashed var(--ink-2);
+  }
+  .spec-head {
+    grid-column: 1 / -1;
+    display: flex; align-items: baseline; gap: 18px; margin-bottom: 4px;
+    flex-wrap: wrap;
+  }
+  .spec-step {
+    font-family: var(--hand); font-weight: 700; font-size: 22px;
+    color: var(--ink); background: #FFE680;
+    border: 1.5px solid var(--ink); border-radius: 999px;
+    padding: 4px 14px; transform: rotate(-2deg);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.12);
+  }
+  .spec-title {
+    font-family: var(--hand); font-size: 38px; font-weight: 700;
+    color: var(--ink); margin: 0; letter-spacing: -0.5px;
+  }
+  .spec-eyebrow {
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-3);
+    letter-spacing: 1.6px; text-transform: uppercase; margin-left: auto;
+  }
+
+  /* ───── Phone ───── */
+  .phone-wrap { position: sticky; top: 32px; align-self: start; width: 380px; }
+  .phone {
+    width: 380px; height: 760px;
+    background: var(--bg); border-radius: 38px;
+    border: 1.5px solid var(--ink);
+    box-shadow: 6px 8px 0 rgba(0,0,0,0.12), inset 0 0 0 8px #08090C;
+    padding: 8px; position: relative; overflow: hidden;
+  }
+  .phone-inner {
+    width: 100%; height: 100%;
+    background: var(--bg); border-radius: 30px;
+    overflow: hidden; position: relative;
+    display: flex; flex-direction: column;
+  }
+  .phone-dims {
+    position: absolute; bottom: -32px; left: 0; right: 0;
+    text-align: center; font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+
+  /* ───── Status bar ───── */
+  .status {
+    height: 28px; padding: 0 18px;
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 12px; font-weight: 600; color: var(--fg1); flex-shrink: 0;
+  }
+  .status-icons { display: flex; align-items: center; gap: 5px; opacity: 0.9; }
+  .status-icons .lucide { width: 14px; height: 14px; stroke-width: 2; }
+
+  /* ───── Header Pokédex ───── */
+  .head {
+    padding: 8px 18px 14px;
+    flex-shrink: 0;
+  }
+  .head-top {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 12px; margin-bottom: 14px;
+  }
+  .head-title {
+    font-size: 28px; font-weight: 700;
+    letter-spacing: -0.6px; color: var(--fg1); margin: 0;
+    line-height: 1.1;
+  }
+  .head-sub {
+    font-size: 12px; color: var(--fg3); margin-top: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .season-badge {
+    flex-shrink: 0; padding: 4px 10px;
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--fg2); background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+  }
+
+  /* ───── Search row ───── */
+  .search-row {
+    display: flex; gap: 8px;
+    padding: 0 18px 12px;
+    flex-shrink: 0;
+  }
+  .search {
+    flex: 1; height: 40px;
+    background: var(--surface-sunken);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    display: flex; align-items: center;
+    padding: 0 12px; gap: 10px;
+    color: var(--fg3);
+    font-size: 14px;
+  }
+  .search .lucide { width: 16px; height: 16px; stroke-width: 1.8; color: var(--fg3); }
+  .search .placeholder { flex: 1; }
+  .search .clear { color: var(--fg-faint); }
+  .filter-btn {
+    flex-shrink: 0;
+    height: 40px; padding: 0 12px;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    color: var(--fg1);
+    font-size: 13px; font-weight: 500;
+    position: relative;
+    cursor: pointer;
+  }
+  .filter-btn .lucide { width: 15px; height: 15px; stroke-width: 1.8; color: var(--fg2); }
+  .filter-btn .count {
+    position: absolute; top: -4px; right: -4px;
+    min-width: 18px; height: 18px;
+    background: var(--accent); color: var(--fg-inverse);
+    border: 2px solid var(--bg);
+    border-radius: 999px;
+    font-size: 10px; font-weight: 700;
+    display: grid; place-items: center;
+    padding: 0 4px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ───── Active filter chips ───── */
+  .active-filters {
+    display: flex; gap: 6px; overflow-x: auto;
+    padding: 0 18px 10px;
+    flex-shrink: 0;
+    scrollbar-width: none;
+  }
+  .active-filters::-webkit-scrollbar { display: none; }
+  .fchip {
+    flex-shrink: 0;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 6px 5px 10px;
+    background: var(--accent-soft);
+    border: 1px solid rgba(91,141,239,0.4);
+    border-radius: var(--r-pill);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .fchip .x {
+    width: 16px; height: 16px;
+    display: grid; place-items: center;
+    background: rgba(91,141,239,0.18);
+    border-radius: 999px;
+    color: var(--accent);
+  }
+  .fchip .x .lucide { width: 10px; height: 10px; stroke-width: 2.5; }
+
+  /* ───── Sort line ───── */
+  .sort-line {
+    padding: 0 18px 12px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .sort-line .results-count {
+    font-size: 11px; color: var(--fg3);
+    font-variant-numeric: tabular-nums;
+  }
+  .sort-btn {
+    background: transparent; border: 0; padding: 0;
+    color: var(--fg3); font-size: 12px;
+    font-family: inherit;
+    display: inline-flex; align-items: center; gap: 4px;
+    cursor: pointer;
+  }
+  .sort-btn .lucide { width: 12px; height: 12px; }
+  .sort-btn em { font-style: normal; color: var(--fg1); }
+
+  /* ───── List ───── */
+  .list {
+    flex: 1; overflow-y: auto;
+    background: var(--bg);
+  }
+  .list::-webkit-scrollbar { display: none; }
+  .pdx-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 18px; height: 68px;
+    position: relative;
+  }
+  .pdx-row + .pdx-row::before {
+    content: ""; position: absolute;
+    left: 78px; right: 18px; top: 0;
+    height: 1px; background: var(--border);
+  }
+  .num {
+    width: 26px; flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-size: 11px; font-variant-numeric: tabular-nums;
+    color: var(--fg3); text-align: right;
+  }
+  .sprite {
+    width: 44px; height: 44px;
+    border-radius: 999px;
+    background: var(--surface-high);
+    position: relative; overflow: hidden;
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .sprite img {
+    width: 110%; height: 110%;
+    object-fit: contain;
+    filter: brightness(0) invert(0.6) contrast(1.1);
+  }
+  .sprite.small { width: 32px; height: 32px; }
+  .sprite.med { width: 36px; height: 36px; }
+  .sprite.tiny { width: 24px; height: 24px; }
+  .sprite.big { width: 96px; height: 96px; }
+  .sprite.big img { filter: brightness(0) invert(0.7) contrast(1.1); }
+
+  .sprite.t-fire     { background: var(--t-fire-bg); }
+  .sprite.t-water    { background: var(--t-water-bg); }
+  .sprite.t-grass    { background: var(--t-grass-bg); }
+  .sprite.t-electric { background: var(--t-electric-bg); }
+  .sprite.t-psychic  { background: var(--t-psychic-bg); }
+  .sprite.t-fighting { background: var(--t-fighting-bg); }
+  .sprite.t-fairy    { background: var(--t-fairy-bg); }
+  .sprite.t-ghost    { background: var(--t-ghost-bg); }
+  .sprite.t-dark     { background: var(--t-dark-bg); }
+  .sprite.t-poison   { background: var(--t-poison-bg); }
+  .sprite.t-flying   { background: var(--t-flying-bg); }
+  .sprite.t-steel    { background: var(--t-steel-bg); }
+  .sprite.t-rock     { background: var(--t-rock-bg); }
+  .sprite.t-ice      { background: var(--t-ice-bg); }
+  .sprite.t-ground   { background: var(--t-ground-bg); }
+  .sprite.t-dragon   { background: var(--t-dragon-bg); }
+  .sprite.t-bug      { background: var(--t-bug-bg); }
+  .sprite.t-normal   { background: var(--t-normal-bg); }
+
+  .pdx-row .row-info {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .pdx-row .nm {
+    font-size: 15px; font-weight: 500;
+    color: var(--fg1); letter-spacing: -0.1px;
+  }
+  .pdx-row .row-types {
+    display: flex; gap: 4px; align-items: center;
+  }
+  .meta-rank {
+    font-size: 11px; color: var(--fg3);
+    font-variant-numeric: tabular-nums;
+    margin-left: 6px;
+  }
+
+  /* Type badge */
+  .tb {
+    font-size: 9.5px; font-weight: 600;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: var(--r-sm);
+  }
+  .tb.fire     { color: var(--t-fire);     background: var(--t-fire-bg); }
+  .tb.water    { color: var(--t-water);    background: var(--t-water-bg); }
+  .tb.grass    { color: var(--t-grass);    background: var(--t-grass-bg); }
+  .tb.electric { color: var(--t-electric); background: var(--t-electric-bg); }
+  .tb.psychic  { color: var(--t-psychic);  background: var(--t-psychic-bg); }
+  .tb.fighting { color: var(--t-fighting); background: var(--t-fighting-bg); }
+  .tb.fairy    { color: var(--t-fairy);    background: var(--t-fairy-bg); }
+  .tb.ghost    { color: var(--t-ghost);    background: var(--t-ghost-bg); }
+  .tb.dark     { color: var(--t-dark);     background: var(--t-dark-bg); }
+  .tb.poison   { color: var(--t-poison);   background: var(--t-poison-bg); }
+  .tb.flying   { color: var(--t-flying);   background: var(--t-flying-bg); }
+  .tb.steel    { color: var(--t-steel);    background: var(--t-steel-bg); }
+  .tb.rock     { color: var(--t-rock);     background: var(--t-rock-bg); }
+  .tb.ice      { color: var(--t-ice);      background: var(--t-ice-bg); }
+  .tb.ground   { color: var(--t-ground);   background: var(--t-ground-bg); }
+  .tb.dragon   { color: var(--t-dragon);   background: var(--t-dragon-bg); }
+  .tb.bug      { color: var(--t-bug);      background: var(--t-bug-bg); }
+  .tb.normal   { color: var(--t-normal);   background: var(--t-normal-bg); }
+  .tb.selectable { cursor: pointer; opacity: 0.65; }
+  .tb.selectable.on { opacity: 1; outline: 1.5px solid currentColor; outline-offset: -1.5px; }
+
+  .row-meta {
+    display: flex; align-items: center; gap: 8px;
+    flex-shrink: 0;
+  }
+  .tier-pill {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.8px;
+    padding: 3px 8px;
+    border-radius: var(--r-sm);
+    font-family: var(--font-sans);
+    font-variant-numeric: tabular-nums;
+  }
+  .tier-pill.s { color: var(--tier-s); background: var(--tier-s-bg); border: 1px solid var(--tier-s); }
+  .tier-pill.a { color: var(--tier-a); background: var(--tier-a-bg); border: 1px solid var(--tier-a); }
+  .tier-pill.b { color: var(--tier-b); background: var(--tier-b-bg); border: 1px solid var(--tier-b); }
+  .tier-pill.c { color: var(--tier-c); background: var(--tier-c-bg); border: 1px solid var(--tier-c); }
+  .tier-pill.ur { color: var(--fg3); background: transparent; border: 1px solid var(--border); }
+  .bookmark {
+    background: transparent; border: 0; padding: 0;
+    color: var(--accent); display: grid; place-items: center;
+    width: 22px; height: 22px;
+  }
+  .bookmark .lucide { width: 15px; height: 15px; stroke-width: 1.8; }
+
+  /* ───── Modal scrim ───── */
+  .scrim {
+    position: absolute; inset: 0;
+    background: rgba(11,13,16,0.7);
+    backdrop-filter: blur(20px);
+    z-index: 5;
+  }
+  .sheet-modal {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    background: var(--surface-high);
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+    border-top: 1px solid var(--border);
+    z-index: 6;
+    display: flex; flex-direction: column;
+    box-shadow: var(--shadow-lg);
+  }
+  .grab {
+    width: 36px; height: 4px;
+    border-radius: 999px;
+    background: var(--fg-faint);
+    margin: 8px auto 6px;
+    flex-shrink: 0;
+  }
+  .modal-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 18px 14px;
+    border-bottom: 1px solid var(--divider);
+    flex-shrink: 0;
+  }
+  .modal-head h3 {
+    margin: 0; font-size: 18px;
+    font-weight: 700; letter-spacing: -0.3px;
+    color: var(--fg1);
+  }
+  .reset-btn {
+    background: transparent; border: 0; padding: 0;
+    color: var(--danger); font-size: 13px;
+    font-weight: 500; font-family: inherit;
+    cursor: pointer;
+  }
+  .reset-btn.disabled { color: var(--fg-faint); pointer-events: none; }
+  .modal-body {
+    flex: 1; overflow-y: auto;
+    padding: 16px 18px 0;
+  }
+  .modal-body::-webkit-scrollbar { display: none; }
+  .modal-apply {
+    padding: 12px 18px 18px;
+    border-top: 1px solid var(--divider);
+    background: var(--surface-high);
+    flex-shrink: 0;
+  }
+  .btn {
+    width: 100%;
+    height: 48px;
+    background: var(--accent);
+    color: var(--fg-inverse);
+    border: 0; border-radius: var(--r-md);
+    font-family: inherit;
+    font-size: 16px; font-weight: 600;
+    cursor: pointer;
+  }
+  .btn.disabled { background: var(--surface-sunken); color: var(--fg-faint); }
+  .home-indicator {
+    width: 120px; height: 4px;
+    background: var(--fg2);
+    border-radius: 999px;
+    margin: 6px auto 0; opacity: 0.6;
+  }
+
+  /* ───── Filter modal sections ───── */
+  .filter-section + .filter-section { margin-top: 22px; }
+  .filter-section .eyebrow {
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--fg3); margin-bottom: 12px;
+  }
+  .type-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  }
+  .type-grid .tb {
+    display: flex; align-items: center; justify-content: center;
+    height: 30px;
+    font-size: 11px;
+  }
+  .tier-row {
+    display: flex; gap: 8px;
+  }
+  .tier-btn {
+    flex: 1; height: 36px;
+    border-radius: var(--r-md);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--fg2);
+    font-family: inherit;
+    font-size: 13px; font-weight: 600;
+    letter-spacing: 0.8px;
+    cursor: pointer;
+  }
+  .tier-btn.on.s { background: var(--tier-s-bg); border-color: var(--tier-s); color: var(--tier-s); }
+  .tier-btn.on.a { background: var(--tier-a-bg); border-color: var(--tier-a); color: var(--tier-a); }
+  .seg {
+    display: flex;
+    background: var(--surface-sunken);
+    border-radius: var(--r-pill);
+    padding: 3px;
+  }
+  .seg button {
+    flex: 1; background: transparent; border: 0;
+    padding: 8px 0; font-family: inherit;
+    font-size: 13px; font-weight: 500;
+    color: var(--fg2);
+    border-radius: var(--r-pill);
+    cursor: pointer;
+  }
+  .seg button.on {
+    background: var(--surface-high);
+    color: var(--fg1);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  }
+  .seg.accent button.on { background: var(--accent); color: var(--fg-inverse); }
+  .filter-note {
+    font-size: 11px; color: var(--fg3);
+    margin-top: 8px; line-height: 1.4;
+  }
+
+  /* ───── Fiche Pokémon ───── */
+  .nav {
+    height: 44px; padding: 0 12px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .nav-btn {
+    background: transparent; border: 0;
+    color: var(--accent); padding: 8px;
+    display: grid; place-items: center;
+    cursor: pointer;
+  }
+  .nav-btn .lucide { width: 22px; height: 22px; stroke-width: 1.8; }
+  .nav-btn.right { color: var(--fg2); }
+  .nav-btn.right.active { color: var(--accent); }
+
+  .fiche-hero {
+    padding: 4px 20px 18px;
+    display: flex; align-items: center; gap: 16px;
+    position: relative;
+    border-bottom: 1px solid var(--divider);
+    flex-shrink: 0;
+  }
+  .fiche-hero::before {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(at top right, var(--t-psychic-bg) 0%, transparent 60%);
+    opacity: 0.7;
+    pointer-events: none;
+  }
+  .fiche-hero > * { position: relative; z-index: 1; }
+  .fiche-hero .sprite { width: 84px; height: 84px; }
+  .fiche-hero .fiche-id {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--fg3);
+    letter-spacing: 0.4px;
+    margin-bottom: 4px;
+  }
+  .fiche-hero .fiche-name {
+    font-size: 22px; font-weight: 700;
+    letter-spacing: -0.4px;
+    color: var(--fg1);
+    margin: 0 0 6px;
+    line-height: 1.05;
+  }
+  .fiche-hero .row-types { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
+  .fiche-hero .info { flex: 1; min-width: 0; }
+  .tier-pill.big { font-size: 11px; padding: 4px 10px; }
+
+  .sticky-seg {
+    padding: 12px 18px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--divider);
+    flex-shrink: 0;
+    position: sticky; top: 0; z-index: 2;
+  }
+
+  .fiche-body {
+    flex: 1; overflow-y: auto;
+    padding-bottom: 60px;
+  }
+  .fiche-body::-webkit-scrollbar { display: none; }
+  .section { padding: 16px 18px; }
+  .section + .section { border-top: 1px solid var(--divider); }
+  .section-eyebrow {
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--fg3); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-eyebrow .plus {
+    font-family: var(--font-mono); font-size: 9px;
+    padding: 2px 5px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 4px;
+    letter-spacing: 0.8px;
+  }
+  .section-eyebrow .sub {
+    margin-left: auto;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 400;
+    font-size: 11px;
+    color: var(--fg-faint);
+  }
+
+  /* Stats */
+  .stat-row {
+    display: grid; grid-template-columns: 56px 32px 1fr;
+    gap: 12px; align-items: center;
+    margin-bottom: 8px;
+  }
+  .stat-row .lbl {
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--fg3);
+  }
+  .stat-row .val {
+    font-family: var(--font-sans);
+    font-size: 14px; font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--fg1); text-align: right;
+  }
+  .bar {
+    width: 100%; height: 4px;
+    background: var(--surface-high);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .bar > span {
+    display: block; height: 100%;
+    background: var(--accent);
+    border-radius: 999px;
+  }
+  .bar.success > span { background: var(--success); }
+  .bar.warning > span { background: var(--warning); }
+  .bar.danger > span  { background: var(--danger); }
+  .bar.thin { height: 2px; }
+  .bar.fat { height: 3px; }
+
+  .bst {
+    display: flex; justify-content: space-between;
+    padding-top: 8px; margin-top: 4px;
+    border-top: 1px solid var(--divider);
+    font-size: 11px; color: var(--fg3);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .bst strong {
+    color: var(--fg1); font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Accordion */
+  .accord {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+  .accord-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px;
+    background: transparent;
+    border: 0; width: 100%; cursor: pointer;
+    font-family: inherit;
+  }
+  .accord-head .label {
+    font-size: 13px; font-weight: 500;
+    color: var(--fg1);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .accord-head .meta { font-size: 11px; color: var(--fg3); }
+  .accord-head .lucide { width: 14px; height: 14px; color: var(--fg3); }
+  .accord.open .accord-head .lucide { transform: rotate(180deg); }
+  .accord-body {
+    border-top: 1px solid var(--divider);
+    padding: 14px;
+  }
+  .eff-grid {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .eff-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 7px;
+    border-radius: var(--r-sm);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+  }
+  .eff-pill.x4 { background: var(--danger-soft); color: var(--danger); border: 1px solid var(--danger); }
+  .eff-pill.x2 { background: var(--surface-high); color: var(--fg1); border: 1px solid var(--border); }
+  .eff-pill.half { background: var(--success-soft); color: var(--success); border: 1px solid rgba(95,169,120,0.5); }
+  .eff-pill.zero { background: var(--success-soft); color: var(--success); border: 1px solid var(--success); }
+  .eff-pill .mult { font-weight: 600; }
+  .eff-note {
+    font-size: 11px; color: var(--fg3);
+    margin-top: 10px; line-height: 1.4;
+  }
+
+  /* Meta rank in fiche */
+  .meta-rank-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 12px 14px;
+    margin-bottom: 8px;
+  }
+  .meta-rank-block .rank-label {
+    font-size: 13px; color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .meta-rank-block .rank-label strong {
+    font-family: var(--font-sans);
+    font-variant-numeric: tabular-nums;
+    font-size: 18px;
+    letter-spacing: -0.3px;
+    margin-right: 4px;
+  }
+
+  /* Spread row */
+  .spread-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 10px 12px;
+    margin-bottom: 8px;
+  }
+  .spread-row .top {
+    display: flex; align-items: center; gap: 10px;
+    justify-content: space-between;
+  }
+  .spread-row .top .left {
+    display: flex; align-items: center; gap: 10px; min-width: 0;
+  }
+  .spread-row .rank-mini {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--fg3);
+    width: 16px;
+  }
+  .spread-numbers {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    color: var(--fg1);
+    letter-spacing: 0.3px;
+  }
+  .nature-badge {
+    display: inline-flex; align-items: center;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: var(--r-sm);
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.4px;
+  }
+  .spread-row .bottom {
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 6px;
+    padding-left: 26px;
+  }
+  .spread-row .bottom .bar { flex: 1; }
+  .spread-row .bottom .pct {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--fg2);
+    font-variant-numeric: tabular-nums;
+  }
+  .spread-row.open {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .spread-row .expand {
+    border-top: 1px dashed var(--border-strong);
+    margin-top: 10px;
+    padding-top: 10px;
+    display: grid;
+    gap: 8px;
+  }
+  .speed-tier-row {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11px;
+    color: var(--fg2);
+  }
+  .speed-tier-row .label {
+    font-weight: 600;
+    color: var(--fg3);
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    font-size: 9px;
+    width: 76px;
+    flex-shrink: 0;
+  }
+  .speed-tier-row .sprites {
+    display: flex; gap: 4px; align-items: center;
+    flex-wrap: wrap;
+  }
+  .speed-tier-row .sprites .label-row {
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .speed-tier-row .sprites .nm-tiny { font-size: 10.5px; color: var(--fg2); }
+
+  /* Move row */
+  .move-row, .item-row, .partner-row, .counter-row {
+    display: grid;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 0;
+    border-top: 1px solid var(--divider);
+  }
+  .move-row { grid-template-columns: 18px 1fr 36px; }
+  .move-row:first-of-type, .item-row:first-of-type, .partner-row:first-of-type, .counter-row:first-of-type { border-top: 0; padding-top: 0; }
+  .move-info { min-width: 0; }
+  .move-name {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--fg1);
+    margin-bottom: 4px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .cat {
+    font-size: 9px;
+    font-weight: 600; letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 2px 5px;
+    border-radius: var(--r-sm);
+  }
+  .cat.phys { color: var(--danger); background: var(--danger-soft); }
+  .cat.spe  { color: var(--info);   background: var(--info-soft); }
+  .cat.stat { color: var(--warning); background: var(--warning-soft); }
+  .move-meter {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .move-meter .bar { width: 100px; }
+  .move-meter .pct {
+    font-size: 11px; font-weight: 600;
+    color: var(--fg2);
+    font-variant-numeric: tabular-nums;
+  }
+  .row-pct {
+    font-size: 12px; font-weight: 600;
+    color: var(--fg1);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  /* Item row */
+  .item-row { grid-template-columns: 28px 1fr 50px; }
+  .item-icon {
+    width: 28px; height: 28px;
+    border-radius: var(--r-sm);
+    background: var(--surface-high);
+    border: 1px solid var(--border);
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .item-icon .lucide { width: 14px; height: 14px; color: var(--fg-faint); }
+  .item-info { min-width: 0; }
+  .item-name {
+    font-size: 13px; font-weight: 500;
+    color: var(--fg1);
+  }
+  .item-effect {
+    font-size: 11px; color: var(--fg-faint);
+    margin-top: 2px; line-height: 1.3;
+  }
+
+  /* Partner row */
+  .partner-row { grid-template-columns: 36px 1fr auto auto; }
+  .role-badge {
+    font-size: 9.5px; font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: var(--r-sm);
+    color: var(--fg2);
+    background: var(--surface-high);
+    border: 1px solid var(--border);
+    margin-right: 6px;
+  }
+  .partner-row .chevron {
+    color: var(--fg-faint);
+  }
+  .partner-row .chevron .lucide { width: 14px; height: 14px; }
+
+  /* Counter row */
+  .counter-row { grid-template-columns: 36px 1fr auto; }
+  .counter-tag {
+    font-size: 9.5px;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid rgba(91,141,239,0.4);
+    border-radius: var(--r-sm);
+    padding: 2px 6px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+  .counter-tag.check { color: var(--warning); background: var(--warning-soft); border-color: rgba(217,165,90,0.4); }
+
+  /* Premium history */
+  .premium-history {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 16px;
+    overflow: hidden;
+  }
+  .premium-history .veil {
+    position: absolute; inset: 0;
+    background: rgba(11,13,16,0.6);
+    backdrop-filter: blur(8px);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px;
+    z-index: 2;
+    text-align: center;
+  }
+  .premium-history .veil .lucide { width: 18px; height: 18px; color: var(--fg2); }
+  .premium-history .veil .ttl {
+    font-size: 13px; color: var(--fg1); font-weight: 600;
+  }
+  .premium-history .veil .offer-btn {
+    margin-top: 4px;
+    background: transparent;
+    border: 1px solid var(--border-strong);
+    color: var(--fg1);
+    padding: 7px 14px;
+    border-radius: var(--r-md);
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .spark-head {
+    display: flex; align-items: end; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .spark-head .label {
+    font-size: 10px; font-weight: 600;
+    color: var(--fg3); letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+  .spark-head .now {
+    font-size: 22px; font-weight: 700;
+    color: var(--fg1);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.4px;
+  }
+  .week-marks {
+    display: flex; justify-content: space-between;
+    margin-top: 6px;
+    font-family: var(--font-mono);
+    font-size: 9px; color: var(--fg3);
+    letter-spacing: 0.4px;
+  }
+
+  /* FAB */
+  .fab {
+    position: absolute;
+    right: 16px;
+    bottom: 26px;
+    z-index: 4;
+    height: 48px;
+    padding: 0 20px 0 16px;
+    background: var(--accent);
+    color: var(--fg-inverse);
+    border-radius: 999px;
+    display: flex; align-items: center; gap: 8px;
+    font-family: inherit;
+    font-size: 14px; font-weight: 600;
+    box-shadow: var(--shadow-lg);
+    border: 0;
+    cursor: pointer;
+  }
+  .fab .lucide { width: 18px; height: 18px; stroke-width: 2.4; }
+
+  /* Scroll fade */
+  .scroll-fade {
+    position: absolute;
+    left: 8px; right: 8px; bottom: 8px;
+    height: 48px;
+    background: linear-gradient(to bottom, transparent, var(--bg));
+    pointer-events: none;
+    border-radius: 0 0 30px 30px;
+    z-index: 3;
+  }
+
+  /* ───── Pins ───── */
+  .pin {
+    position: absolute;
+    font-family: var(--hand); font-size: 16px; font-weight: 700;
+    color: var(--ink); background: #FFE680;
+    border: 1.5px solid var(--ink); border-radius: 999px;
+    width: 26px; height: 26px;
+    display: grid; place-items: center;
+    transform: rotate(-4deg);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.15);
+    z-index: 20;
+  }
+
+  /* ───── Notes column ───── */
+  .notes { display: flex; flex-direction: column; gap: 18px; padding-top: 4px; }
+  .note { display: grid; grid-template-columns: 32px 1fr; gap: 14px; align-items: start; }
+  .note-num {
+    font-family: var(--hand); font-weight: 700; font-size: 18px;
+    color: var(--ink); background: #FFE680;
+    border: 1.5px solid var(--ink); border-radius: 999px;
+    width: 28px; height: 28px; display: grid; place-items: center;
+    transform: rotate(-3deg); box-shadow: 2px 2px 0 rgba(0,0,0,0.12);
+  }
+  .note-body { padding-top: 2px; }
+  .note-title {
+    font-family: var(--hand); font-weight: 600; font-size: 22px;
+    color: var(--ink); line-height: 1.1; margin: 0 0 4px;
+    letter-spacing: -0.3px;
+  }
+  .note-desc {
+    font-family: var(--hand-2); font-size: 16px; color: var(--ink-2);
+    line-height: 1.4; margin: 0 0 8px;
+  }
+  .toks { display: flex; flex-wrap: wrap; gap: 5px; }
+  .tok {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+    color: var(--accent); background: #1C2027;
+    border: 1px solid #2A2F38; border-radius: 5px;
+    padding: 2px 7px;
+  }
+  .tok.muted { color: var(--fg2); }
+  .tok.semantic { color: #5FA978; }
+  .tok.danger { color: #D46A6A; }
+  .tok.warning { color: #D9A55A; }
+  .tok.tier { color: #E0C58A; }
+  .tok.note { color: var(--ink-3); background: transparent; border-color: var(--ink-3); }
+  .comp-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.4px; color: var(--ink);
+    background: #FFE680; border: 1.5px solid var(--ink); border-radius: 4px;
+    padding: 2px 6px; transform: rotate(-1deg); margin: 0 2px;
+  }
+
+  /* ───── Annexe ───── */
+  .annexe {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 18px; margin-top: 36px;
+  }
+  .ann-card {
+    background: var(--bg);
+    border: 1.5px solid var(--ink);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 4px 5px 0 rgba(0,0,0,0.12);
+    color: var(--fg1);
+    display: flex; flex-direction: column;
+  }
+  .ann-title {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 1.4px; text-transform: uppercase;
+    color: var(--ink-3); margin: 12px 0 8px;
+    text-align: center;
+  }
+  .ann-card .inner { padding: 18px 14px; min-height: 320px; display: flex; flex-direction: column; }
+  .ann-empty {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    text-align: center; justify-content: center; flex: 1;
+  }
+  .ann-empty .lucide { width: 36px; height: 36px; color: var(--fg-faint); stroke-width: 1.2; }
+  .ann-empty .ttl { font-size: 15px; font-weight: 600; color: var(--fg1); }
+  .ann-empty .sub { font-size: 12px; color: var(--fg3); max-width: 220px; line-height: 1.4; }
+  .ann-btn {
+    margin-top: 12px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--fg1);
+    padding: 8px 18px;
+    border-radius: var(--r-md);
+    font-size: 13px; font-family: inherit;
+    cursor: pointer;
+  }
+  .shimmer-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0; height: 68px;
+    border-bottom: 1px solid var(--border);
+  }
+  .shimmer-row .sk {
+    background: var(--surface-high);
+    border-radius: 999px; height: 8px;
+  }
+  .shimmer-row .sk.circle { width: 44px; height: 44px; border-radius: 999px; }
+  .shimmer-row .sk.line { flex: 1; }
+  .shimmer-row .sk.short { width: 40px; }
+
+  /* ───── Constraints / legend ───── */
+  .constraints {
+    margin-top: 56px;
+    padding: 32px 28px;
+    background: rgba(255,255,255,0.45);
+    border: 1.5px dashed var(--ink-2);
+    border-radius: 18px;
+  }
+  .constraints h3 {
+    font-family: var(--hand); font-size: 28px; font-weight: 700;
+    margin: 0 0 18px; letter-spacing: -0.5px; color: var(--ink);
+  }
+  .constraints ul {
+    list-style: none; padding: 0; margin: 0;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px 32px;
+  }
+  .constraints li {
+    font-family: var(--hand-2); font-size: 17px;
+    color: var(--ink-2); line-height: 1.4;
+    padding-left: 24px; position: relative;
+  }
+  .constraints li::before {
+    content: "✓"; position: absolute; left: 0; top: 0;
+    color: var(--accent); font-weight: 700;
+    font-family: var(--hand); font-size: 22px; line-height: 1;
+  }
+  .constraints li.x::before { content: "✗"; color: var(--danger); }
+
+  .legend {
+    margin-top: 40px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  }
+  .legend-card {
+    padding: 16px 18px;
+    background: rgba(255,255,255,0.45);
+    border: 1.5px dashed var(--ink-2);
+    border-radius: 12px;
+  }
+  .legend-name {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--accent); letter-spacing: 0.4px; margin-bottom: 6px;
+  }
+  .legend-desc {
+    font-family: var(--hand-2); font-size: 16px;
+    color: var(--ink-2); line-height: 1.35;
+  }
+
+  .lucide { width: 22px; height: 22px; stroke-width: 1.75; }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       DOC HEADER
+       ═══════════════════════════════════════════════════════════ -->
+  <header class="doc-head">
+    <div>
+      <div class="doc-eyebrow">Tacticx · Spec · v01 · Pokédex</div>
+      <h1 class="doc-title">Pokédex — <em>wireframes annotés</em></h1>
+      <p class="doc-sub">Pokédex compétitif — 162 Pokémon de la Regulation M-A. Pas de lore, pas de flavour text. Liste · filtres · fiche orientée meta + plus-values Tacticx.</p>
+    </div>
+    <div class="doc-meta">
+      <strong>Plateforme</strong>&nbsp;·&nbsp;iOS + Android (RN / Expo 56)<br/>
+      <strong>Liste</strong>&nbsp;·&nbsp;FlashList · 162 items<br/>
+      <strong>Tokens</strong>&nbsp;·&nbsp;theme.ts (DS Tacticx)<br/>
+      <strong>Composants</strong>&nbsp;·&nbsp;Reacticx kit
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FLOW OVERVIEW
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="flow">
+    <h2 class="flow-title">Les 4 vues documentées</h2>
+    <p class="flow-sub">Liste · Modal Filtres · Fiche Pokémon haut · Fiche Pokémon bas — annexe à part pour shimmer / vides / erreurs</p>
+
+    <div class="flow-rail">
+      <div class="flow-step">
+        <div class="flow-mini">
+          <div class="m-head"></div>
+          <div class="m-search"></div>
+          <div class="m-fbtn"></div>
+          <div class="m-rows">
+            <div class="m-row"></div><div class="m-row"></div>
+            <div class="m-row"></div><div class="m-row"></div>
+            <div class="m-row"></div><div class="m-row"></div>
+            <div class="m-row"></div>
+          </div>
+        </div>
+        <div class="flow-num">A</div>
+        <div class="flow-label">Liste Pokédex<small>162 · regulation m-a</small></div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-mini modal">
+          <div class="m-head"></div>
+          <div class="m-search"></div>
+          <div class="m-fbtn"></div>
+          <div class="m-rows">
+            <div class="m-row"></div><div class="m-row"></div>
+          </div>
+          <div class="m-sheet">
+            <div class="grab"></div>
+            <div class="typegrid">
+              <span class="on"></span><span></span><span></span>
+              <span></span><span class="on"></span><span></span>
+              <span></span><span></span><span></span>
+              <span></span><span></span><span></span>
+            </div>
+            <div class="tier-row">
+              <span class="on"></span><span></span><span></span><span></span><span></span>
+            </div>
+            <div class="tier-row">
+              <span></span>
+            </div>
+            <div class="tier-row">
+              <span></span>
+            </div>
+            <div class="modal-btn"></div>
+          </div>
+        </div>
+        <div class="flow-num">B</div>
+        <div class="flow-label">Filtres<small>type · tier · usage</small></div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-mini fiche">
+          <div class="navbar"><span></span><span></span></div>
+          <div class="hero"></div>
+          <div class="seg-fix"><span class="on"></span><span></span></div>
+          <div class="bars">
+            <span></span><span></span><span></span>
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="flow-num">C</div>
+        <div class="flow-label">Fiche · haut<small>hero · stats · effs</small></div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-mini fiche bas">
+          <div class="seg-fix"><span class="on"></span><span></span></div>
+          <div class="sections">
+            <div class="sec-block">
+              <div class="l"></div><div class="l"></div><div class="l"></div>
+            </div>
+            <div class="sec-block">
+              <div class="l"></div><div class="l"></div><div class="l"></div><div class="l"></div>
+            </div>
+            <div class="sec-block">
+              <div class="l"></div><div class="l"></div>
+            </div>
+          </div>
+          <div class="fab"></div>
+        </div>
+        <div class="flow-num">D</div>
+        <div class="flow-label">Fiche · bas<small>meta · plus-values · fab</small></div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       STATE A — LISTE POKÉDEX
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">A</span>
+      <h2 class="spec-title">Liste Pokédex</h2>
+      <span class="spec-eyebrow">deux filtres actifs · tri par numéro · 28 résultats</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status">
+            <span>9:41</span>
+            <span class="status-icons"><i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i></span>
+          </div>
+
+          <div class="head">
+            <div class="head-top">
+              <div>
+                <h1 class="head-title">Pokédex</h1>
+                <div class="head-sub">Regulation M-A&nbsp;·&nbsp;162 Pokémon</div>
+              </div>
+              <span class="season-badge">Saison&nbsp;M-2</span>
+            </div>
+          </div>
+
+          <div class="search-row">
+            <div class="search">
+              <i data-lucide="search"></i>
+              <span class="placeholder">Rechercher un Pokémon...</span>
+            </div>
+            <button class="filter-btn">
+              <i data-lucide="sliders-horizontal"></i>
+              Filtres
+              <span class="count">2</span>
+            </button>
+          </div>
+
+          <div class="active-filters">
+            <span class="fchip">Feu<span class="x"><i data-lucide="x"></i></span></span>
+            <span class="fchip">Tier S<span class="x"><i data-lucide="x"></i></span></span>
+          </div>
+
+          <div class="sort-line">
+            <span class="results-count">28 résultats</span>
+            <button class="sort-btn">Trié par&nbsp;: <em>Numéro</em><i data-lucide="chevron-down"></i></button>
+          </div>
+
+          <div class="list">
+            <div class="pdx-row">
+              <span class="num">#006</span>
+              <span class="sprite t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/6.png" alt="" loading="lazy"/></span>
+              <span class="row-info">
+                <span class="nm">Dracaufeu</span>
+                <span class="row-types"><span class="tb fire">Feu</span><span class="tb flying">Vol</span><span class="meta-rank">#14 Doubles</span></span>
+              </span>
+              <span class="row-meta">
+                <span class="tier-pill s">S</span>
+              </span>
+            </div>
+            <div class="pdx-row">
+              <span class="num">#392</span>
+              <span class="sprite t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/392.png" alt="" loading="lazy"/></span>
+              <span class="row-info">
+                <span class="nm">Simiabraz</span>
+                <span class="row-types"><span class="tb fire">Feu</span><span class="tb fighting">Combat</span><span class="meta-rank">#22 Singles</span></span>
+              </span>
+              <span class="row-meta">
+                <span class="tier-pill s">S</span>
+                <button class="bookmark"><i data-lucide="bookmark"></i></button>
+              </span>
+            </div>
+            <div class="pdx-row">
+              <span class="num">#485</span>
+              <span class="sprite t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/485.png" alt="" loading="lazy"/></span>
+              <span class="row-info">
+                <span class="nm">Heatran</span>
+                <span class="row-types"><span class="tb fire">Feu</span><span class="tb steel">Acier</span><span class="meta-rank">#11 Doubles</span></span>
+              </span>
+              <span class="row-meta">
+                <span class="tier-pill s">S</span>
+              </span>
+            </div>
+            <div class="pdx-row">
+              <span class="num">#727</span>
+              <span class="sprite t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/727.png" alt="" loading="lazy"/></span>
+              <span class="row-info">
+                <span class="nm">Incineroar</span>
+                <span class="row-types"><span class="tb fire">Feu</span><span class="tb dark">Ténèbres</span><span class="meta-rank">#2 Doubles</span></span>
+              </span>
+              <span class="row-meta">
+                <span class="tier-pill s">S</span>
+                <button class="bookmark"><i data-lucide="bookmark"></i></button>
+              </span>
+            </div>
+            <div class="pdx-row">
+              <span class="num">#1017</span>
+              <span class="sprite t-grass"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/1017.png" alt="" loading="lazy"/></span>
+              <span class="row-info">
+                <span class="nm">Ogerpon-Foyer</span>
+                <span class="row-types"><span class="tb grass">Plante</span><span class="tb fire">Feu</span><span class="meta-rank">#6 Doubles</span></span>
+              </span>
+              <span class="row-meta">
+                <span class="tier-pill s">S</span>
+              </span>
+            </div>
+            <div class="pdx-row">
+              <span class="num">#1003</span>
+              <span class="sprite t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/1003.png" alt="" loading="lazy"/></span>
+              <span class="row-info">
+                <span class="nm">Chongjian-Yu</span>
+                <span class="row-types"><span class="tb fire">Feu</span><span class="tb dark">Ténèbres</span><span class="meta-rank">#8 Singles</span></span>
+              </span>
+              <span class="row-meta">
+                <span class="tier-pill s">S</span>
+              </span>
+            </div>
+          </div>
+
+          <span class="pin" style="top: 36px; left: 18px;">1</span>
+          <span class="pin" style="top: 36px; right: 18px;">2</span>
+          <span class="pin" style="top: 102px; left: 18px;">3</span>
+          <span class="pin" style="top: 102px; right: 18px;">4</span>
+          <span class="pin" style="top: 168px; left: 18px;">5</span>
+          <span class="pin" style="top: 212px; right: 18px;">6</span>
+          <span class="pin" style="top: 252px; left: 18px;">7</span>
+          <span class="pin" style="top: 312px; right: 12px;">8</span>
+          <span class="pin" style="top: 388px; right: 60px;">9</span>
+        </div>
+        <div class="phone-dims">380 × 760 · scale 1:1</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note">
+        <div class="note-num">1</div>
+        <div class="note-body">
+          <h4 class="note-title">Titre + contexte regulation</h4>
+          <p class="note-desc">Sentence case sobre. Sous le titre, ligne tabulaire <span class="tok muted">"Regulation M-A · 162 Pokémon"</span> en <span class="tok muted">--fg3</span>. Le nombre est dynamique — recompte à chaque update de la regulation officielle.</p>
+          <div class="toks">
+            <span class="tok">--fs-2xl</span>
+            <span class="tok muted">weight 700</span>
+            <span class="tok muted">--tr-tight</span>
+            <span class="tok muted">--fg3 (sub)</span>
+            <span class="tok muted">tabular-nums</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">2</div>
+        <div class="note-body">
+          <h4 class="note-title">Badge saison</h4>
+          <p class="note-desc">Étiquette typographique discrète (pas un chip coloré). Uppercase eyebrow style, casing sentence pour le préfixe. Tap : drawer "À propos de la regulation" avec dates et historique.</p>
+          <div class="toks">
+            <span class="tok muted">--surface</span>
+            <span class="tok muted">--border</span>
+            <span class="tok">--r-sm</span>
+            <span class="tok muted">--tr-wider</span>
+            <span class="tok muted">--fs-xs - 1</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">3</div>
+        <div class="note-body">
+          <h4 class="note-title">Barre de recherche</h4>
+          <p class="note-desc">Icône loupe <span class="tok muted">search</span> à gauche. Filtre en temps réel à chaque caractère (debounce 80ms). Cherche FR et EN simultanément (Dracaufeu = Charizard). Au focus : expansion légère via <span class="comp-pill">Animated Input Bar</span> + clavier iOS natif. Si texte saisi : <span class="tok muted">x-circle</span> à droite pour vider.</p>
+          <div class="toks">
+            <span class="tok muted">--surface-sunken</span>
+            <span class="tok muted">--border</span>
+            <span class="tok">--r-md</span>
+            <span class="tok muted">--fg3 (placeholder)</span>
+            <span class="comp-pill">Animated Input Bar</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">4</div>
+        <div class="note-body">
+          <h4 class="note-title">Bouton Filtres + compteur</h4>
+          <p class="note-desc">Bouton compact icône <span class="tok muted">sliders-horizontal</span> + label. Badge <span class="tok">--accent</span> à -4/-4 quand des filtres sont actifs, avec compteur tabulaire. Border 2px <span class="tok muted">--bg</span> autour du badge pour le détacher du bouton.</p>
+          <div class="toks">
+            <span class="tok">--accent</span>
+            <span class="tok muted">--surface</span>
+            <span class="tok muted">--border</span>
+            <span class="tok">--r-md</span>
+            <span class="tok muted">badge h=18 border 2px</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">5</div>
+        <div class="note-body">
+          <h4 class="note-title">Chips de filtres actifs</h4>
+          <p class="note-desc">Visible seulement si filtres actifs. Background <span class="tok">--accent-soft</span> + border subtle accent. Icône x à droite dans une mini-tuile. Tap : retire ce filtre et re-trigger la liste avec <span class="comp-pill">Shimmer</span>.</p>
+          <div class="toks">
+            <span class="tok">--accent-soft</span>
+            <span class="tok">--accent</span>
+            <span class="tok">--r-pill</span>
+            <span class="tok muted">scroll-x libre</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">6</div>
+        <div class="note-body">
+          <h4 class="note-title">Compteur + tri</h4>
+          <p class="note-desc">Compteur dynamique à gauche (<span class="tok muted">28 résultats</span>). Bouton tri à droite, valeur courante en <span class="tok muted">--fg1</span>, le reste en <span class="tok muted">--fg3</span>. Tap : action sheet natif iOS avec 5 options (Numéro / Nom A→Z / Usage / Tier / Vitesse).</p>
+          <div class="toks">
+            <span class="tok muted">--fg3</span>
+            <span class="tok muted">--fg1 (valeur)</span>
+            <span class="tok muted">--fs-xs</span>
+            <span class="tok note">ActionSheetIOS</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">7</div>
+        <div class="note-body">
+          <h4 class="note-title">Numéro national + sprite</h4>
+          <p class="note-desc">Numéro monospace tabulaire, largeur fixe 26pt (alignement parfait à droite jusqu'à 4 chiffres). Sprite 44×44 fond teinté du type primaire, silhouette via filter <span class="tok muted">brightness(0) invert</span>. Shimmer placeholder tant que l'image charge.</p>
+          <div class="toks">
+            <span class="tok muted">--fg3 (#num)</span>
+            <span class="tok muted">--font-mono</span>
+            <span class="tok muted">--t-fire-bg etc.</span>
+            <span class="tok">--r-pill</span>
+            <span class="comp-pill">Shimmer</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">8</div>
+        <div class="note-body">
+          <h4 class="note-title">Tier pill</h4>
+          <p class="note-desc">Lettre seule (pas de mot "Tier"). Couleur sémantique du tier — champagne S, silver A, bronze B, graphite C. UR (unranked) : transparent + border subtle. Le tier est calculé sur le format actif (cf. filtre format).</p>
+          <div class="toks">
+            <span class="tok tier">--tier-s</span>
+            <span class="tok muted">--tier-s-bg</span>
+            <span class="tok muted">border 1px --tier-s</span>
+            <span class="tok">--r-sm</span>
+            <span class="tok muted">tabular-nums</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">9</div>
+        <div class="note-body">
+          <h4 class="note-title">Indicateur bookmark personnel</h4>
+          <p class="note-desc">Affiché uniquement si le Pokémon est dans une équipe sauvegardée. Icône <span class="tok muted">bookmark</span> filled <span class="tok">--accent</span>. Pas cliquable depuis la liste — c'est un état, pas une action. Pour gérer les favoris, ouvrir la fiche.</p>
+          <div class="toks">
+            <span class="tok">--accent</span>
+            <span class="tok muted">15×15</span>
+            <span class="tok note">indicateur read-only</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       STATE B — MODAL FILTRES
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">B</span>
+      <h2 class="spec-title">Modal — Filtres</h2>
+      <span class="spec-eyebrow">bottom sheet · 70 % hauteur · 4 sections</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status">
+            <span>9:41</span>
+            <span class="status-icons"><i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i></span>
+          </div>
+
+          <div class="head">
+            <div class="head-top">
+              <div>
+                <h1 class="head-title">Pokédex</h1>
+                <div class="head-sub">Regulation M-A&nbsp;·&nbsp;162 Pokémon</div>
+              </div>
+              <span class="season-badge">Saison&nbsp;M-2</span>
+            </div>
+          </div>
+
+          <div class="search-row">
+            <div class="search">
+              <i data-lucide="search"></i>
+              <span class="placeholder">Rechercher un Pokémon...</span>
+            </div>
+            <button class="filter-btn">
+              <i data-lucide="sliders-horizontal"></i>
+              Filtres
+              <span class="count">2</span>
+            </button>
+          </div>
+
+          <div class="scrim"></div>
+
+          <div class="sheet-modal" style="top: 168px;">
+            <div class="grab"></div>
+            <div class="modal-head">
+              <h3>Filtres</h3>
+              <button class="reset-btn">Réinitialiser</button>
+            </div>
+
+            <div class="modal-body">
+              <div class="filter-section">
+                <div class="eyebrow">Type</div>
+                <div class="type-grid">
+                  <span class="tb fire selectable on">Feu</span>
+                  <span class="tb water selectable">Eau</span>
+                  <span class="tb grass selectable">Plante</span>
+                  <span class="tb electric selectable">Élec.</span>
+                  <span class="tb psychic selectable">Psy</span>
+                  <span class="tb fighting selectable">Combat</span>
+                  <span class="tb fairy selectable">Fée</span>
+                  <span class="tb ghost selectable">Spectre</span>
+                  <span class="tb dark selectable">Ténèb.</span>
+                  <span class="tb poison selectable">Poison</span>
+                  <span class="tb flying selectable">Vol</span>
+                  <span class="tb steel selectable">Acier</span>
+                  <span class="tb rock selectable">Roche</span>
+                  <span class="tb ice selectable">Glace</span>
+                  <span class="tb ground selectable">Sol</span>
+                  <span class="tb dragon selectable">Dragon</span>
+                  <span class="tb bug selectable">Insecte</span>
+                  <span class="tb normal selectable">Normal</span>
+                </div>
+              </div>
+
+              <div class="filter-section">
+                <div class="eyebrow">Tier</div>
+                <div class="tier-row">
+                  <button class="tier-btn s on">S</button>
+                  <button class="tier-btn a">A</button>
+                  <button class="tier-btn">B</button>
+                  <button class="tier-btn">C</button>
+                  <button class="tier-btn">UR</button>
+                </div>
+              </div>
+
+              <div class="filter-section">
+                <div class="eyebrow">Usage en ranked</div>
+                <div class="seg">
+                  <button>Tous</button>
+                  <button class="on">Top 20</button>
+                  <button>Top 10</button>
+                </div>
+                <div class="filter-note">Basé sur la Saison M-2 en cours.</div>
+              </div>
+
+              <div class="filter-section">
+                <div class="eyebrow">Format</div>
+                <div class="seg">
+                  <button>Tous les formats</button>
+                  <button class="on">Doubles</button>
+                  <button>Singles</button>
+                </div>
+                <div class="filter-note">Les tiers et l'usage filtrent selon le format sélectionné.</div>
+              </div>
+            </div>
+
+            <div class="modal-apply">
+              <button class="btn">Voir les 28 Pokémon</button>
+            </div>
+          </div>
+
+          <span class="pin" style="top: 178px; left: 18px;">1</span>
+          <span class="pin" style="top: 178px; right: 18px;">2</span>
+          <span class="pin" style="top: 246px; left: 18px;">3</span>
+          <span class="pin" style="top: 442px; left: 18px;">4</span>
+          <span class="pin" style="top: 520px; left: 18px;">5</span>
+          <span class="pin" style="top: 600px; left: 18px;">6</span>
+          <span class="pin" style="bottom: 76px; right: 18px;">7</span>
+        </div>
+        <div class="phone-dims">380 × 760 · sheet 70 %</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note">
+        <div class="note-num">1</div>
+        <div class="note-body">
+          <h4 class="note-title">Header modal</h4>
+          <p class="note-desc">Titre <span class="tok muted">"Filtres"</span> sentence case. Drag handle 36×4 visible au-dessus. Hairline <span class="tok muted">--divider</span> sous le header pour séparer du contenu scrollable.</p>
+          <div class="toks">
+            <span class="tok muted">--surface-high</span>
+            <span class="tok">--r-xl</span>
+            <span class="tok muted">--fg-faint (grab)</span>
+            <span class="tok muted">--fg1 (titre)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">2</div>
+        <div class="note-body">
+          <h4 class="note-title">Bouton "Réinitialiser"</h4>
+          <p class="note-desc">Texte simple <span class="tok danger">--danger</span> quand des filtres sont actifs ; passe à <span class="tok muted">--fg-faint</span> et inerte quand aucun filtre. Pattern iOS standard (style action destructive sans confirmation — réversible côté UX puisque rien n'est encore appliqué).</p>
+          <div class="toks">
+            <span class="tok danger">--danger</span>
+            <span class="tok muted">--fg-faint (disabled)</span>
+            <span class="tok muted">--fs-sm</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">3</div>
+        <div class="note-body">
+          <h4 class="note-title">Grille types — 18 badges</h4>
+          <p class="note-desc">3 colonnes × 6 lignes. Chaque TypeBadge utilise sa couleur du DS (<span class="tok muted">--t-{type}</span> / <span class="tok muted">--t-{type}-bg</span>). État non-sélectionné à 65&nbsp;% d'opacité ; sélectionné = pleine opacité + outline 1.5px de la couleur du type. Sélection multiple (OR logique entre types).</p>
+          <div class="toks">
+            <span class="tok muted">--t-{type}</span>
+            <span class="tok muted">--t-{type}-bg</span>
+            <span class="tok">--r-sm</span>
+            <span class="tok muted">opacity 0.65 → 1</span>
+            <span class="comp-pill">Badge</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">4</div>
+        <div class="note-body">
+          <h4 class="note-title">Tier — 5 boutons en ligne</h4>
+          <p class="note-desc">S / A / B / C + UR (Unranked). Sélection multiple. État sélectionné = background <span class="tok muted">--tier-{x}-bg</span> + border + texte <span class="tok muted">--tier-{x}</span>. Cohérence visuelle avec le tier pill de la liste.</p>
+          <div class="toks">
+            <span class="tok tier">--tier-s</span>
+            <span class="tok muted">--tier-s-bg</span>
+            <span class="tok">--r-md</span>
+            <span class="tok muted">height 36</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">5</div>
+        <div class="note-body">
+          <h4 class="note-title">Usage — segmented 3 options</h4>
+          <p class="note-desc">Mutually exclusive (sélection unique). Variante neutre du segmented (pas accent — la sélection ne demande pas d'emphase ici). Note dessous précise la source : "Basé sur la Saison M-2 en cours."</p>
+          <div class="toks">
+            <span class="tok muted">--surface-sunken</span>
+            <span class="tok muted">--surface-high (on)</span>
+            <span class="tok">--r-pill</span>
+            <span class="comp-pill">Segmented Control</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">6</div>
+        <div class="note-body">
+          <h4 class="note-title">Format — segmented 3 options</h4>
+          <p class="note-desc">Conditionne le calcul des tiers et de l'usage. Note explicite : "Les tiers et l'usage filtrent selon le format sélectionné." Évite la confusion quand un Pokémon est S en Doubles et B en Singles.</p>
+          <div class="toks">
+            <span class="tok muted">--surface-sunken</span>
+            <span class="tok muted">--fg3 (note)</span>
+            <span class="tok muted">--fs-xs</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">7</div>
+        <div class="note-body">
+          <h4 class="note-title">CTA d'application — compteur dynamique</h4>
+          <p class="note-desc">Label dynamique <span class="tok muted">"Voir les X Pokémon"</span>. Le compteur se met à jour en temps réel à chaque toggle de filtre (Rolling Counter sur le nombre). Si 0 résultat : bouton désactivé, texte <span class="tok muted">"Aucun résultat"</span> en <span class="tok muted">--fg-faint</span>.</p>
+          <div class="toks">
+            <span class="tok">--accent</span>
+            <span class="tok muted">--fg-inverse</span>
+            <span class="tok">--r-md</span>
+            <span class="tok muted">h 48 · --fs-md weight 600</span>
+            <span class="comp-pill">Rolling Counter</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       STATE C — FICHE POKÉMON · HAUT
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">C</span>
+      <h2 class="spec-title">Fiche Pokémon — vue haute</h2>
+      <span class="spec-eyebrow">nav · hero · stats · efficacités · meta header</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status">
+            <span>9:41</span>
+            <span class="status-icons"><i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i></span>
+          </div>
+
+          <div class="nav">
+            <button class="nav-btn"><i data-lucide="chevron-left"></i></button>
+            <button class="nav-btn right active"><i data-lucide="bookmark"></i></button>
+          </div>
+
+          <div class="fiche-hero">
+            <span class="sprite big t-psychic"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/898.png" alt="" loading="lazy"/></span>
+            <div class="info">
+              <div class="fiche-id">#898&nbsp;·&nbsp;NAT</div>
+              <h2 class="fiche-name">Calyrex<br/>Cavalier d'Effroi</h2>
+              <div class="row-types">
+                <span class="tb psychic">Psy</span>
+                <span class="tb ghost">Spectre</span>
+                <span class="tier-pill s big" style="margin-left:6px">Tier&nbsp;S</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sticky-seg">
+            <div class="seg accent">
+              <button class="on">Doubles</button>
+              <button>Singles</button>
+            </div>
+          </div>
+
+          <div class="fiche-body">
+            <div class="section">
+              <div class="section-eyebrow">Stats<span class="sub">BST 680</span></div>
+              <div class="stat-row"><span class="lbl">PV</span><span class="val">100</span><span class="bar warning"><span style="width:39%"></span></span></div>
+              <div class="stat-row"><span class="lbl">ATQ</span><span class="val">85</span><span class="bar warning"><span style="width:33%"></span></span></div>
+              <div class="stat-row"><span class="lbl">DÉF</span><span class="val">80</span><span class="bar warning"><span style="width:31%"></span></span></div>
+              <div class="stat-row"><span class="lbl">ATQ S</span><span class="val">165</span><span class="bar success"><span style="width:65%"></span></span></div>
+              <div class="stat-row"><span class="lbl">DÉF S</span><span class="val">100</span><span class="bar warning"><span style="width:39%"></span></span></div>
+              <div class="stat-row"><span class="lbl">VIT</span><span class="val">150</span><span class="bar success"><span style="width:59%"></span></span></div>
+              <div class="bst"><span>Total · BST</span><strong>680</strong></div>
+            </div>
+
+            <div class="section">
+              <div class="section-eyebrow">Efficacités<span class="sub">Talent : Crinière d'Effroi</span></div>
+              <div class="accord open">
+                <button class="accord-head">
+                  <span class="label"><i data-lucide="shield-alert"></i>Faiblesses</span>
+                  <span style="display:inline-flex;align-items:center;gap:10px"><span class="meta">4 types</span><i data-lucide="chevron-down"></i></span>
+                </button>
+                <div class="accord-body">
+                  <div class="eff-grid">
+                    <span class="eff-pill x2"><span class="tb ghost">Spectre</span><span class="mult">×2</span></span>
+                    <span class="eff-pill x2"><span class="tb dark">Ténèb.</span><span class="mult">×2</span></span>
+                    <span class="eff-pill x2"><span class="tb ghost">Spectre</span><span class="mult">×2</span></span>
+                    <span class="eff-pill x4"><span class="tb fairy">Fée</span><span class="mult">×4</span></span>
+                  </div>
+                </div>
+              </div>
+              <div class="accord">
+                <button class="accord-head">
+                  <span class="label"><i data-lucide="shield-check"></i>Résistances&nbsp;&amp; immunités</span>
+                  <span style="display:inline-flex;align-items:center;gap:10px"><span class="meta">6 types</span><i data-lucide="chevron-down"></i></span>
+                </button>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-eyebrow">Meta · Doubles<span class="sub">il y a 2 h</span></div>
+              <div class="meta-rank-block">
+                <div class="rank-label"><strong>#1</strong>les plus utilisés en Doubles</div>
+                <div class="bar fat"><span style="width:100%"></span></div>
+                <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--fg3);font-variant-numeric:tabular-nums"><span>Présence</span><span style="color:var(--fg1);font-weight:600">38.2&nbsp;%</span></div>
+              </div>
+            </div>
+
+            <div class="scroll-fade"></div>
+          </div>
+
+          <span class="pin" style="top: 38px; left: 8px;">1</span>
+          <span class="pin" style="top: 38px; right: 8px;">2</span>
+          <span class="pin" style="top: 100px; right: 100px;">3</span>
+          <span class="pin" style="top: 240px; left: 14px;">4</span>
+          <span class="pin" style="top: 312px; left: 14px;">5</span>
+          <span class="pin" style="top: 480px; left: 14px;">6</span>
+          <span class="pin" style="top: 638px; left: 14px;">7</span>
+        </div>
+        <div class="phone-dims">380 × 760 · scrolled top</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note">
+        <div class="note-num">1</div>
+        <div class="note-body">
+          <h4 class="note-title">Nav bar — back</h4>
+          <p class="note-desc">Chevron simple en <span class="tok">--accent</span>. Push iOS standard. Swipe-right depuis le bord gauche également supporté. Pas de titre dans la nav — le titre est dans le hero juste en-dessous (pattern Bear-like).</p>
+          <div class="toks">
+            <span class="tok">--accent</span>
+            <span class="tok muted">hit-slop 12</span>
+            <span class="tok muted">--fs-lg</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">2</div>
+        <div class="note-body">
+          <h4 class="note-title">Bookmark favori</h4>
+          <p class="note-desc">Toggle filled/outline. État active = filled <span class="tok">--accent</span> (montré ici). Inactive = outline <span class="tok muted">--fg2</span>. Tap : sauvegarde locale (AsyncStorage) + Toast léger "Ajouté aux favoris". Pas de spinner.</p>
+          <div class="toks">
+            <span class="tok">--accent (on)</span>
+            <span class="tok muted">--fg2 (off)</span>
+            <span class="comp-pill">Toast</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">3</div>
+        <div class="note-body">
+          <h4 class="note-title">Hero — sprite 84×84 + identité</h4>
+          <p class="note-desc">Sprite teinté par le type primaire à gauche. Texte aligné gauche : numéro NAT en monospace, nom (2 lignes autorisées), types + tier pill inline. Radial wash discret <span class="tok">--accent-soft</span> 70&nbsp;% opacité en arrière-plan (depuis top-right) — seul cas autorisé par le DS pour les hero blocks.</p>
+          <div class="toks">
+            <span class="tok muted">84×84 sprite</span>
+            <span class="tok">--accent-soft</span>
+            <span class="tok muted">--fs-xl + 2 (nom)</span>
+            <span class="tok muted">--font-mono (#NAT)</span>
+            <span class="tok muted">--fg3 (#NAT)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">4</div>
+        <div class="note-body">
+          <h4 class="note-title">Segmented Doubles / Singles — sticky</h4>
+          <p class="note-desc">Reste collé en haut du scroll de la fiche (sous la nav bar). Mémorise le dernier format sélectionné par l'utilisateur (AsyncStorage). Au switch : sections meta se rechargent en shimmer ; stats de base et efficacités <em>ne changent pas</em>.</p>
+          <div class="toks">
+            <span class="tok">--accent</span>
+            <span class="tok muted">--surface-sunken</span>
+            <span class="tok">--r-pill</span>
+            <span class="tok note">position: sticky</span>
+            <span class="comp-pill">Segmented Control</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">5</div>
+        <div class="note-body">
+          <h4 class="note-title">Stats — 6 barres colorées</h4>
+          <p class="note-desc">Label uppercase tracking <span class="tok muted">--tr-wide</span> en <span class="tok muted">--fg3</span>. Valeur numérique <span class="comp-pill">Rolling Counter</span> à l'apparition. Couleur barre conditionnelle, max 255 :</p>
+          <div class="toks" style="flex-direction:column;align-items:flex-start;gap:4px;">
+            <span><span class="tok danger">--danger</span> ≤ 69 — faible</span>
+            <span><span class="tok warning">--warning</span> 70–99 — moyenne</span>
+            <span><span class="tok">--accent</span> 100–119 — bonne</span>
+            <span><span class="tok semantic">--success</span> ≥ 120 — excellente</span>
+          </div>
+          <div class="toks" style="margin-top:6px">
+            <span class="tok muted">BST en eyebrow sub</span>
+            <span class="comp-pill">Progress</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">6</div>
+        <div class="note-body">
+          <h4 class="note-title">Efficacités — Accordion</h4>
+          <p class="note-desc">Deux items <span class="comp-pill">Accordion</span> : Faiblesses (ouvert par défaut si Pokémon vulnérable) et Résistances&nbsp;&amp; immunités. Les pills combinent TypeBadge + multiplicateur. ×4 en <span class="tok danger">--danger-soft</span>, ×2 neutre, ×0.5 / ×0.25 / ×0 en <span class="tok semantic">--success-soft</span>. Talent modificateur signalé en eyebrow sub.</p>
+          <div class="toks">
+            <span class="tok muted">--surface</span>
+            <span class="tok muted">--border</span>
+            <span class="tok">--r-md</span>
+            <span class="tok danger">--danger (×4)</span>
+            <span class="tok semantic">--success (≤×0.5)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">7</div>
+        <div class="note-body">
+          <h4 class="note-title">Meta header + rang format</h4>
+          <p class="note-desc">Section "Meta · {Format}" avec sub timestamp de fraîcheur. Block dédié au rang : <span class="tok">--accent</span> bold, gros chiffre + label, barre de présence sous le label. Barre relative au #1 du format.</p>
+          <div class="toks">
+            <span class="tok">--accent</span>
+            <span class="tok muted">--surface</span>
+            <span class="tok">--r-md</span>
+            <span class="tok muted">tabular-nums</span>
+            <span class="tok muted">--fg-faint (sub timestamp)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       STATE D — FICHE POKÉMON · BAS
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">D</span>
+      <h2 class="spec-title">Fiche Pokémon — vue basse</h2>
+      <span class="spec-eyebrow">spreads · capacités · objets · partenaires · counters · premium · FAB</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status">
+            <span>9:41</span>
+            <span class="status-icons"><i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i></span>
+          </div>
+
+          <div class="sticky-seg">
+            <div class="seg accent">
+              <button class="on">Doubles</button>
+              <button>Singles</button>
+            </div>
+          </div>
+
+          <div class="fiche-body">
+            <div class="section" style="padding-top: 6px">
+              <div class="section-eyebrow">Spreads<span class="plus">+ TACTICX</span></div>
+
+              <div class="spread-row open">
+                <div class="top">
+                  <div class="left">
+                    <span class="rank-mini">1</span>
+                    <span class="spread-numbers">252 ATQ S / 4 DÉF / 252 VIT</span>
+                  </div>
+                  <span class="nature-badge">Timide</span>
+                </div>
+                <div class="bottom">
+                  <span class="bar thin"><span style="width:100%"></span></span>
+                  <span class="pct">34&nbsp;%</span>
+                </div>
+                <div class="expand">
+                  <div class="speed-tier-row">
+                    <span class="label">Dépasse</span>
+                    <span class="sprites">
+                      <span class="sprite tiny t-water"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/892.png" alt="" loading="lazy"/></span>
+                      <span class="nm-tiny">Shifours</span>
+                      <span class="sprite tiny t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/727.png" alt="" loading="lazy"/></span>
+                      <span class="nm-tiny">Incineroar</span>
+                    </span>
+                  </div>
+                  <div class="speed-tier-row">
+                    <span class="label">Surpassé par</span>
+                    <span class="sprites">
+                      <span class="sprite tiny t-ghost"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/987.png" alt="" loading="lazy"/></span>
+                      <span class="nm-tiny">Flutter Mane</span>
+                      <span class="sprite tiny t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1003.png" alt="" loading="lazy"/></span>
+                      <span class="nm-tiny">Chongjian-Yu</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="spread-row">
+                <div class="top">
+                  <div class="left">
+                    <span class="rank-mini">2</span>
+                    <span class="spread-numbers">252 PV / 4 ATQ S / 252 VIT</span>
+                  </div>
+                  <span class="nature-badge">Modeste</span>
+                </div>
+                <div class="bottom">
+                  <span class="bar thin"><span style="width:65%"></span></span>
+                  <span class="pct">22&nbsp;%</span>
+                </div>
+              </div>
+
+              <div class="spread-row">
+                <div class="top">
+                  <div class="left">
+                    <span class="rank-mini">3</span>
+                    <span class="spread-numbers">252 PV / 252 DÉF S / 4 VIT</span>
+                  </div>
+                  <span class="nature-badge">Calme</span>
+                </div>
+                <div class="bottom">
+                  <span class="bar thin"><span style="width:34%"></span></span>
+                  <span class="pct">11&nbsp;%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-eyebrow">Capacités</div>
+              <div class="move-row">
+                <span class="num" style="text-align:center;width:18px;font-family:var(--font-mono);font-size:11px;color:var(--fg3)">1</span>
+                <span class="move-info">
+                  <span class="move-name">Lame Spectrale<span class="tb ghost">Spectre</span><span class="cat phys">Phys</span></span>
+                  <span class="move-meter"><span class="bar thin"><span style="width:96%"></span></span><span class="pct">96&nbsp;%</span></span>
+                </span>
+                <span></span>
+              </div>
+              <div class="move-row">
+                <span class="num" style="text-align:center;width:18px;font-family:var(--font-mono);font-size:11px;color:var(--fg3)">2</span>
+                <span class="move-info">
+                  <span class="move-name">Protection<span class="tb normal">Normal</span><span class="cat stat">Stat</span></span>
+                  <span class="move-meter"><span class="bar thin"><span style="width:92%"></span></span><span class="pct">92&nbsp;%</span></span>
+                </span>
+                <span></span>
+              </div>
+              <div class="move-row">
+                <span class="num" style="text-align:center;width:18px;font-family:var(--font-mono);font-size:11px;color:var(--fg3)">3</span>
+                <span class="move-info">
+                  <span class="move-name">Astonish<span class="tb ghost">Spectre</span><span class="cat phys">Phys</span></span>
+                  <span class="move-meter"><span class="bar thin"><span style="width:48%"></span></span><span class="pct">48&nbsp;%</span></span>
+                </span>
+                <span></span>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-eyebrow">Objets</div>
+              <div class="item-row">
+                <span class="item-icon"><i data-lucide="circle"></i></span>
+                <span class="item-info">
+                  <span class="item-name">Lunettes Choix</span>
+                  <span class="item-effect">+50&nbsp;% Atq Sp&nbsp;·&nbsp;move verrouillé</span>
+                </span>
+                <span class="row-pct">48&nbsp;%</span>
+              </div>
+              <div class="item-row">
+                <span class="item-icon"><i data-lucide="circle"></i></span>
+                <span class="item-info">
+                  <span class="item-name">Mouchoir Choix</span>
+                  <span class="item-effect">+50&nbsp;% Vit&nbsp;·&nbsp;move verrouillé</span>
+                </span>
+                <span class="row-pct">32&nbsp;%</span>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-eyebrow">Partenaires fréquents<span class="sub">Souvent en équipe avec</span></div>
+              <div class="partner-row">
+                <span class="sprite med t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/727.png" alt="" loading="lazy"/></span>
+                <span class="item-info">
+                  <span class="item-name">Incineroar</span>
+                  <span class="item-effect">Fake-out · pivot · Intimidation</span>
+                </span>
+                <span><span class="role-badge">Support</span><span class="row-pct">42&nbsp;%</span></span>
+                <span class="chevron"><i data-lucide="chevron-right"></i></span>
+              </div>
+              <div class="partner-row">
+                <span class="sprite med t-grass"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/591.png" alt="" loading="lazy"/></span>
+                <span class="item-info">
+                  <span class="item-name">Amoonguss</span>
+                  <span class="item-effect">Spore · Rage Powder</span>
+                </span>
+                <span><span class="role-badge">Support</span><span class="row-pct">28&nbsp;%</span></span>
+                <span class="chevron"><i data-lucide="chevron-right"></i></span>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-eyebrow">Difficile à gérer pour<span class="plus">+ TACTICX</span></div>
+              <div class="counter-row">
+                <span class="sprite med t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/727.png" alt="" loading="lazy"/></span>
+                <span class="item-info">
+                  <span class="item-name">Incineroar</span>
+                  <span class="item-effect">Pas de switch safe contre Lame Spectrale</span>
+                </span>
+                <span class="counter-tag">Counter</span>
+              </div>
+              <div class="counter-row">
+                <span class="sprite med t-grass"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/591.png" alt="" loading="lazy"/></span>
+                <span class="item-info">
+                  <span class="item-name">Amoonguss</span>
+                  <span class="item-effect">Vulnérable au Spore en switch-in</span>
+                </span>
+                <span class="counter-tag check">Check</span>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-eyebrow">Géré par<span class="plus">+ TACTICX</span></div>
+              <div class="counter-row">
+                <span class="sprite med t-ghost"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/987.png" alt="" loading="lazy"/></span>
+                <span class="item-info">
+                  <span class="item-name">Flutter Mane</span>
+                  <span class="item-effect">Surpasse en vitesse + STAB Spectre</span>
+                </span>
+                <span class="counter-tag">Counter</span>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-eyebrow">Historique<span class="plus">+ PREMIUM</span></div>
+              <div class="premium-history">
+                <div class="spark-head">
+                  <div>
+                    <div class="label">Présence · 4 semaines</div>
+                    <div class="now">38.2&nbsp;%</div>
+                  </div>
+                  <svg width="160" height="44" viewBox="0 0 160 44" style="overflow: visible;">
+                    <path d="M0,32 L40,26 L80,18 L120,12 L160,6"
+                          fill="none" stroke="var(--accent)" stroke-width="1.5"
+                          stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="160" cy="6" r="3" fill="var(--accent)"/>
+                  </svg>
+                </div>
+                <div class="bar fat"><span style="width:80%"></span></div>
+                <div class="week-marks"><span>S26-W1</span><span>W2</span><span>W3</span><span>W4</span></div>
+                <div class="veil">
+                  <i data-lucide="lock"></i>
+                  <div class="ttl">Historique en Premium</div>
+                  <button class="offer-btn">Voir les offres</button>
+                </div>
+              </div>
+            </div>
+
+            <div style="height: 80px"></div>
+          </div>
+
+          <button class="fab"><i data-lucide="plus"></i>Ajouter à une équipe</button>
+
+          <span class="pin" style="top: 92px; left: 14px;">1</span>
+          <span class="pin" style="top: 188px; right: 14px;">2</span>
+          <span class="pin" style="top: 322px; left: 14px;">3</span>
+          <span class="pin" style="top: 440px; left: 14px;">4</span>
+          <span class="pin" style="top: 526px; left: 14px;">5</span>
+          <span class="pin" style="top: 610px; right: 14px;">6</span>
+          <span class="pin" style="bottom: 30px; right: 184px;">7</span>
+        </div>
+        <div class="phone-dims">380 × 760 · scrolled meta + plus-values</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note">
+        <div class="note-num">1</div>
+        <div class="note-body">
+          <h4 class="note-title">Spreads EV — plus-value Tacticx</h4>
+          <p class="note-desc">Le jeu natif n'expose pas les spreads. Présentés en cards <span class="comp-pill">--surface</span>. Numbers monospace, nature en badge accent compact. Card sélectionnée passe en <span class="tok">--accent-soft</span> + border accent. Rolling counter sur le %.</p>
+          <div class="toks">
+            <span class="tok muted">--surface</span>
+            <span class="tok">--accent-soft (sel.)</span>
+            <span class="tok">--accent (border sel.)</span>
+            <span class="tok muted">--font-mono</span>
+            <span class="tok">--r-md</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">2</div>
+        <div class="note-body">
+          <h4 class="note-title">Expand spread — speed tiers</h4>
+          <p class="note-desc">Au tap sur un spread, expand inline avec deux lignes : "Dépasse" (sprites + noms) et "Surpassé par". Speed tiers calculés depuis le spread sélectionné (la stat de vitesse effective). Sprites tiny 24×24. Pattern <span class="comp-pill">Accordion</span> simple, 240ms decel.</p>
+          <div class="toks">
+            <span class="tok muted">--border-strong dashed</span>
+            <span class="tok muted">--fg3 (label)</span>
+            <span class="tok muted">tiny 24×24</span>
+            <span class="comp-pill">Accordion</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">3</div>
+        <div class="note-body">
+          <h4 class="note-title">Capacités — top 4 moves</h4>
+          <p class="note-desc">Numéro + nom inline avec TypeBadge et catégorie (Phys/Spé/Stat en palette sémantique). Barre 96&nbsp;% relative au top move. Hairline <span class="tok muted">--divider</span> entre rows.</p>
+          <div class="toks">
+            <span class="tok danger">--danger-soft (phys)</span>
+            <span class="tok muted">--info-soft (spé)</span>
+            <span class="tok warning">--warning-soft (stat)</span>
+            <span class="tok muted">--divider</span>
+            <span class="comp-pill">Progress</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">4</div>
+        <div class="note-body">
+          <h4 class="note-title">Objets — top 3 items</h4>
+          <p class="note-desc">Sprite item carré 28pt (placeholder ici — production : PokeAPI items sprites). Nom + effet 1 ligne <span class="tok muted">--fg-faint</span>. % de fréquence à droite. Pas de barre — la liste reste compacte.</p>
+          <div class="toks">
+            <span class="tok muted">--surface-high (item-icon)</span>
+            <span class="tok muted">--border</span>
+            <span class="tok">--r-sm</span>
+            <span class="tok muted">--fg-faint (effet)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">5</div>
+        <div class="note-body">
+          <h4 class="note-title">Partenaires — navigation imbriquée</h4>
+          <p class="note-desc">Sprite 36 + nom + 1 ligne descriptive + role-badge + % + chevron. Tap : push de la fiche du partenaire (stack iOS). Back retourne à la position de scroll exacte.</p>
+          <div class="toks">
+            <span class="tok muted">role-badge --surface-high</span>
+            <span class="tok muted">--fg-faint (chevron)</span>
+            <span class="tok semantic">→ push nested</span>
+            <span class="comp-pill">Badge</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">6</div>
+        <div class="note-body">
+          <h4 class="note-title">Counters &amp; Checks — 2 sections</h4>
+          <p class="note-desc">"Difficile à gérer pour" (les Pokémon que celui-ci contre) et "Géré par" (ses counters). Tag <span class="tok">--accent</span> pour Counter, <span class="tok warning">--warning</span> pour Check. Justification 1 ligne par row — pédagogique sans verbosité.</p>
+          <div class="toks">
+            <span class="tok">--accent-soft</span>
+            <span class="tok warning">--warning-soft</span>
+            <span class="tok">--r-sm</span>
+            <span class="tok note">tap → fiche du contre</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">7</div>
+        <div class="note-body">
+          <h4 class="note-title">FAB "Ajouter à une équipe"</h4>
+          <p class="note-desc">FAB pleine accent positionné absolute, 16pt du bord droit, 26pt safe-area inset. Icon + label (Material expanded FAB), pas circulaire seul. Shadow <span class="tok muted">--shadow-lg</span>. Tap : bottom sheet de sélection d'équipe (existantes + "Nouvelle équipe").</p>
+          <div class="toks">
+            <span class="tok">--accent</span>
+            <span class="tok muted">--fg-inverse</span>
+            <span class="tok muted">--shadow-lg</span>
+            <span class="tok muted">h 48 · r-pill</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num" style="background:transparent;border-style:dashed">·</div>
+        <div class="note-body">
+          <h4 class="note-title" style="color:var(--ink-2)">Historique premium (voilé)</h4>
+          <p class="note-desc">Sparkline SVG visible mais voilée par <span class="tok muted">blur 8px + scrim 60&nbsp;%</span>. Cadenas + CTA ghost "Voir les offres". Pattern reused depuis la fiche Méta. Visible &gt; caché.</p>
+          <div class="toks">
+            <span class="tok">--accent (path)</span>
+            <span class="tok muted">blur 8px · scrim 0.6</span>
+            <span class="tok note">premium gating</span>
+            <span class="comp-pill">Sparkline · SVG</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       ANNEXE — STATES
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step" style="background:#B7E6C9">∞</span>
+      <h2 class="spec-title">Annexe — états transitoires</h2>
+      <span class="spec-eyebrow">shimmer · recherche vide · filtres 0 résultat</span>
+    </div>
+
+    <div class="annexe" style="grid-column: 1 / -1;">
+      <div>
+        <div class="ann-title">Chargement initial · Shimmer</div>
+        <div class="ann-card">
+          <div class="inner">
+            <div class="shimmer-row">
+              <span class="sk circle"></span>
+              <div style="flex:1; display:flex; flex-direction:column; gap:8px">
+                <span class="sk" style="width:60%; height: 9px"></span>
+                <span class="sk" style="width:35%; height: 6px"></span>
+              </div>
+              <span class="sk short" style="height:14px;border-radius:4px"></span>
+            </div>
+            <div class="shimmer-row">
+              <span class="sk circle"></span>
+              <div style="flex:1; display:flex; flex-direction:column; gap:8px">
+                <span class="sk" style="width:50%; height: 9px"></span>
+                <span class="sk" style="width:30%; height: 6px"></span>
+              </div>
+              <span class="sk short" style="height:14px;border-radius:4px"></span>
+            </div>
+            <div class="shimmer-row">
+              <span class="sk circle"></span>
+              <div style="flex:1; display:flex; flex-direction:column; gap:8px">
+                <span class="sk" style="width:65%; height: 9px"></span>
+                <span class="sk" style="width:42%; height: 6px"></span>
+              </div>
+              <span class="sk short" style="height:14px;border-radius:4px"></span>
+            </div>
+            <div class="shimmer-row">
+              <span class="sk circle"></span>
+              <div style="flex:1; display:flex; flex-direction:column; gap:8px">
+                <span class="sk" style="width:55%; height: 9px"></span>
+                <span class="sk" style="width:32%; height: 6px"></span>
+              </div>
+              <span class="sk short" style="height:14px;border-radius:4px"></span>
+            </div>
+            <div style="margin-top: auto; padding-top: 14px;">
+              <div style="font-family: var(--hand); font-size: 18px; color: var(--ink-2); line-height: 1.2; margin-bottom: 4px;">8 rows shimmer dès le mount</div>
+              <div class="toks">
+                <span class="tok muted">--surface-high</span>
+                <span class="tok muted">opacity 0.35 → 0.65</span>
+                <span class="comp-pill">Shimmer</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="ann-title">Recherche · aucun résultat</div>
+        <div class="ann-card">
+          <div class="inner">
+            <div class="search" style="margin-bottom: 28px;">
+              <i data-lucide="search"></i>
+              <span class="placeholder" style="color: var(--fg1)">Volcaron…</span>
+              <i data-lucide="x-circle"></i>
+            </div>
+            <div class="ann-empty">
+              <i data-lucide="search"></i>
+              <div class="ttl">Aucun résultat</div>
+              <div class="sub">Essaie avec le nom anglais ou vérifie l'orthographe.</div>
+            </div>
+            <div style="margin-top: auto; padding-top: 14px;">
+              <div style="font-family: var(--hand); font-size: 18px; color: var(--ink-2); line-height: 1.2; margin-bottom: 4px;">Inline — pas d'écran séparé</div>
+              <div class="toks">
+                <span class="tok muted">--fg-faint (icône)</span>
+                <span class="tok muted">--fg1 (titre)</span>
+                <span class="tok muted">--fg3 (sub)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="ann-title">Filtres · aucune correspondance</div>
+        <div class="ann-card">
+          <div class="inner">
+            <div style="display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap">
+              <span class="fchip">Glace<span class="x"><i data-lucide="x"></i></span></span>
+              <span class="fchip">Tier S<span class="x"><i data-lucide="x"></i></span></span>
+              <span class="fchip">Top 10<span class="x"><i data-lucide="x"></i></span></span>
+            </div>
+            <div class="ann-empty">
+              <i data-lucide="filter"></i>
+              <div class="ttl">Aucun Pokémon ne correspond</div>
+              <div class="sub">Aucun Pokémon glace en Tier S dans le Top 10 de la saison en cours.</div>
+              <button class="ann-btn">Réinitialiser les filtres</button>
+            </div>
+            <div style="margin-top: auto; padding-top: 14px;">
+              <div style="font-family: var(--hand); font-size: 18px; color: var(--ink-2); line-height: 1.2; margin-bottom: 4px;">Bouton ghost — pas accent</div>
+              <div class="toks">
+                <span class="tok muted">--surface</span>
+                <span class="tok muted">--border</span>
+                <span class="tok muted">--fg1</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       CONSTRAINTS + COMPONENTS
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="constraints">
+    <h3>Contraintes UX — invariantes du Pokédex</h3>
+    <ul>
+      <li>FlashList obligatoire pour la liste (162 items, scroll fluide)</li>
+      <li>Sprites en lazy-load avec shimmer placeholder</li>
+      <li>Recherche en temps réel (debounce 80ms) FR + EN simultanés</li>
+      <li>Filtres modal : compteur dynamique sur le CTA d'application</li>
+      <li>Fiche Pokémon : scroll unique vertical, pas de tabs internes</li>
+      <li>Segmented Doubles/Singles sticky sous le hero de la fiche</li>
+      <li>Switch format mémorise le dernier choix (AsyncStorage)</li>
+      <li>FAB d'ajout à une équipe accessible sans scroll</li>
+      <li>Touch targets ≥ 44×44pt partout</li>
+      <li>Safe area haute (notch) et basse (home indicator) respectées</li>
+      <li class="x">Pas d'emoji, pas d'illustration, pas de flavour text Pokédex</li>
+      <li class="x">Pas de spinner — shimmer partout</li>
+    </ul>
+  </section>
+
+  <section class="legend">
+    <div class="legend-card">
+      <div class="legend-name">Reacticx · Animated Input Bar</div>
+      <div class="legend-desc">Barre de recherche principale. Expansion légère au focus, clear-button à droite quand du texte est saisi.</div>
+    </div>
+    <div class="legend-card">
+      <div class="legend-name">Reacticx · Segmented Control</div>
+      <div class="legend-desc">3 instances : Usage filter (modal), Format filter (modal), Format switch sticky (fiche). Variante accent pour le switch principal de la fiche.</div>
+    </div>
+    <div class="legend-card">
+      <div class="legend-name">Reacticx · Progress</div>
+      <div class="legend-desc">Barres de stats (6/fiche), barres de fréquence (moves, items), barre de présence meta. Variantes danger/warning/accent/success selon valeur.</div>
+    </div>
+    <div class="legend-card">
+      <div class="legend-name">Reacticx · Rolling Counter</div>
+      <div class="legend-desc">Animation des valeurs numériques à l'apparition — stats, %, compteur du CTA de filtres. 240ms standard.</div>
+    </div>
+    <div class="legend-card">
+      <div class="legend-name">Reacticx · Accordion</div>
+      <div class="legend-desc">Faiblesses / Résistances dans la fiche. Expand inline des spreads pour révéler les speed tiers.</div>
+    </div>
+    <div class="legend-card">
+      <div class="legend-name">Reacticx · Shimmer</div>
+      <div class="legend-desc">Tous états de chargement — liste initiale, sprites individuels, rechargement après switch format. Opacity 0.35 → 0.65 sur <code style="font-family:var(--font-mono);font-size:12px">--surface-high</code>.</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  if (window.lucide && window.lucide.createIcons) {
+    window.lucide.createIcons();
+  }
+  document.querySelectorAll('.sprite img').forEach(img => {
+    img.addEventListener('error', () => { img.style.display = 'none'; }, { once: true });
+  });
+</script>
+
+</body>
+</html>

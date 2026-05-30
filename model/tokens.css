@@ -1,0 +1,185 @@
+/* =============================================================
+   Tacticx — Web mirror of theme.ts
+   Dark-only. Mirrors all token names from theme.ts for parity.
+   ============================================================= */
+
+@import url("https://rsms.me/inter/inter.css");
+
+:root {
+  /* ── Surfaces ─────────────────────────────────────────── */
+  --bg:             #0B0D10;
+  --surface:        #13161B;
+  --surface-high:   #1C2027;
+  --surface-sunken: #080A0D;
+
+  /* ── Borders ──────────────────────────────────────────── */
+  --border:         #262A32;
+  --border-strong:  #363B45;
+  --divider:        #1B1E24;
+
+  /* ── Brand accent ─────────────────────────────────────── */
+  --accent:         #5B8DEF;
+  --accent-muted:   #3A5A99;
+  --accent-soft:    #1A2238;
+
+  /* ── Text ─────────────────────────────────────────────── */
+  --fg1:            #ECEEF1;  /* primary */
+  --fg2:            #A1A8B3;  /* secondary */
+  --fg3:            #6B7280;  /* tertiary */
+  --fg-faint:       #4A5260;  /* decorative */
+  --fg-inverse:     #0B0D10;
+
+  /* ── Semantic ─────────────────────────────────────────── */
+  --success:        #5FA978;
+  --success-soft:   #15241C;
+  --danger:         #D46A6A;
+  --danger-soft:    #2A1818;
+  --warning:        #D9A55A;
+  --warning-soft:   #2A2014;
+  --info:           #6FA8C7;
+  --info-soft:      #15222A;
+
+  /* ── Pokémon types ────────────────────────────────────── */
+  --t-normal:    #B8B0A4;   --t-normal-bg:   #23211E;
+  --t-fire:      #D98C6A;   --t-fire-bg:     #2A1D17;
+  --t-water:     #6FA0CC;   --t-water-bg:    #172230;
+  --t-grass:     #7FA978;   --t-grass-bg:    #1A241B;
+  --t-electric:  #D9C26A;   --t-electric-bg: #2A2616;
+  --t-ice:       #8FC0C7;   --t-ice-bg:      #172729;
+  --t-fighting:  #C77878;   --t-fighting-bg: #2A1A1A;
+  --t-poison:    #A988C2;   --t-poison-bg:   #22192A;
+  --t-ground:    #C29A6A;   --t-ground-bg:   #2A2117;
+  --t-flying:    #A0B0D4;   --t-flying-bg:   #1B1F2A;
+  --t-psychic:   #D48BA8;   --t-psychic-bg:  #2A1A23;
+  --t-bug:       #A8B86A;   --t-bug-bg:      #222614;
+  --t-rock:      #B89C7A;   --t-rock-bg:     #26211A;
+  --t-ghost:     #9080B8;   --t-ghost-bg:    #1F1A2A;
+  --t-dragon:    #7B8FD9;   --t-dragon-bg:   #181D2E;
+  --t-dark:      #8A8478;   --t-dark-bg:     #1F1D1A;
+  --t-steel:     #9BA8B5;   --t-steel-bg:    #1D2127;
+  --t-fairy:     #D49AB8;   --t-fairy-bg:    #2A1D24;
+
+  /* ── Tiers ────────────────────────────────────────────── */
+  --tier-s:  #E0C58A;  --tier-s-bg:  #26200F;
+  --tier-a:  #B8C4D4;  --tier-a-bg:  #1A1F26;
+  --tier-b:  #B89A78;  --tier-b-bg:  #241D15;
+  --tier-c:  #7A7F87;  --tier-c-bg:  #181B1F;
+
+  /* ── Spacing ──────────────────────────────────────────── */
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  12px;
+  --space-base:16px;
+  --space-lg:  20px;
+  --space-xl:  28px;
+  --space-2xl: 40px;
+  --space-3xl: 56px;
+
+  /* ── Radii ────────────────────────────────────────────── */
+  --r-sm:   6px;
+  --r-md:   10px;
+  --r-lg:   14px;
+  --r-xl:   20px;
+  --r-pill: 999px;
+
+  /* ── Type ─────────────────────────────────────────────── */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menonaco, monospace;
+
+  --fs-xs:   11px;
+  --fs-sm:   13px;
+  --fs-base: 15px;
+  --fs-md:   16px;
+  --fs-lg:   17px;
+  --fs-xl:   20px;
+  --fs-2xl:  24px;
+  --fs-3xl:  32px;
+
+  --lh-tight:   1.15;
+  --lh-snug:    1.3;
+  --lh-normal:  1.45;
+  --lh-relaxed: 1.6;
+
+  --tr-tight: -0.4px;
+  --tr-wide:  0.4px;
+  --tr-wider: 1.2px;
+
+  /* ── Shadows ──────────────────────────────────────────── */
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 24px rgba(0, 0, 0, 0.6);
+}
+
+/* ─────────────────────────────────────────────────────────
+   Base / semantic element styles
+   ───────────────────────────────────────────────────────── */
+
+@supports (font-variation-settings: normal) {
+  :root { --font-sans: "Inter var", -apple-system, BlinkMacSystemFont, system-ui, sans-serif; }
+}
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg1);
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  line-height: var(--lh-normal);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv11", "ss01", "ss03";
+}
+
+h1, h2, h3, h4 {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: var(--tr-tight);
+  line-height: var(--lh-snug);
+  color: var(--fg1);
+}
+
+h1 { font-size: var(--fs-3xl); }
+h2 { font-size: var(--fs-2xl); }
+h3 { font-size: var(--fs-xl); }
+h4 { font-size: var(--fs-lg); }
+
+p  { margin: 0; color: var(--fg2); }
+
+small, .caption {
+  font-size: var(--fs-sm);
+  color: var(--fg3);
+}
+
+.eyebrow {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg3);
+}
+
+code, pre, .mono, .num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-num {
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  letter-spacing: var(--tr-tight);
+}
+
+/* ─────────────────────────────────────────────────────────
+   Utility primitives used across preview cards
+   ───────────────────────────────────────────────────────── */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+}
+
+.hairline { background: var(--border); height: 1px; }
+
+::selection { background: var(--accent-soft); color: var(--fg1); }

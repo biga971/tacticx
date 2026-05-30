@@ -1,0 +1,920 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>Tacticx — Profil · Wireframes annotés</title>
+<link rel="stylesheet" href="tokens.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Patrick+Hand&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@0.461.0/dist/umd/lucide.min.js"></script>
+<style>
+  :root {
+    --paper:  #ECE6D6;
+    --ink:    #1A1A1A;
+    --ink-2:  #4A4A40;
+    --ink-3:  #87826F;
+    --hand:   "Caveat", "Patrick Hand", cursive;
+    --hand-2: "Patrick Hand", "Caveat", cursive;
+  }
+  html, body { margin: 0; }
+  body {
+    background: var(--paper);
+    background-image: radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+    background-size: 22px 22px;
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  * { box-sizing: border-box; }
+  .sheet { max-width: 1280px; margin: 0 auto; padding: 56px 48px 96px; }
+
+  .doc-head {
+    display: grid; grid-template-columns: 1fr auto;
+    align-items: end; gap: 32px;
+    border-bottom: 1.5px dashed var(--ink-2);
+    padding-bottom: 24px; margin-bottom: 40px;
+  }
+  .doc-eyebrow {
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 1.6px; text-transform: uppercase;
+    color: var(--ink-3); margin-bottom: 10px;
+  }
+  .doc-title {
+    font-family: var(--hand); font-size: 64px; font-weight: 700;
+    line-height: 0.95; letter-spacing: -1px; color: var(--ink); margin: 0;
+  }
+  .doc-title em {
+    font-style: normal; color: var(--accent);
+    background: linear-gradient(180deg, transparent 60%, rgba(91,141,239,0.25) 60%);
+    padding: 0 6px;
+  }
+  .doc-sub {
+    font-family: var(--hand-2); font-size: 22px; color: var(--ink-2);
+    margin-top: 8px; line-height: 1.3; max-width: 720px;
+  }
+  .doc-meta {
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-3);
+    line-height: 1.7; text-align: right;
+  }
+  .doc-meta strong { color: var(--ink); font-weight: 500; }
+
+  .flow {
+    background: rgba(255,255,255,0.4);
+    border: 1.5px dashed var(--ink-2);
+    border-radius: 18px; padding: 28px 24px 32px;
+    margin-bottom: 64px;
+  }
+  .flow-title { font-family: var(--hand); font-size: 28px; font-weight: 700; color: var(--ink); margin: 0 0 6px; letter-spacing: -0.5px; }
+  .flow-sub { font-family: var(--hand-2); font-size: 16px; color: var(--ink-3); margin-bottom: 22px; }
+  .flow-rail { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; align-items: start; }
+  .flow-step { display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; }
+  .flow-step + .flow-step::before {
+    content: ""; position: absolute; left: -20px; top: 32%;
+    width: 16px; height: 2px;
+    background: repeating-linear-gradient(90deg, var(--ink-2) 0 4px, transparent 4px 8px);
+  }
+  .flow-mini {
+    width: 100%; aspect-ratio: 9 / 16;
+    background: var(--bg); border: 1.5px solid var(--ink);
+    border-radius: 14px; position: relative; overflow: hidden;
+    box-shadow: 4px 5px 0 rgba(0,0,0,0.12);
+    padding: 9% 8%; display: flex; flex-direction: column; gap: 6px;
+  }
+  .flow-mini .mhrow { display: flex; align-items: center; gap: 5px; }
+  .flow-mini .mhrow .av { width: 16px; height: 16px; border-radius: 999px; background: var(--accent); }
+  .flow-mini .mhrow .nm { flex: 1; height: 6px; background: var(--fg1); border-radius: 2px; }
+  .flow-mini .mseg { height: 11px; background: var(--surface-sunken); border-radius: 999px; display: flex; padding: 2px; gap: 2px; }
+  .flow-mini .mseg span { flex: 1; border-radius: 999px; }
+  .flow-mini .mseg span.on { background: var(--accent); }
+  .flow-mini .card { background: var(--surface); border: 1px solid var(--border); border-radius: 7px; padding: 6px; display: flex; flex-direction: column; gap: 4px; }
+  .flow-mini .card .big { width: 50%; height: 8px; background: var(--fg1); border-radius: 2px; margin: 0 auto; }
+  .flow-mini .card .pbar { height: 4px; background: var(--surface-sunken); border-radius: 999px; position: relative; }
+  .flow-mini .card .pbar::after { content:""; position:absolute; left:0; top:0; bottom:0; width: 60%; background: var(--accent); border-radius: 999px; }
+  .flow-mini .card .stats3 { display: flex; gap: 4px; }
+  .flow-mini .card .stats3 span { flex: 1; height: 12px; background: var(--surface-high); border-radius: 3px; }
+  .flow-mini .prow { height: 16px; background: var(--surface); border-radius: 5px; display: flex; align-items: center; gap: 3px; padding: 0 4px; }
+  .flow-mini .prow i { width: 9px; height: 9px; border-radius: 999px; background: var(--surface-high); display: block; }
+  .flow-mini .prow .circ { margin-left: auto; width: 10px; height: 10px; border-radius: 999px; border: 2px solid var(--success); }
+  .flow-mini .sub-card { background: var(--surface); border: 1px solid var(--accent); border-radius: 7px; padding: 6px; display: flex; flex-direction: column; gap: 4px; }
+  .flow-mini .sub-card .lk { display: flex; align-items: center; gap: 4px; }
+  .flow-mini .sub-card .lk span { height: 4px; flex: 1; background: var(--surface-high); border-radius: 2px; }
+  .flow-mini .sub-card .lk i { width: 6px; height: 6px; border-radius: 1px; background: var(--fg-faint); display: block; }
+  .flow-mini .sub-card .cta { height: 12px; background: var(--accent); border-radius: 4px; margin-top: 2px; }
+  .flow-mini.sheetmini::after { content:""; position:absolute; inset:0; background: rgba(11,13,16,0.55); }
+  .flow-mini.sheetmini .msheet {
+    position: absolute; left: 4%; right: 4%; bottom: 0; height: 64%;
+    background: var(--surface-high); border-radius: 12px 12px 0 0;
+    border: 1.5px solid var(--border); padding: 8px;
+    display: flex; flex-direction: column; gap: 5px;
+  }
+  .flow-mini.sheetmini .grab { width: 20px; height: 3px; background: var(--fg-faint); border-radius: 2px; margin: 0 auto 4px; }
+  .flow-mini.sheetmini .opt { height: 20px; background: var(--surface); border-radius: 5px; }
+  .flow-mini.sheetmini .opt.on { border: 1.5px solid var(--accent); background: var(--accent-soft); }
+
+  .flow-num {
+    font-family: var(--hand); font-weight: 700; font-size: 22px;
+    color: var(--ink); background: #FFE680;
+    border: 1.5px solid var(--ink); border-radius: 999px;
+    width: 32px; height: 32px; display: grid; place-items: center;
+    transform: rotate(-3deg); box-shadow: 2px 2px 0 rgba(0,0,0,0.12);
+  }
+  .flow-label { font-family: var(--hand); font-weight: 600; font-size: 18px; color: var(--ink); text-align: center; line-height: 1.1; }
+  .flow-label small { display: block; font-family: var(--font-mono); font-size: 9px; font-weight: 400; letter-spacing: 0.6px; text-transform: uppercase; color: var(--ink-3); margin-top: 2px; }
+
+  .spec {
+    display: grid; grid-template-columns: 380px 1fr;
+    gap: 56px; padding: 48px 0 56px;
+    border-top: 1.5px dashed var(--ink-2);
+  }
+  .spec-head { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 18px; margin-bottom: 4px; flex-wrap: wrap; }
+  .spec-step {
+    font-family: var(--hand); font-weight: 700; font-size: 22px;
+    color: var(--ink); background: #FFE680;
+    border: 1.5px solid var(--ink); border-radius: 999px;
+    padding: 4px 14px; transform: rotate(-2deg);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.12);
+  }
+  .spec-title { font-family: var(--hand); font-size: 38px; font-weight: 700; color: var(--ink); margin: 0; letter-spacing: -0.5px; }
+  .spec-eyebrow { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); letter-spacing: 1.6px; text-transform: uppercase; margin-left: auto; }
+
+  .phone-wrap { position: sticky; top: 32px; align-self: start; width: 380px; }
+  .phone {
+    width: 380px; height: 760px;
+    background: var(--bg); border-radius: 38px;
+    border: 1.5px solid var(--ink);
+    box-shadow: 6px 8px 0 rgba(0,0,0,0.12), inset 0 0 0 8px #08090C;
+    padding: 8px; position: relative; overflow: hidden;
+  }
+  .phone-inner { width: 100%; height: 100%; background: var(--bg); border-radius: 30px; overflow: hidden; position: relative; display: flex; flex-direction: column; }
+  .phone-dims { position: absolute; bottom: -32px; left: 0; right: 0; text-align: center; font-family: var(--font-mono); font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--ink-3); }
+
+  .status { height: 28px; padding: 0 18px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--fg1); flex-shrink: 0; }
+  .status-icons { display: flex; align-items: center; gap: 5px; opacity: 0.9; }
+  .status-icons .lucide { width: 14px; height: 14px; stroke-width: 2; }
+
+  /* Header */
+  .head { padding: 10px 18px 12px; flex-shrink: 0; border-bottom: 1px solid var(--divider); background: var(--bg); }
+  .head-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .avatar {
+    width: 48px; height: 48px; border-radius: 999px;
+    background: var(--accent); color: var(--fg-inverse);
+    display: grid; place-items: center;
+    font-size: 18px; font-weight: 700; letter-spacing: 0.5px;
+    flex-shrink: 0;
+  }
+  .head-info { flex: 1; min-width: 0; }
+  .player-name { font-size: 18px; font-weight: 700; color: var(--fg1); letter-spacing: -0.3px; display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .player-name .lucide { width: 14px; height: 14px; color: var(--fg-faint); }
+  .profile-badges { display: flex; gap: 6px; }
+  .badge {
+    font-size: 9.5px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
+    padding: 2px 7px; border-radius: var(--r-sm);
+    color: var(--fg2); background: var(--surface-high); border: 1px solid var(--border);
+  }
+  .badge.accent { color: var(--accent); background: var(--accent-soft); border-color: rgba(91,141,239,0.4); }
+
+  .seg { display: flex; background: var(--surface-sunken); border-radius: var(--r-pill); padding: 3px; }
+  .seg button { flex: 1; background: transparent; border: 0; padding: 7px 0; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--fg2); border-radius: var(--r-pill); cursor: pointer; }
+  .seg button.on { background: var(--accent); color: var(--fg-inverse); }
+
+  .body { flex: 1; overflow-y: auto; background: var(--bg); padding: 14px 18px 18px; }
+  .body::-webkit-scrollbar { display: none; }
+
+  .section-title { font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--fg3); margin: 4px 0 12px; display: flex; align-items: center; justify-content: space-between; }
+  .section-title .link { text-transform: none; letter-spacing: 0; color: var(--accent); font-size: 12px; font-weight: 500; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--r-lg); padding: 16px; margin-bottom: 16px;
+  }
+
+  /* Rank */
+  .rank-top { text-align: center; margin-bottom: 14px; }
+  .rank-name { font-size: 24px; font-weight: 700; color: var(--fg1); letter-spacing: -0.5px; margin-bottom: 8px; display: inline-flex; align-items: center; gap: 8px; }
+  .rank-chip { font-size: 10px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; padding: 3px 9px; border-radius: var(--r-sm); }
+  .rank-chip.gold { color: var(--tier-s); background: var(--tier-s-bg); border: 1px solid var(--tier-s); }
+  .rank-pts { font-size: 12px; color: var(--fg3); font-variant-numeric: tabular-nums; margin-bottom: 8px; }
+  .rank-pts strong { color: var(--fg1); font-weight: 600; }
+  .pbar { height: 8px; background: var(--surface-sunken); border-radius: 999px; overflow: hidden; margin-bottom: 8px; }
+  .pbar > span { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+  .rank-next { font-size: 11px; color: var(--fg3); text-align: center; }
+  .rank-next strong { color: var(--fg2); font-weight: 600; }
+
+  /* Sparkline premium */
+  .spark-block {
+    margin-top: 14px; padding-top: 14px;
+    border-top: 1px solid var(--divider);
+    position: relative;
+  }
+  .spark-block .sub-eyebrow { font-size: 9px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--fg-faint); margin-bottom: 8px; }
+  .spark-svg-wrap { position: relative; }
+  .spark-veil {
+    position: absolute; inset: -4px;
+    background: rgba(11,13,16,0.45);
+    backdrop-filter: blur(5px);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px; z-index: 2; border-radius: var(--r-sm);
+  }
+  .spark-veil .lucide { width: 15px; height: 15px; color: var(--fg2); }
+  .spark-veil .t { font-size: 10px; color: var(--fg2); font-weight: 600; }
+
+  /* Win/Loss */
+  .wl-row { display: flex; gap: 8px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--divider); }
+  .wl-block { flex: 1; text-align: center; padding: 10px 4px; background: var(--surface-sunken); border-radius: var(--r-md); }
+  .wl-block .v { font-size: 22px; font-weight: 700; color: var(--fg1); font-variant-numeric: tabular-nums; letter-spacing: -0.5px; }
+  .wl-block .v.win { color: var(--fg1); }
+  .wl-block .v.wr { color: var(--success); }
+  .wl-block .l { font-size: 10px; color: var(--fg3); text-transform: uppercase; letter-spacing: 0.6px; margin-top: 3px; }
+  .wl-caption { text-align: center; font-size: 10px; color: var(--fg-faint); margin-top: 8px; }
+
+  /* Most played */
+  .mp-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--divider); }
+  .mp-row:last-child { border-bottom: 0; }
+  .mp-rank { font-family: var(--font-mono); font-size: 11px; color: var(--fg3); width: 20px; text-align: center; flex-shrink: 0; }
+  .mp-sprite { width: 44px; height: 44px; border-radius: 999px; background: var(--surface-high); overflow: hidden; display: grid; place-items: center; flex-shrink: 0; }
+  .mp-sprite img { width: 110%; height: 110%; object-fit: contain; filter: brightness(0) invert(0.62) contrast(1.1); }
+  .mp-sprite.t-psychic { background: var(--t-psychic-bg); }
+  .mp-sprite.t-fire { background: var(--t-fire-bg); }
+  .mp-sprite.t-fighting { background: var(--t-fighting-bg); }
+  .mp-sprite.t-ghost { background: var(--t-ghost-bg); }
+  .mp-sprite.t-grass { background: var(--t-grass-bg); }
+  .mp-info { flex: 1; min-width: 0; }
+  .mp-name { font-size: 14px; font-weight: 500; color: var(--fg1); margin-bottom: 4px; }
+  .mp-types { display: flex; gap: 4px; }
+  .mp-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+  .mp-games { text-align: right; }
+  .mp-games .n { font-size: 14px; font-weight: 600; color: var(--fg1); font-variant-numeric: tabular-nums; }
+  .mp-games .l { font-size: 9px; color: var(--fg3); text-transform: uppercase; letter-spacing: 0.4px; }
+  .circ-prog { width: 36px; height: 36px; position: relative; flex-shrink: 0; }
+  .circ-prog svg { transform: rotate(-90deg); }
+  .circ-prog .pc { position: absolute; inset: 0; display: grid; place-items: center; font-size: 10px; font-weight: 700; color: var(--fg1); font-variant-numeric: tabular-nums; }
+
+  .tb { font-size: 9px; font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; padding: 2px 6px; border-radius: var(--r-sm); }
+  .tb.fire { color: var(--t-fire); background: var(--t-fire-bg); }
+  .tb.water { color: var(--t-water); background: var(--t-water-bg); }
+  .tb.grass { color: var(--t-grass); background: var(--t-grass-bg); }
+  .tb.electric { color: var(--t-electric); background: var(--t-electric-bg); }
+  .tb.psychic { color: var(--t-psychic); background: var(--t-psychic-bg); }
+  .tb.fighting { color: var(--t-fighting); background: var(--t-fighting-bg); }
+  .tb.fairy { color: var(--t-fairy); background: var(--t-fairy-bg); }
+  .tb.ghost { color: var(--t-ghost); background: var(--t-ghost-bg); }
+  .tb.dark { color: var(--t-dark); background: var(--t-dark-bg); }
+  .tb.poison { color: var(--t-poison); background: var(--t-poison-bg); }
+  .tb.flying { color: var(--t-flying); background: var(--t-flying-bg); }
+  .tb.steel { color: var(--t-steel); background: var(--t-steel-bg); }
+  .tb.normal { color: var(--t-normal); background: var(--t-normal-bg); }
+
+  .see-all { width: 100%; background: transparent; border: 1px dashed var(--border-strong); border-radius: var(--r-md); color: var(--fg2); font-family: inherit; font-size: 12px; padding: 9px; margin-top: 10px; cursor: pointer; }
+
+  /* Objectives */
+  .obj-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--divider); }
+  .obj-row:last-of-type { border-bottom: 0; }
+  .obj-check { width: 22px; height: 22px; flex-shrink: 0; display: grid; place-items: center; color: var(--fg-faint); margin-top: 1px; }
+  .obj-check.done { color: var(--success); }
+  .obj-check .lucide { width: 20px; height: 20px; }
+  .obj-main { flex: 1; min-width: 0; }
+  .obj-label { font-size: 13.5px; font-weight: 500; color: var(--fg1); margin-bottom: 7px; }
+  .obj-label.done { color: var(--fg3); text-decoration: line-through; }
+  .obj-bar { height: 5px; background: var(--surface-sunken); border-radius: 999px; overflow: hidden; margin-bottom: 5px; }
+  .obj-bar > span { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+  .obj-bar.done > span { background: var(--success); }
+  .obj-val { font-size: 11px; color: var(--fg3); font-variant-numeric: tabular-nums; }
+  .add-obj { width: 100%; background: transparent; border: 1px dashed var(--border-strong); border-radius: var(--r-md); color: var(--fg2); font-family: inherit; font-size: 12.5px; padding: 10px; margin-top: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
+  .add-obj .lucide { width: 14px; height: 14px; }
+  .add-obj.locked { color: var(--fg-faint); }
+  .add-obj .lock { color: var(--fg-faint); }
+  .add-obj .lock .lucide { width: 12px; height: 12px; }
+
+  /* Profile rows */
+  .prow { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--divider); cursor: pointer; }
+  .prow:last-child { border-bottom: 0; }
+  .prow .ico { width: 28px; height: 28px; border-radius: var(--r-sm); background: var(--surface-high); display: grid; place-items: center; color: var(--fg2); flex-shrink: 0; }
+  .prow .ico .lucide { width: 15px; height: 15px; stroke-width: 1.8; }
+  .prow .label { flex: 1; font-size: 13.5px; color: var(--fg3); }
+  .prow .value { font-size: 13.5px; font-weight: 600; color: var(--fg1); }
+  .prow .chevron { color: var(--fg-faint); }
+  .prow .chevron .lucide { width: 16px; height: 16px; }
+
+  /* Subscription */
+  .sub-card { border: 1px solid var(--border); border-radius: var(--r-lg); padding: 16px; margin-bottom: 16px; background: var(--surface); }
+  .sub-card.premium { border-color: var(--accent); }
+  .sub-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .sub-head .name { font-size: 16px; font-weight: 700; color: var(--fg1); display: flex; align-items: center; gap: 8px; }
+  .sub-head .badge.active { color: var(--accent); background: var(--accent-soft); border-color: rgba(91,141,239,0.4); }
+  .feat-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 12.5px; color: var(--fg2); }
+  .feat-row .lucide { width: 14px; height: 14px; color: var(--fg-faint); flex-shrink: 0; }
+  .feat-row.on .lucide { color: var(--success); }
+  .sub-cta { width: 100%; height: 46px; background: var(--accent); color: var(--fg-inverse); border: 0; border-radius: var(--r-md); font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 12px; }
+  .sub-link { display: block; width: 100%; text-align: center; background: transparent; border: 0; color: var(--accent); font-family: inherit; font-size: 12px; padding: 12px 0 0; cursor: pointer; }
+  .sub-meta { font-size: 12px; color: var(--fg3); margin-bottom: 4px; }
+  .sub-row-link { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-top: 1px solid var(--divider); color: var(--accent); font-size: 13px; cursor: pointer; }
+  .sub-row-link .lucide { width: 15px; height: 15px; }
+  .sub-row-link:first-of-type { margin-top: 8px; }
+
+  /* Footer legal */
+  .footer-legal { text-align: center; padding: 20px 18px 8px; }
+  .footer-legal p { font-size: 10px; color: var(--fg-faint); line-height: 1.5; margin: 0 0 6px; }
+  .footer-legal .links { font-size: 11px; color: var(--fg3); }
+  .footer-legal .links a { color: var(--accent); text-decoration: none; }
+  .footer-legal .links span { color: var(--fg-faint); margin: 0 6px; }
+
+  /* RevenueCat offer (annexe) */
+  .offer-card { padding: 12px; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--r-lg); margin-bottom: 8px; position: relative; }
+  .offer-card.best { border-color: var(--accent); background: var(--accent-soft); }
+  .offer-card .ot { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+  .offer-card .oname { font-size: 14px; font-weight: 600; color: var(--fg1); }
+  .offer-card .save { font-size: 9px; font-weight: 700; color: var(--success); background: var(--success-soft); border: 1px solid var(--success); border-radius: var(--r-sm); padding: 2px 6px; letter-spacing: 0.4px; }
+  .offer-card .price { font-size: 22px; font-weight: 700; color: var(--fg1); letter-spacing: -0.5px; font-variant-numeric: tabular-nums; }
+  .offer-card .price small { font-size: 12px; font-weight: 400; color: var(--fg3); }
+  .offer-card .octa { width: 100%; height: 40px; background: var(--accent); color: var(--fg-inverse); border: 0; border-radius: var(--r-md); font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+  .offer-card.best .octa { background: var(--accent); }
+  .offer-card:not(.best) .octa { background: var(--surface-high); color: var(--fg1); }
+
+  /* Edit sheet (annexe) */
+  .opt-card { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); margin-bottom: 8px; }
+  .opt-card.on { background: var(--accent-soft); border: 1.5px solid var(--accent); }
+  .opt-card .oi { width: 36px; height: 36px; border-radius: var(--r-md); background: var(--surface-high); display: grid; place-items: center; color: var(--fg2); flex-shrink: 0; }
+  .opt-card.on .oi { background: rgba(91,141,239,0.15); color: var(--accent); }
+  .opt-card .oi .lucide { width: 18px; height: 18px; }
+  .opt-card .ob { flex: 1; }
+  .opt-card .otitle { font-size: 14px; font-weight: 600; color: var(--fg1); }
+  .opt-card.on .otitle { color: var(--accent); }
+  .opt-card .odesc { font-size: 11px; color: var(--fg3); margin-top: 2px; }
+  .opt-card .oradio { width: 18px; height: 18px; border-radius: 999px; border: 1.5px solid var(--border-strong); flex-shrink: 0; display: grid; place-items: center; }
+  .opt-card.on .oradio { border-color: var(--accent); background: var(--accent); }
+  .opt-card.on .oradio::after { content:""; width: 6px; height: 6px; border-radius: 999px; background: var(--fg-inverse); }
+
+  /* Pins */
+  .pin {
+    position: absolute; font-family: var(--hand); font-size: 16px; font-weight: 700;
+    color: var(--ink); background: #FFE680;
+    border: 1.5px solid var(--ink); border-radius: 999px;
+    width: 26px; height: 26px; display: grid; place-items: center;
+    transform: rotate(-4deg); box-shadow: 2px 2px 0 rgba(0,0,0,0.15); z-index: 20;
+  }
+
+  /* Notes */
+  .notes { display: flex; flex-direction: column; gap: 18px; padding-top: 4px; }
+  .note { display: grid; grid-template-columns: 32px 1fr; gap: 14px; align-items: start; }
+  .note-num {
+    font-family: var(--hand); font-weight: 700; font-size: 18px;
+    color: var(--ink); background: #FFE680;
+    border: 1.5px solid var(--ink); border-radius: 999px;
+    width: 28px; height: 28px; display: grid; place-items: center;
+    transform: rotate(-3deg); box-shadow: 2px 2px 0 rgba(0,0,0,0.12);
+  }
+  .note-body { padding-top: 2px; }
+  .note-title { font-family: var(--hand); font-weight: 600; font-size: 22px; color: var(--ink); line-height: 1.1; margin: 0 0 4px; letter-spacing: -0.3px; }
+  .note-desc { font-family: var(--hand-2); font-size: 16px; color: var(--ink-2); line-height: 1.4; margin: 0 0 8px; }
+  .toks { display: flex; flex-wrap: wrap; gap: 5px; }
+  .tok { font-family: var(--font-mono); font-size: 11px; font-weight: 500; color: var(--accent); background: #1C2027; border: 1px solid #2A2F38; border-radius: 5px; padding: 2px 7px; }
+  .tok.muted { color: var(--fg2); }
+  .tok.semantic { color: #5FA978; }
+  .tok.danger { color: #D46A6A; }
+  .tok.warning { color: #D9A55A; }
+  .tok.tier { color: #E0C58A; }
+  .tok.note { color: var(--ink-3); background: transparent; border-color: var(--ink-3); }
+  .comp-pill { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.4px; color: var(--ink); background: #FFE680; border: 1.5px solid var(--ink); border-radius: 4px; padding: 2px 6px; transform: rotate(-1deg); margin: 0 2px; }
+
+  /* Annexe */
+  .annexe { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 36px; }
+  .ann-card { background: var(--bg); border: 1.5px solid var(--ink); border-radius: 16px; overflow: hidden; box-shadow: 4px 5px 0 rgba(0,0,0,0.12); color: var(--fg1); display: flex; flex-direction: column; }
+  .ann-title { font-family: var(--font-mono); font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--ink-3); margin: 12px 0 8px; text-align: center; }
+  .ann-card .inner { padding: 16px; min-height: 360px; display: flex; flex-direction: column; }
+
+  .constraints { margin-top: 56px; padding: 32px 28px; background: rgba(255,255,255,0.45); border: 1.5px dashed var(--ink-2); border-radius: 18px; }
+  .constraints h3 { font-family: var(--hand); font-size: 28px; font-weight: 700; margin: 0 0 18px; letter-spacing: -0.5px; color: var(--ink); }
+  .constraints ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 32px; }
+  .constraints li { font-family: var(--hand-2); font-size: 17px; color: var(--ink-2); line-height: 1.4; padding-left: 24px; position: relative; }
+  .constraints li::before { content: "✓"; position: absolute; left: 0; top: 0; color: var(--accent); font-weight: 700; font-family: var(--hand); font-size: 22px; line-height: 1; }
+  .constraints li.x::before { content: "✗"; color: var(--danger); }
+
+  .legend { margin-top: 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .legend-card { padding: 16px 18px; background: rgba(255,255,255,0.45); border: 1.5px dashed var(--ink-2); border-radius: 12px; }
+  .legend-name { font-family: var(--font-mono); font-size: 11px; color: var(--accent); letter-spacing: 0.4px; margin-bottom: 6px; }
+  .legend-desc { font-family: var(--hand-2); font-size: 16px; color: var(--ink-2); line-height: 1.35; }
+
+  .lucide { width: 22px; height: 22px; stroke-width: 1.75; }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+
+  <header class="doc-head">
+    <div>
+      <div class="doc-eyebrow">Tacticx · Spec · v01 · Profil</div>
+      <h1 class="doc-title">Profil — <em>wireframes annotés</em></h1>
+      <p class="doc-sub">Profil joueur single-scroll. Rang &amp; stats de saison · Pokémon les plus joués · objectifs · résumé d'onboarding éditable · abonnement free / premium · mentions légales.</p>
+    </div>
+    <div class="doc-meta">
+      <strong>Fichier</strong>&nbsp;·&nbsp;profile/index.tsx<br/>
+      <strong>Scroll</strong>&nbsp;·&nbsp;vertical unique<br/>
+      <strong>Tokens</strong>&nbsp;·&nbsp;theme.ts (DS Tacticx)<br/>
+      <strong>Composants</strong>&nbsp;·&nbsp;Reacticx kit
+    </div>
+  </header>
+
+  <section class="flow">
+    <h2 class="flow-title">Les 3 vues documentées</h2>
+    <p class="flow-sub">Scroll unique · 6 sections empilées — découpées en haut (rang + Pokémon joués), bas (objectifs + profil + abonnement), et annexe (premium + sheet édition + offre)</p>
+
+    <div class="flow-rail">
+      <div class="flow-step">
+        <div class="flow-mini">
+          <div class="mhrow"><span class="av"></span><span class="nm"></span></div>
+          <div class="mseg"><span class="on"></span><span></span></div>
+          <div class="card">
+            <div class="big"></div>
+            <div class="pbar"></div>
+            <div class="stats3"><span></span><span></span><span></span></div>
+          </div>
+          <div class="prow"><i></i><span style="flex:1"></span><span class="circ"></span></div>
+          <div class="prow"><i></i><span style="flex:1"></span><span class="circ"></span></div>
+        </div>
+        <div class="flow-num">A</div>
+        <div class="flow-label">Rang + Pokémon<small>stats · most played</small></div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-mini">
+          <div class="prow" style="background:transparent"><i style="background:var(--success)"></i><span style="flex:1"></span></div>
+          <div class="prow"><i></i><span style="flex:1"></span></div>
+          <div class="prow"><i></i><span style="flex:1"></span></div>
+          <div class="sub-card">
+            <div class="lk"><i></i><span></span></div>
+            <div class="lk"><i></i><span></span></div>
+            <div class="cta"></div>
+          </div>
+        </div>
+        <div class="flow-num">B</div>
+        <div class="flow-label">Objectifs + Abo<small>profil · free</small></div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-mini sheetmini">
+          <div class="mhrow"><span class="av"></span><span class="nm"></span></div>
+          <div class="prow"><i></i><span style="flex:1"></span></div>
+          <div class="msheet">
+            <div class="grab"></div>
+            <div class="opt on"></div>
+            <div class="opt"></div>
+            <div class="opt"></div>
+          </div>
+        </div>
+        <div class="flow-num">C</div>
+        <div class="flow-label">Annexe<small>premium · sheets</small></div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═════════ STATE A — RANG + POKÉMON ═════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">A</span>
+      <h2 class="spec-title">Rang &amp; stats + Pokémon joués</h2>
+      <span class="spec-eyebrow">profile/index.tsx · haut du scroll</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status"><span>9:41</span><span class="status-icons"><i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i></span></div>
+
+          <div class="head">
+            <div class="head-top">
+              <span class="avatar">AL</span>
+              <div class="head-info">
+                <div class="player-name">Alex L.<i data-lucide="pencil"></i></div>
+                <div class="profile-badges">
+                  <span class="badge accent">Compétitif</span>
+                  <span class="badge">VGC</span>
+                </div>
+              </div>
+            </div>
+            <div class="seg">
+              <button class="on">VGC</button>
+              <button>Singles</button>
+            </div>
+          </div>
+
+          <div class="body">
+            <div class="section-title">Rang · saison M-2</div>
+            <div class="card">
+              <div class="rank-top">
+                <div class="rank-name">Gold III<span class="rank-chip gold">Or</span></div>
+                <div class="rank-pts"><strong>1 240</strong> / 1 500 pts</div>
+                <div class="pbar"><span style="width:82%"></span></div>
+                <div class="rank-next">Prochain&nbsp;: <strong>Platinum I</strong></div>
+              </div>
+
+              <div class="spark-block">
+                <div class="sub-eyebrow">Évolution · 7 jours</div>
+                <div class="spark-svg-wrap">
+                  <svg width="100%" height="40" viewBox="0 0 300 40" preserveAspectRatio="none" style="display:block">
+                    <path d="M0,30 L50,26 L100,28 L150,18 L200,22 L250,12 L300,8" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <div class="spark-veil"><i data-lucide="lock"></i><span class="t">Suivi premium</span></div>
+                </div>
+              </div>
+
+              <div class="wl-row">
+                <div class="wl-block"><div class="v win">142</div><div class="l">Victoires</div></div>
+                <div class="wl-block"><div class="v">87</div><div class="l">Défaites</div></div>
+                <div class="wl-block"><div class="v wr">62 %</div><div class="l">Winrate</div></div>
+              </div>
+              <div class="wl-caption">Saison actuelle</div>
+            </div>
+
+            <div class="section-title">Mes Pokémon<span class="link">Voir tous</span></div>
+            <div class="card" style="padding:8px 16px">
+              <div class="mp-row">
+                <span class="mp-rank">#1</span>
+                <span class="mp-sprite t-psychic"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/898.png" alt=""/></span>
+                <span class="mp-info"><span class="mp-name">Calyrex-S</span><span class="mp-types"><span class="tb psychic">Psy</span><span class="tb ghost">Spectre</span></span></span>
+                <span class="mp-right">
+                  <span class="mp-games"><span class="n">68</span><span class="l">parties</span></span>
+                  <span class="circ-prog">
+                    <svg width="36" height="36"><circle cx="18" cy="18" r="15" fill="none" stroke="var(--surface-high)" stroke-width="3"/><circle cx="18" cy="18" r="15" fill="none" stroke="var(--success)" stroke-width="3" stroke-dasharray="94.2" stroke-dashoffset="29" stroke-linecap="round"/></svg>
+                    <span class="pc">69%</span>
+                  </span>
+                </span>
+              </div>
+              <div class="mp-row">
+                <span class="mp-rank">#2</span>
+                <span class="mp-sprite t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/727.png" alt=""/></span>
+                <span class="mp-info"><span class="mp-name">Incineroar</span><span class="mp-types"><span class="tb fire">Feu</span><span class="tb dark">Ténèb.</span></span></span>
+                <span class="mp-right">
+                  <span class="mp-games"><span class="n">61</span><span class="l">parties</span></span>
+                  <span class="circ-prog">
+                    <svg width="36" height="36"><circle cx="18" cy="18" r="15" fill="none" stroke="var(--surface-high)" stroke-width="3"/><circle cx="18" cy="18" r="15" fill="none" stroke="var(--success)" stroke-width="3" stroke-dasharray="94.2" stroke-dashoffset="38" stroke-linecap="round"/></svg>
+                    <span class="pc">60%</span>
+                  </span>
+                </span>
+              </div>
+              <div class="mp-row">
+                <span class="mp-rank">#3</span>
+                <span class="mp-sprite t-fighting"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/892.png" alt=""/></span>
+                <span class="mp-info"><span class="mp-name">Shifours</span><span class="mp-types"><span class="tb fighting">Combat</span><span class="tb water">Eau</span></span></span>
+                <span class="mp-right">
+                  <span class="mp-games"><span class="n">54</span><span class="l">parties</span></span>
+                  <span class="circ-prog">
+                    <svg width="36" height="36"><circle cx="18" cy="18" r="15" fill="none" stroke="var(--surface-high)" stroke-width="3"/><circle cx="18" cy="18" r="15" fill="none" stroke="var(--warning)" stroke-width="3" stroke-dasharray="94.2" stroke-dashoffset="47" stroke-linecap="round"/></svg>
+                    <span class="pc">50%</span>
+                  </span>
+                </span>
+              </div>
+              <div class="mp-row">
+                <span class="mp-rank">#4</span>
+                <span class="mp-sprite t-grass"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/591.png" alt=""/></span>
+                <span class="mp-info"><span class="mp-name">Amoonguss</span><span class="mp-types"><span class="tb grass">Plante</span><span class="tb poison">Poison</span></span></span>
+                <span class="mp-right">
+                  <span class="mp-games"><span class="n">49</span><span class="l">parties</span></span>
+                  <span class="circ-prog">
+                    <svg width="36" height="36"><circle cx="18" cy="18" r="15" fill="none" stroke="var(--surface-high)" stroke-width="3"/><circle cx="18" cy="18" r="15" fill="none" stroke="var(--success)" stroke-width="3" stroke-dasharray="94.2" stroke-dashoffset="33" stroke-linecap="round"/></svg>
+                    <span class="pc">65%</span>
+                  </span>
+                </span>
+              </div>
+              <button class="see-all">Voir les 5 Pokémon</button>
+            </div>
+          </div>
+
+          <span class="pin" style="top: 42px; left: 14px;">1</span>
+          <span class="pin" style="top: 42px; right: 100px;">2</span>
+          <span class="pin" style="top: 96px; left: 14px;">3</span>
+          <span class="pin" style="top: 158px; left: 14px;">4</span>
+          <span class="pin" style="top: 252px; left: 14px;">5</span>
+          <span class="pin" style="top: 318px; right: 100px;">6</span>
+          <span class="pin" style="top: 366px; right: 14px;">7</span>
+        </div>
+        <div class="phone-dims">380 × 760 · scroll haut</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><div class="note-num">1</div><div class="note-body">
+        <h4 class="note-title">Avatar généré + nom éditable</h4>
+        <p class="note-desc">Cercle 48pt <span class="tok">--accent</span> avec initiales <span class="tok muted">--fg-inverse</span>. Nom tap → éditable inline (<span class="tok muted">pencil-outline</span> à droite). Pas de photo uploadée — initiales seulement (cohérent avec le ton sobre, pas social).</p>
+        <div class="toks"><span class="tok">--accent</span><span class="tok muted">--fg-inverse</span><span class="tok">--r-pill</span><span class="tok muted">--fg-faint (pencil)</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">2</div><div class="note-body">
+        <h4 class="note-title">Badges profil (lecture seule)</h4>
+        <p class="note-desc">Niveau en <span class="tok">--accent-soft</span>, format en neutre. Reflètent les réponses d'onboarding. Non-cliquables ici — la modification passe par la section "Mon profil" plus bas.</p>
+        <div class="toks"><span class="tok">--accent-soft</span><span class="tok muted">--surface-high</span><span class="tok">--r-sm</span><span class="comp-pill">Badge</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">3</div><div class="note-body">
+        <h4 class="note-title">Segmented VGC / Singles</h4>
+        <p class="note-desc">Filtre toutes les stats de saison affichées en dessous (rang, win/loss, Pokémon joués). Variante accent. Au switch : recharge des stats en <span class="comp-pill">Shimmer</span>.</p>
+        <div class="toks"><span class="tok">--accent</span><span class="tok muted">--surface-sunken</span><span class="comp-pill">Segmented Control</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">4</div><div class="note-body">
+        <h4 class="note-title">Rang actuel + progression</h4>
+        <p class="note-desc">Nom du palier grand et centré + chip coloré (Or = <span class="tok tier">--tier-s</span>, palette propre à chaque palier). Points actuels / palier suivant tabulaires. <span class="comp-pill">Progress</span> de progression dans le palier. "Prochain : Platinum I" dessous.</p>
+        <div class="toks"><span class="tok tier">--tier-s (or)</span><span class="tok">--accent (barre)</span><span class="tok muted">--surface-sunken (rail)</span><span class="comp-pill">Progress</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">5</div><div class="note-body">
+        <h4 class="note-title">Sparkline rang — premium</h4>
+        <p class="note-desc">Courbe 7 jours sans labels d'axe. Voilée (blur 5px) + <span class="tok muted">lock-closed-outline</span> + "Suivi premium" si free. Visible mais floutée — jamais cachée.</p>
+        <div class="toks"><span class="tok">--accent (courbe)</span><span class="tok muted">blur 5px</span><span class="tok note">premium gating</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">6</div><div class="note-body">
+        <h4 class="note-title">Stats Win / Loss / Winrate</h4>
+        <p class="note-desc">3 blocs <span class="tok muted">--surface-sunken</span>, valeurs animées <span class="comp-pill">Rolling Counter</span> au chargement. Winrate codé couleur : <span class="tok semantic">--success</span> &gt; 55&nbsp;%, <span class="tok warning">--warning</span> 45-55&nbsp;%, <span class="tok danger">--danger</span> &lt; 45&nbsp;%. Caption "Saison actuelle" en <span class="tok muted">--fg-faint</span>.</p>
+        <div class="toks"><span class="tok semantic">--success</span><span class="tok warning">--warning</span><span class="tok danger">--danger</span><span class="comp-pill">Rolling Counter</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">7</div><div class="note-body">
+        <h4 class="note-title">Pokémon les plus joués</h4>
+        <p class="note-desc">Top 5 en saison. Sprite 44pt teinté + rang #1-5 + nom + types. À droite : nb de parties + winrate individuel en <span class="comp-pill">Circular Progress</span> 36pt (couleur success/warning/danger). <span class="comp-pill">Shimmer</span> au chargement. "Voir tous" expande sans navigation.</p>
+        <div class="toks"><span class="tok semantic">--success (cercle)</span><span class="tok warning">--warning</span><span class="tok danger">--danger</span><span class="comp-pill">Circular Progress</span><span class="comp-pill">Shimmer</span></div>
+      </div></div>
+    </div>
+  </section>
+
+
+  <!-- ═════════ STATE B — OBJECTIFS + PROFIL + ABONNEMENT ═════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">B</span>
+      <h2 class="spec-title">Objectifs · profil · abonnement</h2>
+      <span class="spec-eyebrow">bas du scroll · variante FREE · footer légal</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status"><span>9:41</span><span class="status-icons"><i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i></span></div>
+
+          <div class="body" style="padding-top: 10px;">
+            <div class="section-title">Mes objectifs</div>
+            <div class="card" style="padding:6px 16px">
+              <div class="obj-row">
+                <span class="obj-check done"><i data-lucide="check-circle-2"></i></span>
+                <span class="obj-main">
+                  <span class="obj-label done">Atteindre Gold</span>
+                  <span class="obj-bar done"><span style="width:100%"></span></span>
+                  <span class="obj-val">Complété</span>
+                </span>
+              </div>
+              <div class="obj-row">
+                <span class="obj-check"><i data-lucide="circle"></i></span>
+                <span class="obj-main">
+                  <span class="obj-label">Compléter 50 batailles VGC</span>
+                  <span class="obj-bar"><span style="width:46%"></span></span>
+                  <span class="obj-val">23 / 50 batailles</span>
+                </span>
+              </div>
+              <div class="obj-row">
+                <span class="obj-check"><i data-lucide="circle"></i></span>
+                <span class="obj-main">
+                  <span class="obj-label">Tester 3 archétypes différents</span>
+                  <span class="obj-bar"><span style="width:66%"></span></span>
+                  <span class="obj-val">2 / 3 archétypes</span>
+                </span>
+              </div>
+              <button class="add-obj locked"><i data-lucide="plus"></i>Ajouter un objectif<span class="lock"><i data-lucide="lock"></i></span></button>
+            </div>
+
+            <div class="section-title">Mon profil</div>
+            <div class="card" style="padding:2px 16px">
+              <div class="prow">
+                <span class="ico"><i data-lucide="trophy"></i></span>
+                <span class="label">Niveau</span>
+                <span class="value">Compétitif</span>
+                <span class="chevron"><i data-lucide="chevron-right"></i></span>
+              </div>
+              <div class="prow">
+                <span class="ico"><i data-lucide="git-branch"></i></span>
+                <span class="label">Format</span>
+                <span class="value">VGC + Singles</span>
+                <span class="chevron"><i data-lucide="chevron-right"></i></span>
+              </div>
+              <div class="prow">
+                <span class="ico"><i data-lucide="zap"></i></span>
+                <span class="label">Style</span>
+                <span class="value">Offensif</span>
+                <span class="chevron"><i data-lucide="chevron-right"></i></span>
+              </div>
+              <div class="prow">
+                <span class="ico"><i data-lucide="flag"></i></span>
+                <span class="label">Objectif</span>
+                <span class="value">Rank up</span>
+                <span class="chevron"><i data-lucide="chevron-right"></i></span>
+              </div>
+            </div>
+
+            <div class="section-title">Abonnement</div>
+            <div class="sub-card">
+              <div class="sub-head"><span class="name">Tacticx Free</span></div>
+              <div class="feat-row"><i data-lucide="lock"></i>Suivi rang sparkline</div>
+              <div class="feat-row"><i data-lucide="lock"></i>Sync cloud équipes</div>
+              <div class="feat-row"><i data-lucide="lock"></i>Sauvegarder scénarios calc</div>
+              <div class="feat-row"><i data-lucide="lock"></i>Objectifs illimités</div>
+              <div class="feat-row"><i data-lucide="lock"></i>Publication communauté</div>
+              <button class="sub-cta">Passer à Premium</button>
+            </div>
+
+            <div class="footer-legal">
+              <p>Pokémon © Nintendo / Creatures Inc. / GAME FREAK inc.</p>
+              <p>Tacticx n'est pas affilié à Nintendo ou The Pokémon Company.</p>
+              <div class="links"><a href="#">Politique de confidentialité</a><span>·</span><a href="#">CGU</a></div>
+            </div>
+          </div>
+
+          <span class="pin" style="top: 56px; left: 14px;">1</span>
+          <span class="pin" style="top: 180px; right: 14px;">2</span>
+          <span class="pin" style="top: 230px; left: 14px;">3</span>
+          <span class="pin" style="top: 410px; left: 14px;">4</span>
+          <span class="pin" style="top: 470px; right: 14px;">5</span>
+          <span class="pin" style="top: 600px; right: 14px;">6</span>
+          <span class="pin" style="bottom: 64px; left: 14px;">7</span>
+        </div>
+        <div class="phone-dims">380 × 760 · scroll bas · FREE</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><div class="note-num">1</div><div class="note-body">
+        <h4 class="note-title">Objectifs de saison</h4>
+        <p class="note-desc">3 objectifs max, définis par le profil onboarding. <span class="tok muted">checkbox-outline</span> → <span class="tok semantic">checkmark-circle-outline</span> animé si complété (label barré, barre <span class="tok semantic">--success</span>). <span class="comp-pill">Progress</span> + valeur textuelle "23 / 50". Objectif complété en haut, en cours en dessous.</p>
+        <div class="toks"><span class="tok semantic">--success (done)</span><span class="tok">--accent (en cours)</span><span class="tok muted">--fg3 (label done)</span><span class="comp-pill">Progress</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">2</div><div class="note-body">
+        <h4 class="note-title">"Ajouter un objectif" — premium</h4>
+        <p class="note-desc">Bouton dashed. Au-delà de 3 objectifs → gated avec <span class="tok muted">lock-closed-outline</span> + état grisé. Tap → bottom-sheet paywall. Les 3 premiers restent gratuits.</p>
+        <div class="toks"><span class="tok muted">--border-strong dashed</span><span class="tok muted">--fg-faint (locked)</span><span class="tok note">premium gating</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">3</div><div class="note-body">
+        <h4 class="note-title">Mon profil — 4 rows</h4>
+        <p class="note-desc">Une row par réponse d'onboarding : Niveau (<span class="tok muted">trophy</span>), Format (<span class="tok muted">git-branch</span>), Style (<span class="tok muted">flash</span>), Objectif (<span class="tok muted">flag</span>). Tuile icône <span class="tok muted">--surface-high</span>, label <span class="tok muted">--fg3</span>, valeur <span class="tok muted">--fg1</span>, chevron. Tap → bottom-sheet de modif (voir annexe).</p>
+        <div class="toks"><span class="tok muted">--surface-high (ico)</span><span class="tok muted">--fg3 (label)</span><span class="tok muted">--fg1 (value)</span><span class="tok">--r-sm</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">4</div><div class="note-body">
+        <h4 class="note-title">Carte abonnement — FREE</h4>
+        <p class="note-desc">Border <span class="tok muted">--border</span> (neutre, pas accent). "Tacticx Free" + liste des 5 features premium <strong>visibles</strong> avec <span class="tok muted">lock-closed-outline</span> devant chaque ligne. Cohérent avec la règle "premium visible, jamais caché".</p>
+        <div class="toks"><span class="tok muted">--surface</span><span class="tok muted">--border</span><span class="tok muted">--fg-faint (lock)</span><span class="tok muted">--fg2 (feature)</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">5</div><div class="note-body">
+        <h4 class="note-title">CTA "Passer à Premium"</h4>
+        <p class="note-desc">Bouton primaire <span class="tok">--accent</span>. Tap → bottom-sheet offre RevenueCat (mensuel 4,99 € / annuel 29,99 € + "Économisez 37&nbsp;%"). Voir annexe pour le détail de l'offre.</p>
+        <div class="toks"><span class="tok">--accent</span><span class="tok muted">--fg-inverse</span><span class="tok">--r-md</span><span class="tok note">→ RevenueCat sheet</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">6</div><div class="note-body">
+        <h4 class="note-title">Footer légal</h4>
+        <p class="note-desc">Mentions <span class="tok muted">--fg-faint</span> 10px centrées : copyright Nintendo/Creatures/GAME FREAK + disclaimer de non-affiliation. Liens Politique de confidentialité + CGU en <span class="tok">--accent</span>. C'est le seul endroit où ces mentions apparaissent (pas inline ailleurs).</p>
+        <div class="toks"><span class="tok muted">--fg-faint</span><span class="tok">--accent (liens)</span><span class="tok note">mentions légales</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">7</div><div class="note-body">
+        <h4 class="note-title">Safe area basse</h4>
+        <p class="note-desc">Le footer respecte l'inset bas (home indicator). Le contenu scrolle sous la tab bar avec le padding adéquat. Pas de contenu critique masqué par la tab bar.</p>
+        <div class="toks"><span class="tok note">safe-area-inset-bottom</span></div>
+      </div></div>
+    </div>
+  </section>
+
+
+  <!-- ═════════ ANNEXE ═════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step" style="background:#B7E6C9">∞</span>
+      <h2 class="spec-title">Annexe — premium + sheets</h2>
+      <span class="spec-eyebrow">abonnement premium · sheet édition profil · offre RevenueCat</span>
+    </div>
+
+    <div class="annexe" style="grid-column: 1 / -1;">
+      <!-- Premium subscription variant -->
+      <div>
+        <div class="ann-title">Abonnement · variante PREMIUM</div>
+        <div class="ann-card">
+          <div class="inner">
+            <div class="sub-card premium" style="margin:0">
+              <div class="sub-head">
+                <span class="name">Tacticx Premium</span>
+                <span class="badge active">Actif</span>
+              </div>
+              <div class="sub-meta">Renouvellement le 14 juin 2026</div>
+              <div class="sub-row-link"><i data-lucide="settings"></i>Gérer l'abonnement</div>
+              <div class="sub-row-link"><i data-lucide="receipt"></i>Restaurer les achats</div>
+            </div>
+            <div style="margin-top:auto;padding-top:14px">
+              <div style="font-family:var(--hand);font-size:17px;color:var(--ink-2);line-height:1.2;margin-bottom:4px;">Border accent quand abonné</div>
+              <div class="toks"><span class="tok">--accent (border)</span><span class="tok">--accent-soft (badge actif)</span><span class="tok muted">--fg3 (date)</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit profile sheet -->
+      <div>
+        <div class="ann-title">Sheet modif · ex. Niveau</div>
+        <div class="ann-card">
+          <div class="inner" style="padding:0;background:var(--surface-high);position:relative">
+            <div style="width:36px;height:4px;border-radius:999px;background:var(--fg-faint);margin:8px auto 6px"></div>
+            <div style="padding:4px 16px 12px;border-bottom:1px solid var(--divider);font-size:16px;font-weight:700;color:var(--fg1)">Niveau</div>
+            <div style="padding:14px 16px">
+              <div class="opt-card">
+                <span class="oi"><i data-lucide="gamepad-2"></i></span>
+                <span class="ob"><span class="otitle">Casual</span><span class="odesc">Je découvre et progresse à mon rythme</span></span>
+                <span class="oradio"></span>
+              </div>
+              <div class="opt-card on">
+                <span class="oi"><i data-lucide="trophy"></i></span>
+                <span class="ob"><span class="otitle">Compétitif</span><span class="odesc">Je joue en ranked et veux monter</span></span>
+                <span class="oradio"></span>
+              </div>
+              <div class="opt-card">
+                <span class="oi"><i data-lucide="shield"></i></span>
+                <span class="ob"><span class="otitle">Try Hard</span><span class="odesc">Je vise les tournois</span></span>
+                <span class="oradio"></span>
+              </div>
+              <button class="sub-cta" style="margin-top:6px">Enregistrer</button>
+            </div>
+            <div style="position:absolute;bottom:8px;left:16px;right:16px">
+              <div style="font-family:var(--hand);font-size:14px;color:var(--fg2);line-height:1.15;">Même UI que l'onboarding · Toast au save</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RevenueCat offer -->
+      <div>
+        <div class="ann-title">Offre RevenueCat</div>
+        <div class="ann-card">
+          <div class="inner" style="padding:0;background:var(--surface-high)">
+            <div style="width:36px;height:4px;border-radius:999px;background:var(--fg-faint);margin:8px auto 6px"></div>
+            <div style="padding:4px 16px 14px;text-align:center;border-bottom:1px solid var(--divider)">
+              <div style="font-size:18px;font-weight:700;color:var(--fg1);margin-bottom:4px">Tacticx Premium</div>
+              <div style="font-size:12px;color:var(--fg3)">Débloque tout le potentiel compétitif</div>
+            </div>
+            <div style="padding:14px 16px">
+              <div class="offer-card best">
+                <div class="ot"><span class="oname">Annuel</span><span class="save">−37 %</span></div>
+                <div class="price">29,99 €<small> / an</small></div>
+                <button class="octa">Commencer</button>
+              </div>
+              <div class="offer-card">
+                <div class="ot"><span class="oname">Mensuel</span></div>
+                <div class="price">4,99 €<small> / mois</small></div>
+                <button class="octa">Commencer</button>
+              </div>
+              <button class="sub-link">Restaurer les achats</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="constraints">
+    <h3>Contraintes UX — invariantes du Profil</h3>
+    <ul>
+      <li>Scroll vertical unique — pas de tabs internes</li>
+      <li>Segmented VGC/Singles dans le header filtre toutes les stats saison</li>
+      <li>Stats animées au chargement (Rolling Counter)</li>
+      <li>Winrate codé couleur partout (success/warning/danger)</li>
+      <li>"Voir tous" expande la liste sans navigation séparée</li>
+      <li>Tap row "Mon profil" → sheet identique à l'onboarding</li>
+      <li>Changement niveau → Toast "L'interface s'adaptera au prochain lancement"</li>
+      <li>Carte abonnement : border accent si premium, neutre si free</li>
+      <li>Mentions légales en footer uniquement (pas inline ailleurs)</li>
+      <li>Safe area haut ET bas respectée</li>
+      <li class="x">Pas d'emoji — Ionicons -outline uniquement</li>
+      <li class="x">Premium (sparkline, sync, scénarios, objectifs illimités) : visible + lock</li>
+    </ul>
+  </section>
+
+  <section class="legend">
+    <div class="legend-card"><div class="legend-name">Reacticx · Segmented Control</div><div class="legend-desc">VGC/Singles dans le header — filtre rang, win/loss et Pokémon joués.</div></div>
+    <div class="legend-card"><div class="legend-name">Reacticx · Progress</div><div class="legend-desc">Progression de rang dans le palier + barres d'objectifs de saison.</div></div>
+    <div class="legend-card"><div class="legend-name">Reacticx · Circular Progress</div><div class="legend-desc">Winrate individuel par Pokémon (cercle 36pt, couleur success/warning/danger).</div></div>
+    <div class="legend-card"><div class="legend-name">Reacticx · Rolling Counter</div><div class="legend-desc">Victoires / défaites / winrate animés au chargement de la saison.</div></div>
+    <div class="legend-card"><div class="legend-name">Reacticx · Badge</div><div class="legend-desc">Badges profil (niveau, format), chip de rang, badge "Actif" premium.</div></div>
+    <div class="legend-card"><div class="legend-name">Reacticx · Toast</div><div class="legend-desc">Confirmation "Profil mis à jour" + note d'adaptation au changement de niveau.</div></div>
+  </section>
+
+</div>
+
+<script>
+  if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+  document.querySelectorAll('img').forEach(img => {
+    img.addEventListener('error', () => { img.style.display = 'none'; }, { once: true });
+  });
+</script>
+
+</body>
+</html>

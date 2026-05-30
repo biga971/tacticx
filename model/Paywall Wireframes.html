@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>Tacticx — Paywall · Wireframes annotés</title>
+<link rel="stylesheet" href="tokens.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Patrick+Hand&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@0.461.0/dist/umd/lucide.min.js"></script>
+<style>
+  /* ───── Paper / spec-sheet background ───── */
+  :root {
+    --paper:   #ECE6D6;
+    --paper-2: #E2DCC8;
+    --ink:     #1A1A1A;
+    --ink-2:   #4A4A40;
+    --ink-3:   #87826F;
+    --hand:    "Caveat", "Patrick Hand", cursive;
+    --hand-2:  "Patrick Hand", "Caveat", cursive;
+  }
+  html, body { margin: 0; }
+  body {
+    background: var(--paper);
+    background-image: radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+    background-size: 22px 22px;
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  * { box-sizing: border-box; }
+  .sheet { max-width: 1280px; margin: 0 auto; padding: 56px 48px 96px; }
+
+  /* ───── Document header ───── */
+  .doc-head { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 32px; border-bottom: 1.5px dashed var(--ink-2); padding-bottom: 24px; margin-bottom: 40px; }
+  .doc-eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px; }
+  .doc-title { font-family: var(--hand); font-size: 64px; font-weight: 700; line-height: 0.95; letter-spacing: -1px; color: var(--ink); margin: 0; }
+  .doc-title em { font-style: normal; color: var(--accent); background: linear-gradient(180deg, transparent 60%, rgba(91,141,239,0.25) 60%); padding: 0 6px; }
+  .doc-sub { font-family: var(--hand-2); font-size: 22px; color: var(--ink-2); margin-top: 8px; line-height: 1.3; max-width: 680px; }
+  .doc-meta { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); line-height: 1.7; text-align: right; }
+  .doc-meta strong { color: var(--ink); font-weight: 500; }
+
+  /* ───── Triggers overview ───── */
+  .flow { background: rgba(255,255,255,0.4); border: 1.5px dashed var(--ink-2); border-radius: 18px; padding: 28px 24px 32px; margin-bottom: 64px; }
+  .flow-title { font-family: var(--hand); font-size: 28px; font-weight: 700; color: var(--ink); margin: 0 0 6px; letter-spacing: -0.5px; }
+  .flow-sub { font-family: var(--hand-2); font-size: 16px; color: var(--ink-3); margin-bottom: 24px; }
+  .trig-rail { display: grid; grid-template-columns: repeat(6, 1fr) auto; gap: 14px; align-items: stretch; }
+  .trig { background: var(--bg); border: 1.5px solid var(--ink); border-radius: 12px; padding: 14px 12px; display: flex; flex-direction: column; gap: 8px; box-shadow: 3px 4px 0 rgba(0,0,0,0.12); position: relative; }
+  .trig .ti { width: 30px; height: 30px; border-radius: 8px; background: var(--surface-high); color: var(--fg2); display: grid; place-items: center; }
+  .trig .ti .lucide { width: 17px; height: 17px; }
+  .trig .tlock { position: absolute; top: 12px; right: 12px; width: 18px; height: 18px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; }
+  .trig .tlock .lucide { width: 11px; height: 11px; }
+  .trig .tlabel { font-family: var(--font-sans); font-size: 12px; font-weight: 600; color: var(--fg1); line-height: 1.25; letter-spacing: -0.2px; }
+  .trig .tsrc { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.4px; text-transform: uppercase; color: var(--fg3); }
+  .trig-arrow { display: grid; place-items: center; font-family: var(--hand); font-size: 20px; font-weight: 700; color: var(--ink); }
+  .trig-arrow .sheetdot { width: 70px; aspect-ratio: 9/16; background: var(--bg); border: 1.5px solid var(--ink); border-radius: 12px; position: relative; overflow: hidden; box-shadow: 3px 4px 0 rgba(0,0,0,0.12); }
+  .trig-arrow .sheetdot::after { content:""; position:absolute; inset:0; background: rgba(11,13,16,0.55); }
+  .trig-arrow .sheetdot .ms { position:absolute; left:6%; right:6%; bottom:0; height:78%; background: var(--surface); border:1.5px solid var(--border); border-radius: 10px 10px 0 0; z-index:2; display:flex; flex-direction:column; align-items:center; padding:6px 6px 0; gap:4px; }
+  .trig-arrow .sheetdot .ms .g { width:16px; height:3px; border-radius:2px; background: var(--border); }
+  .trig-arrow .sheetdot .ms .ic { width:14px; height:14px; border-radius:999px; background: var(--accent-soft); border:1px solid var(--accent); margin-top:2px; }
+  .trig-arrow .sheetdot .ms .l { width:80%; height:4px; border-radius:2px; background: var(--surface-high); }
+  .trig-arrow .sheetdot .ms .cta { margin-top:auto; margin-bottom:6px; width:80%; height:9px; border-radius:3px; background: var(--accent); }
+  .trig-arrow .lab { font-family: var(--hand); font-size: 14px; color: var(--ink-2); text-align: center; margin-top: 6px; }
+
+  /* ───── Spec sections ───── */
+  .spec { display: grid; grid-template-columns: 420px 1fr; gap: 56px; padding: 48px 0 56px; border-top: 1.5px dashed var(--ink-2); }
+  .spec-head { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 18px; margin-bottom: 4px; }
+  .spec-step { font-family: var(--hand); font-weight: 700; font-size: 22px; color: var(--ink); background: #FFE680; border: 1.5px solid var(--ink); border-radius: 999px; padding: 4px 14px; transform: rotate(-2deg); box-shadow: 2px 2px 0 rgba(0,0,0,0.12); }
+  .spec-title { font-family: var(--hand); font-size: 38px; font-weight: 700; color: var(--ink); margin: 0; letter-spacing: -0.5px; }
+  .spec-eyebrow { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); letter-spacing: 1.2px; text-transform: uppercase; margin-left: auto; }
+
+  /* ───── Phone frame ───── */
+  .phone-wrap { position: sticky; top: 32px; align-self: start; }
+  .phone { width: 380px; height: 800px; background: var(--bg); border-radius: 40px; border: 1.5px solid var(--ink); box-shadow: 6px 8px 0 rgba(0,0,0,0.12), inset 0 0 0 8px #08090C; padding: 8px; position: relative; }
+  .phone-inner { width: 100%; height: 100%; background: var(--bg); border-radius: 32px; overflow: hidden; position: relative; display: flex; flex-direction: column; }
+  .phone-dims { position: absolute; bottom: -32px; left: 0; right: 0; text-align: center; font-family: var(--font-mono); font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--ink-3); }
+
+  /* status bar */
+  .status { height: 30px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--fg1); flex-shrink: 0; position: relative; z-index: 1; }
+  .status-icons { display: flex; align-items: center; gap: 5px; opacity: 0.9; }
+  .status-icons .lucide { width: 14px; height: 14px; stroke-width: 2; }
+
+  /* faint background screen behind scrim */
+  .bg-screen { position: absolute; inset: 0; padding: 38px 16px 0; display: flex; flex-direction: column; gap: 12px; }
+  .bg-screen .bs-h { height: 22px; width: 55%; background: var(--surface-high); border-radius: 6px; }
+  .bg-screen .bs-card { height: 96px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); }
+  .bg-screen .bs-card.spark { display: flex; align-items: flex-end; gap: 5px; padding: 16px; }
+  .bg-screen .bs-card.spark i { flex: 1; background: var(--accent-muted); border-radius: 2px; display: block; opacity: 0.7; }
+
+  /* scrim */
+  .scrim { position: absolute; inset: 0; background: rgba(11,13,16,0.72); backdrop-filter: blur(18px); z-index: 5; }
+
+  /* ───── Paywall sheet ───── */
+  .pw { position: absolute; left: 0; right: 0; bottom: 0; height: 86.5%; background: var(--surface); border-radius: var(--r-xl) var(--r-xl) 0 0; border-top: 1px solid var(--border); z-index: 6; display: flex; flex-direction: column; box-shadow: var(--shadow-lg); }
+  .pw-grab { width: 32px; height: 4px; border-radius: 999px; background: var(--border); margin: 8px auto 0; flex-shrink: 0; }
+  .pw-close { position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 999px; background: var(--surface-high); border: 1px solid var(--border); color: var(--fg2); display: grid; place-items: center; cursor: pointer; z-index: 2; }
+  .pw-close .lucide { width: 16px; height: 16px; }
+  .pw-body { flex: 1; overflow-y: auto; padding: 20px 18px 8px; display: flex; flex-direction: column; }
+  .pw-body::-webkit-scrollbar { display: none; }
+
+  /* contextual top block */
+  .pw-ctx { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 6px 8px 20px; border-bottom: 1px solid var(--divider); }
+  .pw-ctx-ic { width: 56px; height: 56px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; }
+  .pw-ctx-ic .lucide { width: 26px; height: 26px; stroke-width: 1.75; }
+  .pw-ctx h3 { margin: 0; font-size: 21px; font-weight: 700; letter-spacing: -0.4px; color: var(--fg1); }
+  .pw-ctx p { margin: 0; font-size: 13.5px; color: var(--fg2); line-height: 1.4; max-width: 280px; }
+  .pw-ctx .eyebrow-pro { font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: 1.6px; text-transform: uppercase; color: var(--accent); }
+
+  /* benefits */
+  .pw-benes { padding: 18px 4px 20px; display: flex; flex-direction: column; gap: 13px; border-bottom: 1px solid var(--divider); }
+  .pw-bene { display: flex; align-items: center; gap: 12px; }
+  .pw-bene .bc { width: 22px; height: 22px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; flex-shrink: 0; }
+  .pw-bene .bc .lucide { width: 14px; height: 14px; stroke-width: 2.5; }
+  .pw-bene span.t { font-size: 14.5px; color: var(--fg1); letter-spacing: -0.1px; }
+
+  /* plan selector */
+  .pw-plans { padding: 20px 4px 0; }
+  .pw-seg-wrap { position: relative; }
+  .pw-seg { display: flex; background: var(--surface-sunken); border: 1px solid var(--border); border-radius: var(--r-pill); padding: 3px; }
+  .pw-seg button { flex: 1; background: transparent; border: 0; padding: 11px 0; font-family: inherit; font-size: 14px; font-weight: 500; color: var(--fg2); border-radius: var(--r-pill); cursor: pointer; position: relative; }
+  .pw-seg button.on { background: var(--accent); color: var(--fg-inverse); font-weight: 600; }
+  .pw-badge { position: absolute; top: -9px; right: 26px; font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.2px; color: var(--success); background: var(--success-soft); border: 1px solid #2C4636; border-radius: var(--r-pill); padding: 2px 8px; z-index: 3; }
+
+  /* price card */
+  .pw-price { margin-top: 16px; background: var(--surface-high); border: 1.5px solid var(--accent); border-radius: 16px; padding: 18px 20px; display: flex; align-items: baseline; justify-content: space-between; }
+  .pw-price .amt { font-family: var(--font-sans); font-variant-numeric: tabular-nums; font-weight: 600; font-size: 34px; letter-spacing: -0.8px; color: var(--fg1); line-height: 1; }
+  .pw-price .amt small { font-size: 16px; font-weight: 500; color: var(--fg2); letter-spacing: -0.2px; }
+  .pw-price .per { text-align: right; }
+  .pw-price .per .save { font-size: 12px; color: var(--success); font-weight: 600; }
+  .pw-price .per .sub { font-size: 12px; color: var(--fg3); font-variant-numeric: tabular-nums; }
+
+  /* footer */
+  .pw-foot { flex-shrink: 0; padding: 12px 18px 14px; border-top: 1px solid var(--divider); background: var(--surface); }
+  .pw-cta { width: 100%; height: 50px; background: var(--accent); color: var(--fg-inverse); border: 0; border-radius: var(--r-md); font-family: inherit; font-size: 16px; font-weight: 600; letter-spacing: -0.1px; cursor: pointer; }
+  .pw-links { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 12px; }
+  .pw-link { display: inline-flex; align-items: center; gap: 5px; background: transparent; border: 0; color: var(--fg3); font-family: inherit; font-size: 11px; cursor: pointer; }
+  .pw-link .lucide { width: 12px; height: 12px; }
+  .pw-legal { text-align: center; font-size: 10px; color: var(--fg-faint); margin: 9px 0 0; line-height: 1.4; }
+  .home-indicator { width: 120px; height: 4px; background: var(--fg2); border-radius: 999px; margin: 8px auto 6px; opacity: 0.55; }
+
+  /* ───── Callout pins ───── */
+  .pin { position: absolute; font-family: var(--hand); font-size: 16px; font-weight: 700; color: var(--ink); background: #FFE680; border: 1.5px solid var(--ink); border-radius: 999px; width: 26px; height: 26px; display: grid; place-items: center; transform: rotate(-4deg); box-shadow: 2px 2px 0 rgba(0,0,0,0.15); z-index: 8; }
+
+  /* ───── Annotations ───── */
+  .notes { display: flex; flex-direction: column; gap: 18px; padding-top: 4px; }
+  .note { display: grid; grid-template-columns: 32px 1fr; gap: 14px; align-items: start; }
+  .note-num { font-family: var(--hand); font-weight: 700; font-size: 18px; color: var(--ink); background: #FFE680; border: 1.5px solid var(--ink); border-radius: 999px; width: 28px; height: 28px; display: grid; place-items: center; transform: rotate(-3deg); box-shadow: 2px 2px 0 rgba(0,0,0,0.12); }
+  .note-body { padding-top: 2px; }
+  .note-title { font-family: var(--hand); font-weight: 600; font-size: 22px; color: var(--ink); line-height: 1.1; margin: 0 0 4px; letter-spacing: -0.3px; }
+  .note-desc { font-family: var(--hand-2); font-size: 16px; color: var(--ink-2); line-height: 1.4; margin: 0 0 8px; }
+  .toks { display: flex; flex-wrap: wrap; gap: 5px; }
+  .tok { font-family: var(--font-mono); font-size: 11px; font-weight: 500; color: var(--accent); background: #1C2027; border: 1px solid #2A2F38; border-radius: 5px; padding: 2px 7px; }
+  .tok.muted { color: var(--fg2); }
+  .tok.semantic { color: #6BB585; }
+  .tok.note { color: var(--ink-3); background: transparent; border-color: var(--ink-3); }
+  .comp-pill { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.4px; color: var(--ink); background: #FFE680; border: 1.5px solid var(--ink); border-radius: 4px; padding: 2px 6px; transform: rotate(-1deg); margin: 0 2px; }
+
+  /* ───── Contextual variants gallery ───── */
+  .ctx-gal { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 6px; }
+  .ctx-card { background: var(--bg); border: 1.5px solid var(--ink); border-radius: 16px; padding: 22px 18px 20px; box-shadow: 4px 5px 0 rgba(0,0,0,0.12); display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; }
+  .ctx-card .ci { width: 50px; height: 50px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; }
+  .ctx-card .ci .lucide { width: 24px; height: 24px; stroke-width: 1.75; }
+  .ctx-card .ct { font-size: 16px; font-weight: 700; color: var(--fg1); letter-spacing: -0.3px; }
+  .ctx-card .cs { font-size: 12.5px; color: var(--fg2); line-height: 1.4; }
+  .ctx-card .src { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.6px; text-transform: uppercase; color: var(--fg3); border-top: 1px solid var(--divider); padding-top: 10px; width: 100%; margin-top: 4px; }
+
+  /* ───── Constraints + legend ───── */
+  .constraints { margin-top: 56px; padding: 32px 28px; background: rgba(255,255,255,0.45); border: 1.5px dashed var(--ink-2); border-radius: 18px; }
+  .constraints h3 { font-family: var(--hand); font-size: 28px; font-weight: 700; margin: 0 0 18px; letter-spacing: -0.5px; color: var(--ink); }
+  .constraints ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 32px; }
+  .constraints li { font-family: var(--hand-2); font-size: 17px; color: var(--ink-2); line-height: 1.4; padding-left: 24px; position: relative; }
+  .constraints li::before { content: "✓"; position: absolute; left: 0; top: 0; color: var(--accent); font-weight: 700; font-family: var(--hand); font-size: 22px; line-height: 1; }
+  .constraints li.x::before { content: "✗"; color: var(--danger); }
+  .legend { margin-top: 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .legend-card { padding: 16px 18px; background: rgba(255,255,255,0.45); border: 1.5px dashed var(--ink-2); border-radius: 12px; }
+  .legend-name { font-family: var(--font-mono); font-size: 11px; color: var(--accent); letter-spacing: 0.4px; margin-bottom: 6px; }
+  .legend-desc { font-family: var(--hand-2); font-size: 16px; color: var(--ink-2); line-height: 1.35; }
+
+  .lucide { width: 22px; height: 22px; stroke-width: 1.75; }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+
+  <!-- ═══════════════ DOC HEADER ═══════════════ -->
+  <header class="doc-head">
+    <div>
+      <div class="doc-eyebrow">Tacticx · Spec · Paywall · v01</div>
+      <h1 class="doc-title">Paywall — <em>bottom sheet premium</em></h1>
+      <p class="doc-sub">Sheet contextuelle (≈ 85 % de l'écran) déclenchée par n'importe quel élément verrouillé. Le bloc haut s'adapte au déclencheur ; le reste est commun. Dark mode, safe-area respectée.</p>
+    </div>
+    <div class="doc-meta">
+      <strong>Fichier</strong>&nbsp;·&nbsp;PaywallSheet.tsx<br/>
+      <strong>Plateforme</strong>&nbsp;·&nbsp;iOS + Android (Expo 56)<br/>
+      <strong>Icônes</strong>&nbsp;·&nbsp;Ionicons -outline<br/>
+      <strong>Composants</strong>&nbsp;·&nbsp;Reacticx kit
+    </div>
+  </header>
+
+  <!-- ═══════════════ TRIGGERS OVERVIEW ═══════════════ -->
+  <section class="flow">
+    <h2 class="flow-title">D'où s'ouvre la sheet</h2>
+    <p class="flow-sub">6 déclencheurs · tap sur un élément verrouillé (<span style="font-family:var(--font-mono);font-size:13px">lock-closed-outline</span> + blur) · slide-up natif <span style="font-family:var(--font-mono);font-size:13px">decel · 360ms</span></p>
+
+    <div class="trig-rail">
+      <div class="trig">
+        <span class="ti"><i data-lucide="eye-off"></i></span>
+        <span class="tlock"><i data-lucide="lock"></i></span>
+        <span class="tlabel">Élément flouté</span>
+        <span class="tsrc">Feed communauté</span>
+      </div>
+      <div class="trig">
+        <span class="ti"><i data-lucide="upload"></i></span>
+        <span class="tlock"><i data-lucide="lock"></i></span>
+        <span class="tlabel">Publier une équipe</span>
+        <span class="tsrc">Communauté</span>
+      </div>
+      <div class="trig">
+        <span class="ti"><i data-lucide="trending-up"></i></span>
+        <span class="tlock"><i data-lucide="lock"></i></span>
+        <span class="tlabel">Sparkline rang</span>
+        <span class="tsrc">Profil</span>
+      </div>
+      <div class="trig">
+        <span class="ti"><i data-lucide="bookmark"></i></span>
+        <span class="tlock"><i data-lucide="lock"></i></span>
+        <span class="tlabel">Sauvegarder scénario</span>
+        <span class="tsrc">Calc</span>
+      </div>
+      <div class="trig">
+        <span class="ti"><i data-lucide="cloud"></i></span>
+        <span class="tlock"><i data-lucide="lock"></i></span>
+        <span class="tlabel">Sync cloud</span>
+        <span class="tsrc">Mes équipes</span>
+      </div>
+      <div class="trig">
+        <span class="ti"><i data-lucide="sparkles"></i></span>
+        <span class="tlabel">Section abonnement</span>
+        <span class="tsrc">Profil</span>
+      </div>
+      <div class="trig-arrow">
+        <div style="font-size:26px;margin-bottom:6px;">→</div>
+        <div class="sheetdot">
+          <div class="ms">
+            <div class="g"></div>
+            <div class="ic"></div>
+            <div class="l"></div>
+            <div class="l" style="width:60%"></div>
+            <div class="cta"></div>
+          </div>
+        </div>
+        <div class="lab">PaywallSheet</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ SPEC A — SHEET COMPLÈTE (ANNUEL) ═══════════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">A</span>
+      <h2 class="spec-title">Sheet complète</h2>
+      <span class="spec-eyebrow">déclencheur « suivi de rang » · annuel sélectionné</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status"><span>9:41</span><span class="status-icons"><i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i></span></div>
+
+          <!-- faint background screen -->
+          <div class="bg-screen">
+            <div class="bs-h"></div>
+            <div class="bs-card spark"><i style="height:30%"></i><i style="height:55%"></i><i style="height:40%"></i><i style="height:72%"></i><i style="height:60%"></i><i style="height:88%"></i></div>
+            <div class="bs-card"></div>
+          </div>
+          <div class="scrim"></div>
+
+          <!-- paywall sheet -->
+          <div class="pw">
+            <div class="pw-grab"></div>
+            <button class="pw-close"><i data-lucide="x"></i></button>
+            <div class="pw-body">
+              <div class="pw-ctx">
+                <div class="pw-ctx-ic"><i data-lucide="trending-up"></i></div>
+                <span class="eyebrow-pro">Tacticx Pro</span>
+                <h3>Suivi de rang</h3>
+                <p>Suis ta progression sur l'échelle ranked, semaine après semaine.</p>
+              </div>
+
+              <div class="pw-benes">
+                <div class="pw-bene"><span class="bc"><i data-lucide="check"></i></span><span class="t">Sync cloud de tes équipes</span></div>
+                <div class="pw-bene"><span class="bc"><i data-lucide="check"></i></span><span class="t">Publication dans la communauté</span></div>
+                <div class="pw-bene"><span class="bc"><i data-lucide="check"></i></span><span class="t">Suivi de rang + historique sparkline</span></div>
+                <div class="pw-bene"><span class="bc"><i data-lucide="check"></i></span><span class="t">Sauvegarder tes scénarios Calc</span></div>
+                <div class="pw-bene"><span class="bc"><i data-lucide="check"></i></span><span class="t">Objectifs de saison illimités</span></div>
+                <div class="pw-bene"><span class="bc"><i data-lucide="check"></i></span><span class="t">Accès en avant-première aux nouveautés</span></div>
+              </div>
+
+              <div class="pw-plans">
+                <div class="pw-seg-wrap">
+                  <div class="pw-seg">
+                    <button>Mensuel</button>
+                    <button class="on">Annuel</button>
+                  </div>
+                  <span class="pw-badge">−37 %</span>
+                </div>
+                <div class="pw-price">
+                  <div class="amt">29,99 €<small> /an</small></div>
+                  <div class="per">
+                    <div class="save">Économise 30 €</div>
+                    <div class="sub">soit 2,50 €/mois</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pw-foot">
+              <button class="pw-cta">Commencer — 29,99 €/an</button>
+              <div class="pw-links">
+                <button class="pw-link"><i data-lucide="receipt"></i>Restaurer les achats</button>
+                <button class="pw-link">Conditions · Confidentialité</button>
+              </div>
+              <p class="pw-legal">Renouvellement automatique. Annulable à tout moment.</p>
+              <div class="home-indicator"></div>
+            </div>
+          </div>
+
+          <!-- pins -->
+          <span class="pin" style="top: 112px; left: 50%; transform: translateX(-50%) rotate(-4deg);">1</span>
+          <span class="pin" style="top: 100px; right: 16px;">2</span>
+          <span class="pin" style="top: 170px; left: 16px;">3</span>
+          <span class="pin" style="top: 340px; left: 14px;">4</span>
+          <span class="pin" style="top: 470px; right: 60px;">5</span>
+          <span class="pin" style="top: 500px; left: 14px;">6</span>
+          <span class="pin" style="bottom: 128px; right: 16px;">7</span>
+          <span class="pin" style="bottom: 78px; left: 14px;">8</span>
+        </div>
+        <div class="phone-dims">380 × 800 · sheet ≈ 85 % · scale 1:1</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><div class="note-num">1</div><div class="note-body">
+        <h4 class="note-title">Bloc haut contextuel</h4>
+        <p class="note-desc">S'adapte au déclencheur (voir variantes plus bas). Icône Ionicons 26pt dans cercle 56pt <span class="tok">--accent-soft</span>, eyebrow « Tacticx&nbsp;Pro », titre court, sous-titre 1 ligne — ce que ça débloque concrètement.</p>
+        <div class="toks"><span class="tok">--accent-soft</span><span class="tok">--accent</span><span class="tok muted">trending-up-outline</span><span class="tok muted">--fs-xl 700</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">2</div><div class="note-body">
+        <h4 class="note-title">Fermeture explicite</h4>
+        <p class="note-desc"><span class="tok muted">close-outline</span> 30pt en haut à droite + drag-to-dismiss sur la poignée + tap sur le scrim. Exigence App&nbsp;Store : dismiss toujours atteignable, hors paroi pouce.</p>
+        <div class="toks"><span class="tok muted">--surface-high</span><span class="tok muted">--border</span><span class="tok note">hit ≥ 44pt</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">3</div><div class="note-body">
+        <h4 class="note-title">Poignée + sheet sur surface01</h4>
+        <p class="note-desc">Drag indicator pill 32×4 en <span class="tok muted">--border</span>. Fond de la sheet <span class="tok">--surface</span>, coins <span class="tok muted">--r-xl</span> haut uniquement, scrim <span class="tok muted">blur 18px</span> + <span class="tok muted">rgba(11,13,16,.72)</span>.</p>
+        <div class="toks"><span class="tok">--surface</span><span class="tok muted">--r-xl</span><span class="tok muted">--shadow-lg</span><span class="comp-pill">Reacticx · Sheet</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">4</div><div class="note-body">
+        <h4 class="note-title">Avantages Premium — 6 lignes</h4>
+        <p class="note-desc">Chaque ligne : <span class="tok muted">checkmark-outline</span> accent (pastille <span class="tok">--accent-soft</span>) + label <span class="tok muted">--fg1</span>. Sentence case, jamais de Title Case. Liste statique, non scrollée individuellement.</p>
+        <div class="toks"><span class="tok">--accent</span><span class="tok">--accent-soft</span><span class="tok muted">gap 13</span><span class="tok muted">checkmark-outline</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">5</div><div class="note-body">
+        <h4 class="note-title">Sélecteur de plan + badge</h4>
+        <p class="note-desc"><span class="comp-pill">Reacticx · Segmented Control</span> Mensuel | Annuel. <strong>Annuel par défaut.</strong> <span class="comp-pill">Reacticx · Badge</span> « −37&nbsp;% » <span class="tok semantic">success</span> ancré sur l'option Annuel. Fill <span class="tok">--accent</span> sur l'onglet actif.</p>
+        <div class="toks"><span class="tok">--accent</span><span class="tok semantic">--success</span><span class="tok semantic">--success-soft</span><span class="tok muted">--surface-sunken</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">6</div><div class="note-body">
+        <h4 class="note-title">Carte prix active</h4>
+        <p class="note-desc">Change selon la sélection. Prix en grand tabulaire, sous-ligne « soit 2,50 €/mois » en <span class="tok muted">--fg3</span>. Fond <span class="tok muted">--surface-high</span> (surface02), border <span class="tok">--accent 1.5px</span>, radius 16.</p>
+        <div class="toks"><span class="tok muted">--surface-high</span><span class="tok">--accent</span><span class="tok muted">radius 16</span><span class="tok muted">tabular-nums</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">7</div><div class="note-body">
+        <h4 class="note-title">CTA primaire — libellé dynamique</h4>
+        <p class="note-desc">Pleine largeur, h&nbsp;50. Libellé suit le plan : « Commencer — 29,99 €/an » ou « — 4,99 €/mois ». Hairline supérieure <span class="tok muted">--divider</span> détache la zone d'action.</p>
+        <div class="toks"><span class="tok">--accent</span><span class="tok muted">--fg-inverse</span><span class="tok">--r-md</span><span class="tok muted">--fs-md 600</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">8</div><div class="note-body">
+        <h4 class="note-title">Liens secondaires + légal + safe-area</h4>
+        <p class="note-desc">Centrés, <span class="tok muted">--fg3 11pt</span> : « Restaurer les achats » (<span class="tok muted">receipt-outline</span>) · « Conditions · Confidentialité ». Note légale <span class="tok muted">--fg-faint</span>. Bouton au-dessus du home indicator.</p>
+        <div class="toks"><span class="tok muted">--fg3</span><span class="tok muted">--fg-faint</span><span class="tok note">safe-area bottom</span><span class="tok muted">receipt-outline</span></div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ SPEC B — MENSUEL ═══════════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">B</span>
+      <h2 class="spec-title">Plan mensuel</h2>
+      <span class="spec-eyebrow">carte prix + cta swap · badge reste sur annuel</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status"><span>9:41</span><span class="status-icons"><i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i></span></div>
+          <div class="bg-screen">
+            <div class="bs-h"></div>
+            <div class="bs-card spark"><i style="height:30%"></i><i style="height:55%"></i><i style="height:40%"></i><i style="height:72%"></i><i style="height:60%"></i><i style="height:88%"></i></div>
+            <div class="bs-card"></div>
+          </div>
+          <div class="scrim"></div>
+
+          <div class="pw">
+            <div class="pw-grab"></div>
+            <button class="pw-close"><i data-lucide="x"></i></button>
+            <div class="pw-body">
+              <div class="pw-ctx">
+                <div class="pw-ctx-ic"><i data-lucide="trending-up"></i></div>
+                <span class="eyebrow-pro">Tacticx Pro</span>
+                <h3>Suivi de rang</h3>
+                <p>Suis ta progression sur l'échelle ranked, semaine après semaine.</p>
+              </div>
+
+              <div class="pw-benes">
+                <div class="pw-bene"><span class="bc"><i data-lucide="check"></i></span><span class="t">Sync cloud de tes équipes</span></div>
+                <div class="pw-bene"><span class="bc"><i data-lucide="check"></i></span><span class="t">Publication dans la communauté</span></div>
+                <div class="pw-bene"><span class="bc"><i data-lucide="check"></i></span><span class="t">Suivi de rang + historique sparkline</span></div>
+                <div class="pw-bene"><span class="bc"><i data-lucide="check"></i></span><span class="t">Sauvegarder tes scénarios Calc</span></div>
+                <div class="pw-bene"><span class="bc"><i data-lucide="check"></i></span><span class="t">Objectifs de saison illimités</span></div>
+                <div class="pw-bene"><span class="bc"><i data-lucide="check"></i></span><span class="t">Accès en avant-première aux nouveautés</span></div>
+              </div>
+
+              <div class="pw-plans">
+                <div class="pw-seg-wrap">
+                  <div class="pw-seg">
+                    <button class="on">Mensuel</button>
+                    <button>Annuel</button>
+                  </div>
+                  <span class="pw-badge">−37 %</span>
+                </div>
+                <div class="pw-price">
+                  <div class="amt">4,99 €<small> /mois</small></div>
+                  <div class="per">
+                    <div class="sub">facturé mensuellement</div>
+                    <div class="sub">sans engagement</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pw-foot">
+              <button class="pw-cta">Commencer — 4,99 €/mois</button>
+              <div class="pw-links">
+                <button class="pw-link"><i data-lucide="receipt"></i>Restaurer les achats</button>
+                <button class="pw-link">Conditions · Confidentialité</button>
+              </div>
+              <p class="pw-legal">Renouvellement automatique. Annulable à tout moment.</p>
+              <div class="home-indicator"></div>
+            </div>
+          </div>
+
+          <span class="pin" style="top: 470px; left: 60px;">1</span>
+          <span class="pin" style="top: 470px; right: 60px;">2</span>
+          <span class="pin" style="top: 540px; left: 14px;">3</span>
+          <span class="pin" style="bottom: 128px; right: 16px;">4</span>
+        </div>
+        <div class="phone-dims">380 × 800 · état mensuel</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><div class="note-num">1</div><div class="note-body">
+        <h4 class="note-title">Onglet Mensuel actif</h4>
+        <p class="note-desc">Le fill <span class="tok">--accent</span> glisse sur « Mensuel » (transition <span class="tok muted">160ms · standard</span>). Le reste de la sheet est inchangé — seuls la carte prix et le CTA réagissent.</p>
+        <div class="toks"><span class="tok">--accent</span><span class="tok muted">--fg-inverse</span><span class="comp-pill">Segmented Control</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">2</div><div class="note-body">
+        <h4 class="note-title">Le badge −37 % ne bouge pas</h4>
+        <p class="note-desc">Il reste ancré sur l'option <strong>Annuel</strong> même quand Mensuel est actif : c'est un repère d'incitation, pas un état. Rappelle l'économie disponible.</p>
+        <div class="toks"><span class="tok semantic">--success</span><span class="tok semantic">--success-soft</span><span class="tok note">incitation persistante</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">3</div><div class="note-body">
+        <h4 class="note-title">Carte prix mensuelle</h4>
+        <p class="note-desc">Prix « 4,99 €/mois », pas de sous-ligne d'équivalence — remplacée par « facturé mensuellement · sans engagement » en <span class="tok muted">--fg3</span>. Border accent identique.</p>
+        <div class="toks"><span class="tok muted">--surface-high</span><span class="tok">--accent</span><span class="tok muted">--fg3</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">4</div><div class="note-body">
+        <h4 class="note-title">CTA suit le plan</h4>
+        <p class="note-desc">« Commencer — 4,99 €/mois ». Même style, libellé recomposé à la volée depuis le plan sélectionné — une seule source de vérité (prix + période).</p>
+        <div class="toks"><span class="tok">--accent</span><span class="tok muted">label dynamique</span></div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ SPEC C — VARIANTES BLOC HAUT ═══════════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">C</span>
+      <h2 class="spec-title">Bloc haut contextuel</h2>
+      <span class="spec-eyebrow">seul le haut change · corps + offres identiques</span>
+    </div>
+
+    <div class="ctx-gal">
+      <div class="ctx-card">
+        <div class="ci"><i data-lucide="cloud"></i></div>
+        <div class="ct">Sync cloud</div>
+        <div class="cs">Retrouve tes équipes sur tous tes appareils, sauvegardées en continu.</div>
+        <div class="src">cloud-outline · depuis Mes équipes</div>
+      </div>
+      <div class="ctx-card">
+        <div class="ci"><i data-lucide="upload"></i></div>
+        <div class="ct">Publication d'équipes</div>
+        <div class="cs">Partage tes compositions dans la communauté et reçois des retours.</div>
+        <div class="src">cloud-upload-outline · depuis Communauté</div>
+      </div>
+      <div class="ctx-card">
+        <div class="ci"><i data-lucide="bookmark"></i></div>
+        <div class="ct">Scénarios Calc</div>
+        <div class="cs">Sauvegarde et compare tes calculs de dégâts à tout moment.</div>
+        <div class="src">bookmark-outline · depuis Calc</div>
+      </div>
+      <div class="ctx-card">
+        <div class="ci"><i data-lucide="sparkles"></i></div>
+        <div class="ct">Tacticx Pro</div>
+        <div class="cs">Débloque l'ensemble des fonctionnalités premium d'un seul coup.</div>
+        <div class="src">sparkles-outline · depuis Profil</div>
+      </div>
+    </div>
+
+    <div class="notes" style="grid-column: 1 / -1; margin-top: 28px;">
+      <div class="note"><div class="note-num">i</div><div class="note-body">
+        <h4 class="note-title">Une seule sheet, un slot contextuel</h4>
+        <p class="note-desc">Le déclencheur passe une <span class="tok muted">feature</span> en prop (<span class="tok muted">icon · titre · sous-titre</span>). Tout le reste — liste d'avantages, sélecteur, prix, footer — reste strictement identique. La feature déclencheuse apparaît aussi en tête de la liste d'avantages (auto-scroll si nécessaire), jamais d'écran sur-mesure par déclencheur.</p>
+        <div class="toks"><span class="tok muted">props.feature</span><span class="tok">--accent-soft</span><span class="tok note">DRY · 1 composant</span><span class="comp-pill">Reacticx · Shimmer</span><span class="comp-pill">Reacticx · Toast</span></div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ CONSTRAINTS ═══════════════ -->
+  <section class="constraints">
+    <h3>Règles de cohérence</h3>
+    <ul>
+      <li>Tokens <span style="font-family:var(--font-mono);font-size:14px">theme.ts</span> uniquement — aucune valeur en dur</li>
+      <li>Ionicons <span style="font-family:var(--font-mono);font-size:14px">-outline</span> exclusivement</li>
+      <li>Dark mode uniquement — fond <span style="font-family:var(--font-mono);font-size:14px">--surface</span></li>
+      <li>Touch targets 44×44pt minimum (close, liens, onglets)</li>
+      <li>Safe-area bas respectée — CTA au-dessus du home indicator</li>
+      <li>Sentence case partout · pas d'emoji · pas d'exclamation</li>
+      <li class="x">Pas de gradient, néon, ni « offre limitée » anxiogène</li>
+      <li class="x">Pas d'écran paywall sur-mesure par déclencheur — 1 sheet</li>
+    </ul>
+  </section>
+
+  <!-- ═══════════════ LEGEND ═══════════════ -->
+  <section class="legend">
+    <div class="legend-card"><div class="legend-name">Reacticx · Segmented Control</div><div class="legend-desc">Sélecteur de plan Mensuel | Annuel — fill accent sur l'onglet actif.</div></div>
+    <div class="legend-card"><div class="legend-name">Reacticx · Badge</div><div class="legend-desc">« −37 % » success ancré sur l'option Annuel, persistant.</div></div>
+    <div class="legend-card"><div class="legend-name">Reacticx · Progress</div><div class="legend-desc">Barre d'achat / restauration en cours (state transitoire du CTA).</div></div>
+    <div class="legend-card"><div class="legend-name">Reacticx · Shimmer</div><div class="legend-desc">Skeleton des prix le temps du fetch StoreKit / Billing.</div></div>
+    <div class="legend-card"><div class="legend-name">Reacticx · Toast</div><div class="legend-desc">Confirmation d'abonnement · erreurs réseau (« Réseau indisponible. Réessayer. »).</div></div>
+    <div class="legend-card"><div class="legend-name">theme.ts · tokens</div><div class="legend-desc">surface · accent · success · fg1/2/3 · r-xl · shadow-lg — zéro hard-code.</div></div>
+  </section>
+
+</div>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

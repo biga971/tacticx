@@ -1,0 +1,1609 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>Tacticx — Onboarding · Wireframes annotés</title>
+<link rel="stylesheet" href="tokens.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Patrick+Hand&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@0.461.0/dist/umd/lucide.min.js"></script>
+<style>
+  /* ───── Paper / spec-sheet background (light wireframe context) ───── */
+  :root {
+    --paper:        #ECE6D6;
+    --paper-2:      #E2DCC8;
+    --ink:          #1A1A1A;
+    --ink-2:        #4A4A40;
+    --ink-3:        #87826F;
+    --hand:         "Caveat", "Patrick Hand", cursive;
+    --hand-2:       "Patrick Hand", "Caveat", cursive;
+  }
+  html, body { margin: 0; }
+  body {
+    background: var(--paper);
+    background-image:
+      radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+    background-size: 22px 22px;
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  * { box-sizing: border-box; }
+
+  .sheet { max-width: 1280px; margin: 0 auto; padding: 56px 48px 96px; }
+
+  /* ───── Document header ───── */
+  .doc-head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 32px;
+    border-bottom: 1.5px dashed var(--ink-2);
+    padding-bottom: 24px;
+    margin-bottom: 40px;
+  }
+  .doc-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 10px;
+  }
+  .doc-title {
+    font-family: var(--hand);
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -1px;
+    color: var(--ink);
+    margin: 0;
+  }
+  .doc-title em {
+    font-style: normal;
+    color: var(--accent);
+    background: linear-gradient(180deg, transparent 60%, rgba(91,141,239,0.25) 60%);
+    padding: 0 6px;
+  }
+  .doc-sub {
+    font-family: var(--hand-2);
+    font-size: 22px;
+    color: var(--ink-2);
+    margin-top: 8px;
+    line-height: 1.3;
+    max-width: 640px;
+  }
+  .doc-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    line-height: 1.7;
+    text-align: right;
+  }
+  .doc-meta strong { color: var(--ink); font-weight: 500; }
+
+  /* ───── Flow overview ───── */
+  .flow {
+    background: rgba(255,255,255,0.4);
+    border: 1.5px dashed var(--ink-2);
+    border-radius: 18px;
+    padding: 28px 24px 32px;
+    margin-bottom: 64px;
+    position: relative;
+  }
+  .flow-title {
+    font-family: var(--hand);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 6px;
+    letter-spacing: -0.5px;
+  }
+  .flow-sub {
+    font-family: var(--hand-2);
+    font-size: 16px;
+    color: var(--ink-3);
+    margin-bottom: 22px;
+  }
+  .flow-rail {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
+  .flow-step { display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; }
+  .flow-step + .flow-step::before {
+    content: "";
+    position: absolute;
+    left: -16px;
+    top: 50%;
+    width: 14px;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, var(--ink-2) 0 4px, transparent 4px 8px);
+  }
+  .flow-mini {
+    width: 100%;
+    aspect-ratio: 9 / 16;
+    background: var(--bg);
+    border: 1.5px solid var(--ink);
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 4px 5px 0 rgba(0,0,0,0.12);
+  }
+  .flow-mini .mini-bar {
+    position: absolute;
+    left: 12%; right: 12%; top: 12%;
+    height: 3px;
+    display: flex; gap: 3px;
+  }
+  .flow-mini .mini-bar span {
+    flex: 1;
+    background: var(--border);
+    border-radius: 2px;
+  }
+  .flow-mini .mini-bar span.on { background: var(--accent); }
+  .flow-mini .mini-title {
+    position: absolute;
+    left: 12%; right: 12%; top: 22%;
+    height: 8px;
+    background: var(--fg2);
+    border-radius: 2px;
+    opacity: 0.7;
+  }
+  .flow-mini .mini-sub {
+    position: absolute;
+    left: 12%; width: 55%; top: 30%;
+    height: 4px;
+    background: var(--fg3);
+    border-radius: 2px;
+    opacity: 0.5;
+  }
+  .flow-mini .mini-cards {
+    position: absolute;
+    left: 12%; right: 12%; top: 40%;
+    display: flex; flex-direction: column; gap: 5px;
+  }
+  .flow-mini .mini-card {
+    height: 22px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+  }
+  .flow-mini .mini-card.sel {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .flow-mini .mini-btn {
+    position: absolute;
+    left: 12%; right: 12%; bottom: 8%;
+    height: 14px;
+    background: var(--accent);
+    border-radius: 4px;
+  }
+  .flow-mini.result .mini-bar,
+  .flow-mini.result .mini-cards,
+  .flow-mini.result .mini-sub { display: none; }
+  .flow-mini.result .mini-check {
+    position: absolute; left: 50%; top: 32%;
+    transform: translateX(-50%);
+    width: 40%; aspect-ratio: 1;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    border: 2px solid var(--accent);
+  }
+  .flow-mini.result .mini-title { top: 56%; left: 25%; right: 25%; }
+  .flow-mini.result .mini-recap {
+    position: absolute; left: 12%; right: 12%; top: 66%;
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .flow-mini.result .mini-recap span {
+    height: 6px; background: var(--surface); border-radius: 2px;
+  }
+
+  .flow-num {
+    font-family: var(--hand);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--ink);
+    background: #FFE680;
+    border: 1.5px solid var(--ink);
+    border-radius: 999px;
+    width: 32px; height: 32px;
+    display: grid; place-items: center;
+    transform: rotate(-3deg);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.12);
+  }
+  .flow-label {
+    font-family: var(--hand);
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--ink);
+    text-align: center;
+    line-height: 1.1;
+  }
+  .flow-label small {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 2px;
+  }
+
+  /* ───── Spec sections ───── */
+  .spec {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 56px;
+    padding: 48px 0 56px;
+    border-top: 1.5px dashed var(--ink-2);
+    position: relative;
+  }
+  .spec-head {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    margin-bottom: 4px;
+  }
+  .spec-step {
+    font-family: var(--hand);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--ink);
+    background: #FFE680;
+    border: 1.5px solid var(--ink);
+    border-radius: 999px;
+    padding: 4px 14px;
+    transform: rotate(-2deg);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.12);
+  }
+  .spec-title {
+    font-family: var(--hand);
+    font-size: 38px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0;
+    letter-spacing: -0.5px;
+  }
+  .spec-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+
+  /* ───── Phone frame (dark — actual DS preview) ───── */
+  .phone-wrap {
+    position: sticky;
+    top: 32px;
+    align-self: start;
+  }
+  .phone {
+    width: 360px;
+    height: 720px;
+    background: var(--bg);
+    border-radius: 38px;
+    border: 1.5px solid var(--ink);
+    box-shadow: 6px 8px 0 rgba(0,0,0,0.12), inset 0 0 0 8px #08090C;
+    padding: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .phone-inner {
+    width: 100%;
+    height: 100%;
+    background: var(--bg);
+    border-radius: 30px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .phone-dims {
+    position: absolute;
+    bottom: -32px;
+    left: 0; right: 0;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* ───── Status bar ───── */
+  .status {
+    height: 28px;
+    padding: 0 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--fg1);
+    flex-shrink: 0;
+  }
+  .status-icons { display: flex; align-items: center; gap: 5px; opacity: 0.9; }
+
+  /* ───── Top bar (progress + back) ───── */
+  .topbar {
+    padding: 8px 18px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex-shrink: 0;
+  }
+  .topbar-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 32px;
+  }
+  .back-btn {
+    width: 30px; height: 30px;
+    display: grid; place-items: center;
+    color: var(--fg2);
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    padding: 0;
+  }
+  .back-btn.disabled { opacity: 0.3; }
+  .step-count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    color: var(--fg3);
+    letter-spacing: 0.4px;
+  }
+  .progress {
+    display: flex;
+    gap: 6px;
+    height: 4px;
+  }
+  .progress span {
+    flex: 1;
+    background: var(--surface-high);
+    border-radius: var(--r-pill);
+    overflow: hidden;
+  }
+  .progress span.on { background: var(--accent); }
+  .progress span.now {
+    background: linear-gradient(90deg, var(--accent) 60%, var(--surface-high) 60%);
+  }
+
+  /* ───── Screen body ───── */
+  .body {
+    flex: 1;
+    padding: 24px 18px 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .h-title {
+    font-family: var(--font-sans);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+    line-height: 1.15;
+    color: var(--fg1);
+    margin: 0 0 6px;
+  }
+  .h-sub {
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--fg2);
+    margin: 0 0 22px;
+  }
+
+  /* ───── Option cards ───── */
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 14px 14px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    text-align: left;
+    cursor: pointer;
+    transition: background 160ms cubic-bezier(0.4,0,0.2,1), border-color 160ms;
+    position: relative;
+  }
+  .opt.selected {
+    background: var(--accent-soft);
+    border: 1.5px solid var(--accent);
+    padding: 13.5px 13.5px;
+  }
+  .opt-ico {
+    width: 38px; height: 38px;
+    border-radius: var(--r-md);
+    background: var(--surface-high);
+    color: var(--fg2);
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .opt.selected .opt-ico {
+    background: rgba(91,141,239,0.15);
+    color: var(--accent);
+  }
+  .opt-body { flex: 1; min-width: 0; }
+  .opt-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 3px;
+  }
+  .opt-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--fg1);
+    letter-spacing: -0.2px;
+  }
+  .opt.selected .opt-title { color: var(--accent); }
+  .opt-desc {
+    font-size: 12.5px;
+    line-height: 1.35;
+    color: var(--fg3);
+  }
+  .opt-badge {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--fg2);
+    background: var(--surface-high);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    padding: 2px 6px;
+  }
+  .opt-radio {
+    width: 20px; height: 20px;
+    border-radius: 999px;
+    border: 1.5px solid var(--border-strong);
+    flex-shrink: 0;
+    display: grid; place-items: center;
+  }
+  .opt.selected .opt-radio {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+  .opt.selected .opt-radio::after {
+    content: "";
+    width: 6px; height: 6px;
+    border-radius: 999px;
+    background: var(--fg-inverse);
+  }
+
+  /* compact variant (step 3) */
+  .opt.compact { padding: 12px 14px; }
+  .opt.compact .opt-ico { width: 34px; height: 34px; }
+  .opt.compact.selected { padding: 11.5px 13.5px; }
+
+  /* ───── Bottom action ───── */
+  .action {
+    padding: 14px 18px 22px;
+    border-top: 1px solid var(--divider);
+    background: var(--bg);
+    flex-shrink: 0;
+  }
+  .btn {
+    width: 100%;
+    height: 48px;
+    background: var(--accent);
+    color: var(--fg-inverse);
+    border: 0;
+    border-radius: var(--r-md);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.1px;
+    cursor: pointer;
+  }
+  .btn.disabled { background: var(--surface-high); color: var(--fg-faint); }
+  .home-indicator {
+    width: 120px; height: 4px;
+    background: var(--fg2);
+    border-radius: 999px;
+    margin: 6px auto 0;
+    opacity: 0.6;
+  }
+
+  /* ───── Result screen ───── */
+  .result-body {
+    flex: 1;
+    padding: 0 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .check-wrap {
+    margin: 28px auto 18px;
+    width: 88px;
+    height: 88px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    border: 1.5px solid var(--accent);
+    display: grid;
+    place-items: center;
+    color: var(--accent);
+    position: relative;
+  }
+  .check-wrap::before {
+    content: "";
+    position: absolute;
+    inset: -16px;
+    border-radius: 999px;
+    border: 1px solid var(--accent);
+    opacity: 0.2;
+  }
+  .result-title {
+    font-family: var(--font-sans);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--fg1);
+    text-align: center;
+    letter-spacing: -0.5px;
+    margin: 4px 0 6px;
+  }
+  .result-sub {
+    font-size: 14px;
+    color: var(--fg2);
+    text-align: center;
+    line-height: 1.4;
+    margin: 0 auto 24px;
+    max-width: 280px;
+  }
+  .recap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+  .recap-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-top: 1px solid var(--divider);
+    font-size: 13px;
+    color: var(--fg2);
+  }
+  .recap-row:first-child { border-top: 0; }
+  .recap-row .opt-ico {
+    width: 28px; height: 28px;
+    background: transparent;
+    color: var(--fg3);
+  }
+  .recap-row strong {
+    color: var(--fg1);
+    font-weight: 500;
+    margin-left: auto;
+  }
+
+  /* ───── Callout pins on phone ───── */
+  .pin {
+    position: absolute;
+    font-family: var(--hand);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    background: #FFE680;
+    border: 1.5px solid var(--ink);
+    border-radius: 999px;
+    width: 26px; height: 26px;
+    display: grid; place-items: center;
+    transform: rotate(-4deg);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.15);
+    z-index: 5;
+  }
+
+  /* ───── Annotations column ───── */
+  .notes {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding-top: 4px;
+  }
+  .note {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+  .note-num {
+    font-family: var(--hand);
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--ink);
+    background: #FFE680;
+    border: 1.5px solid var(--ink);
+    border-radius: 999px;
+    width: 28px; height: 28px;
+    display: grid; place-items: center;
+    transform: rotate(-3deg);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.12);
+  }
+  .note-body { padding-top: 2px; }
+  .note-title {
+    font-family: var(--hand);
+    font-weight: 600;
+    font-size: 22px;
+    color: var(--ink);
+    line-height: 1.1;
+    margin: 0 0 4px;
+    letter-spacing: -0.3px;
+  }
+  .note-desc {
+    font-family: var(--hand-2);
+    font-size: 16px;
+    color: var(--ink-2);
+    line-height: 1.4;
+    margin: 0 0 8px;
+  }
+  .toks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .tok {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    background: #1C2027;
+    border: 1px solid #2A2F38;
+    border-radius: 5px;
+    padding: 2px 7px;
+    letter-spacing: 0;
+  }
+  .tok.muted { color: var(--fg2); }
+  .tok.semantic { color: #5FA978; }
+  .tok.note { color: var(--ink-3); background: transparent; border-color: var(--ink-3); }
+
+  /* ───── Inline component pills (Reacticx etc) ───── */
+  .comp-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.4px;
+    color: var(--ink);
+    background: #FFE680;
+    border: 1.5px solid var(--ink);
+    border-radius: 4px;
+    padding: 2px 6px;
+    transform: rotate(-1deg);
+    margin: 0 2px;
+  }
+
+  /* ───── UX constraints strip (bottom) ───── */
+  .constraints {
+    margin-top: 56px;
+    padding: 32px 28px;
+    background: rgba(255,255,255,0.45);
+    border: 1.5px dashed var(--ink-2);
+    border-radius: 18px;
+  }
+  .constraints h3 {
+    font-family: var(--hand);
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 18px;
+    letter-spacing: -0.5px;
+    color: var(--ink);
+  }
+  .constraints ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 32px;
+  }
+  .constraints li {
+    font-family: var(--hand-2);
+    font-size: 17px;
+    color: var(--ink-2);
+    line-height: 1.4;
+    padding-left: 24px;
+    position: relative;
+  }
+  .constraints li::before {
+    content: "✓";
+    position: absolute;
+    left: 0; top: 0;
+    color: var(--accent);
+    font-weight: 700;
+    font-family: var(--hand);
+    font-size: 22px;
+    line-height: 1;
+  }
+  .constraints li.x::before {
+    content: "✗";
+    color: var(--danger);
+  }
+
+  /* ───── Reacticx components legend ───── */
+  .legend {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .legend-card {
+    padding: 16px 18px;
+    background: rgba(255,255,255,0.45);
+    border: 1.5px dashed var(--ink-2);
+    border-radius: 12px;
+  }
+  .legend-name {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.4px;
+    margin-bottom: 6px;
+  }
+  .legend-desc {
+    font-family: var(--hand-2);
+    font-size: 16px;
+    color: var(--ink-2);
+    line-height: 1.35;
+  }
+
+  /* ───── Misc helpers ───── */
+  .lucide { width: 22px; height: 22px; stroke-width: 1.75; }
+  .opt-ico .lucide { width: 22px; height: 22px; }
+  .opt.compact .opt-ico .lucide { width: 20px; height: 20px; }
+  .status-icons .lucide { width: 14px; height: 14px; stroke-width: 2; }
+  .back-btn .lucide { width: 22px; height: 22px; stroke-width: 1.6; }
+  .check-wrap .lucide { width: 48px; height: 48px; stroke-width: 1.5; }
+  .recap-row .opt-ico .lucide { width: 16px; height: 16px; }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       DOC HEADER
+       ═══════════════════════════════════════════════════════════ -->
+  <header class="doc-head">
+    <div>
+      <div class="doc-eyebrow">Tacticx · Spec · v01</div>
+      <h1 class="doc-title">Onboarding — <em>wireframes annotés</em></h1>
+      <p class="doc-sub">4 étapes séquentielles + écran de résultat. Friction zéro, dark mode, conçu pour rester sans-scroll sur iPhone SE.</p>
+    </div>
+    <div class="doc-meta">
+      <strong>Plateforme</strong>&nbsp;·&nbsp;iOS + Android (RN / Expo 56)<br/>
+      <strong>Viewport</strong>&nbsp;·&nbsp;320 → 430 pt<br/>
+      <strong>Tokens</strong>&nbsp;·&nbsp;theme.ts (DS Tacticx)<br/>
+      <strong>Composants</strong>&nbsp;·&nbsp;Reacticx kit
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FLOW OVERVIEW
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="flow">
+    <h2 class="flow-title">Le flux complet</h2>
+    <p class="flow-sub">Une question par écran · barre de progression en haut · transition slide horizontal natif iOS · back possible à chaque étape</p>
+
+    <div class="flow-rail">
+      <div class="flow-step">
+        <div class="flow-mini">
+          <div class="mini-bar"><span class="on now"></span><span></span><span></span><span></span></div>
+          <div class="mini-title"></div>
+          <div class="mini-sub"></div>
+          <div class="mini-cards">
+            <div class="mini-card"></div>
+            <div class="mini-card sel"></div>
+            <div class="mini-card"></div>
+          </div>
+          <div class="mini-btn"></div>
+        </div>
+        <div class="flow-num">1</div>
+        <div class="flow-label">Niveau<small>3 cards</small></div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-mini">
+          <div class="mini-bar"><span class="on"></span><span class="on now"></span><span></span><span></span></div>
+          <div class="mini-title"></div>
+          <div class="mini-sub"></div>
+          <div class="mini-cards">
+            <div class="mini-card sel"></div>
+            <div class="mini-card"></div>
+            <div class="mini-card"></div>
+          </div>
+          <div class="mini-btn"></div>
+        </div>
+        <div class="flow-num">2</div>
+        <div class="flow-label">Format<small>vgc · 3v3</small></div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-mini">
+          <div class="mini-bar"><span class="on"></span><span class="on"></span><span class="on now"></span><span></span></div>
+          <div class="mini-title"></div>
+          <div class="mini-sub"></div>
+          <div class="mini-cards">
+            <div class="mini-card"></div>
+            <div class="mini-card"></div>
+            <div class="mini-card sel"></div>
+          </div>
+          <div class="mini-btn"></div>
+        </div>
+        <div class="flow-num">3</div>
+        <div class="flow-label">Style<small>compact</small></div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-mini">
+          <div class="mini-bar"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on now"></span></div>
+          <div class="mini-title"></div>
+          <div class="mini-sub"></div>
+          <div class="mini-cards">
+            <div class="mini-card"></div>
+            <div class="mini-card sel"></div>
+            <div class="mini-card"></div>
+          </div>
+          <div class="mini-btn"></div>
+        </div>
+        <div class="flow-num">4</div>
+        <div class="flow-label">Objectif<small>cta change</small></div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-mini result">
+          <div class="mini-check"></div>
+          <div class="mini-title"></div>
+          <div class="mini-recap">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <div class="mini-btn"></div>
+        </div>
+        <div class="flow-num" style="background:#B7E6C9">✓</div>
+        <div class="flow-label">Profil créé<small>commencer</small></div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       STEP 1 — NIVEAU
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">01</span>
+      <h2 class="spec-title">Niveau</h2>
+      <span class="spec-eyebrow">3 cards · selectable · single choice</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status">
+            <span>9:41</span>
+            <span class="status-icons">
+              <i data-lucide="signal"></i>
+              <i data-lucide="wifi"></i>
+              <i data-lucide="battery-full"></i>
+            </span>
+          </div>
+          <div class="topbar">
+            <div class="topbar-row">
+              <button class="back-btn disabled" aria-disabled="true"><i data-lucide="chevron-left"></i></button>
+              <span class="step-count">1 · 4</span>
+              <span style="width:30px"></span>
+            </div>
+            <div class="progress">
+              <span class="on now"></span><span></span><span></span><span></span>
+            </div>
+          </div>
+          <div class="body">
+            <h3 class="h-title">Quel est ton niveau&nbsp;?</h3>
+            <p class="h-sub">On adapte l'expérience à ton profil.</p>
+            <div class="options">
+              <button class="opt">
+                <span class="opt-ico"><i data-lucide="gamepad-2"></i></span>
+                <span class="opt-body">
+                  <span class="opt-title-row"><span class="opt-title">Casual</span></span>
+                  <span class="opt-desc">Je découvre le jeu et je veux progresser à mon rythme</span>
+                </span>
+                <span class="opt-radio"></span>
+              </button>
+              <button class="opt selected">
+                <span class="opt-ico"><i data-lucide="trophy"></i></span>
+                <span class="opt-body">
+                  <span class="opt-title-row"><span class="opt-title">Compétitif</span></span>
+                  <span class="opt-desc">Je joue en ranked et je veux monter dans le classement</span>
+                </span>
+                <span class="opt-radio"></span>
+              </button>
+              <button class="opt">
+                <span class="opt-ico"><i data-lucide="shield"></i></span>
+                <span class="opt-body">
+                  <span class="opt-title-row"><span class="opt-title">Try Hard</span></span>
+                  <span class="opt-desc">Je vise les tournois et j'optimise chaque détail</span>
+                </span>
+                <span class="opt-radio"></span>
+              </button>
+            </div>
+          </div>
+          <div class="action">
+            <button class="btn">Continuer</button>
+            <div class="home-indicator"></div>
+          </div>
+
+          <!-- pins -->
+          <span class="pin" style="top: 60px; left: 14px;">1</span>
+          <span class="pin" style="top: 78px; right: 14px;">2</span>
+          <span class="pin" style="top: 160px; left: 14px;">3</span>
+          <span class="pin" style="top: 308px; right: 8px;">4</span>
+          <span class="pin" style="top: 348px; left: 8px;">5</span>
+          <span class="pin" style="top: 354px; right: 14px;">6</span>
+          <span class="pin" style="bottom: 78px; right: 14px;">7</span>
+        </div>
+        <div class="phone-dims">360 × 720 · scale 1:1 · viewport iPhone&nbsp;SE&nbsp;safe</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note">
+        <div class="note-num">1</div>
+        <div class="note-body">
+          <h4 class="note-title">Barre de progression</h4>
+          <p class="note-desc">4 segments, 1/4 rempli. Composant <span class="comp-pill">Reacticx&nbsp;·&nbsp;Progress</span>. Animation de remplissage <span class="tok muted">240ms · standard</span>.</p>
+          <div class="toks">
+            <span class="tok">--accent</span>
+            <span class="tok muted">--surface-high</span>
+            <span class="tok muted">--r-pill</span>
+            <span class="tok muted">height: 4</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">2</div>
+        <div class="note-body">
+          <h4 class="note-title">Compteur d'étape</h4>
+          <p class="note-desc">Format <span class="tok muted">N · 4</span> en monospace tabulaire. Aide à l'orientation. Touchable area inchangée (info-only).</p>
+          <div class="toks">
+            <span class="tok muted">--fg3</span>
+            <span class="tok muted">--font-mono</span>
+            <span class="tok muted">--fs-xs</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">3</div>
+        <div class="note-body">
+          <h4 class="note-title">Header titre + sous-titre</h4>
+          <p class="note-desc">Sentence case (jamais Title Case). Une seule question, jamais d'exclamation. Sous-titre justifie la question — pas de flatterie.</p>
+          <div class="toks">
+            <span class="tok">--fs-2xl</span>
+            <span class="tok muted">weight 700</span>
+            <span class="tok muted">--tr-tight</span>
+            <span class="tok muted">--fg1</span>
+            <span class="tok muted">--fg2</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">4</div>
+        <div class="note-body">
+          <h4 class="note-title">Card · état non sélectionné</h4>
+          <p class="note-desc">Icône Ionicons <span class="tok muted">gamepad-2 / trophy / shield</span> dans tuile <span class="tok muted">--r-md</span>. Touch target ≥ 64pt de haut. Apparition via <span class="comp-pill">Fade</span> séquentiel (stagger 60ms).</p>
+          <div class="toks">
+            <span class="tok muted">--surface</span>
+            <span class="tok muted">--border</span>
+            <span class="tok">--r-lg</span>
+            <span class="tok muted">padding 14</span>
+            <span class="tok muted">gap 10</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">5</div>
+        <div class="note-body">
+          <h4 class="note-title">Card · état sélectionné</h4>
+          <p class="note-desc">Border 1.5px accent + fond teinté <span class="tok">--accent-soft</span>. Icône passe en accent. Titre passe en accent (le reste reste neutre — pas de surcharge visuelle).</p>
+          <div class="toks">
+            <span class="tok">--accent</span>
+            <span class="tok">--accent-soft</span>
+            <span class="tok muted">border 1.5px</span>
+            <span class="tok muted">transition 160ms</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">6</div>
+        <div class="note-body">
+          <h4 class="note-title">Radio circle</h4>
+          <p class="note-desc">Indicateur explicite de sélection (en plus du border). Rempli accent avec dot <span class="tok muted">--fg-inverse</span> au centre.</p>
+          <div class="toks">
+            <span class="tok muted">20×20</span>
+            <span class="tok muted">--border-strong → --accent</span>
+            <span class="tok muted">--r-pill</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">7</div>
+        <div class="note-body">
+          <h4 class="note-title">CTA primaire</h4>
+          <p class="note-desc">Toujours visible sans scroll. Désactivé tant qu'aucune card n'est sélectionnée (passe à <span class="tok muted">--surface-high</span> + <span class="tok muted">--fg-faint</span>). Hairline supérieure <span class="tok muted">--divider</span> sépare la zone d'action du contenu.</p>
+          <div class="toks">
+            <span class="tok">--accent</span>
+            <span class="tok muted">--fg-inverse</span>
+            <span class="tok">--r-md</span>
+            <span class="tok muted">h 48</span>
+            <span class="tok muted">--fs-md</span>
+            <span class="tok muted">weight 600</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       STEP 2 — FORMAT
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">02</span>
+      <h2 class="spec-title">Format préféré</h2>
+      <span class="spec-eyebrow">badge "format mondiaux" sur card 1</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status">
+            <span>9:41</span>
+            <span class="status-icons">
+              <i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i>
+            </span>
+          </div>
+          <div class="topbar">
+            <div class="topbar-row">
+              <button class="back-btn"><i data-lucide="chevron-left"></i></button>
+              <span class="step-count">2 · 4</span>
+              <span style="width:30px"></span>
+            </div>
+            <div class="progress">
+              <span class="on"></span><span class="on now"></span><span></span><span></span>
+            </div>
+          </div>
+          <div class="body">
+            <h3 class="h-title">Ton format de jeu&nbsp;?</h3>
+            <p class="h-sub">Les équipes et la méta sont différentes selon le format.</p>
+            <div class="options">
+              <button class="opt selected">
+                <span class="opt-ico"><i data-lucide="users"></i></span>
+                <span class="opt-body">
+                  <span class="opt-title-row">
+                    <span class="opt-title">VGC Doubles</span>
+                    <span class="opt-badge">Format Mondiaux</span>
+                  </span>
+                  <span class="opt-desc">Format officiel des Championnats du Monde — 2 Pokémon en jeu simultanément</span>
+                </span>
+                <span class="opt-radio"></span>
+              </button>
+              <button class="opt">
+                <span class="opt-ico"><i data-lucide="user"></i></span>
+                <span class="opt-body">
+                  <span class="opt-title-row"><span class="opt-title">3v3 Singles</span></span>
+                  <span class="opt-desc">Format ranked ladder — combat séquentiel, proche de Showdown</span>
+                </span>
+                <span class="opt-radio"></span>
+              </button>
+              <button class="opt">
+                <span class="opt-ico"><i data-lucide="columns-2"></i></span>
+                <span class="opt-body">
+                  <span class="opt-title-row"><span class="opt-title">Les deux</span></span>
+                  <span class="opt-desc">Je joue les deux formats selon l'envie</span>
+                </span>
+                <span class="opt-radio"></span>
+              </button>
+            </div>
+          </div>
+          <div class="action">
+            <button class="btn">Continuer</button>
+            <div class="home-indicator"></div>
+          </div>
+
+          <span class="pin" style="top: 56px; left: 14px;">1</span>
+          <span class="pin" style="top: 100px; left: 14px;">2</span>
+          <span class="pin" style="top: 234px; right: 8px;">3</span>
+          <span class="pin" style="top: 264px; left: 8px;">4</span>
+        </div>
+        <div class="phone-dims">360 × 720 · scale 1:1</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note">
+        <div class="note-num">1</div>
+        <div class="note-body">
+          <h4 class="note-title">Back navigation</h4>
+          <p class="note-desc">Active à partir de l'étape 2. Tap → slide horizontal inverse <span class="tok muted">240ms · standard</span>. Geste swipe-right natif iOS également supporté.</p>
+          <div class="toks">
+            <span class="tok muted">--fg2</span>
+            <span class="tok muted">hit-slop 12</span>
+            <span class="tok muted">chevron-left</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">2</div>
+        <div class="note-body">
+          <h4 class="note-title">Progression — segment 2/4 actif</h4>
+          <p class="note-desc">L'animation entre segments est synchronisée avec la transition slide. <span class="comp-pill">Progress</span> remplit son segment courant en parallèle de l'entrée du nouveau contenu.</p>
+          <div class="toks">
+            <span class="tok">--accent</span>
+            <span class="tok muted">--surface-high</span>
+            <span class="tok muted">durée 240ms</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">3</div>
+        <div class="note-body">
+          <h4 class="note-title">Badge discret "Format Mondiaux"</h4>
+          <p class="note-desc">Petite étiquette typographique — pas un chip coloré. Renforce la légitimité du format VGC sans crier. <strong>Casing</strong> : sentence case (le terme reste lisible mais sobre).</p>
+          <div class="toks">
+            <span class="tok muted">--surface-high</span>
+            <span class="tok muted">--border</span>
+            <span class="tok muted">--r-sm</span>
+            <span class="tok muted">--font-mono</span>
+            <span class="tok muted">--tr-wide</span>
+            <span class="tok muted">--fs-xs</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">4</div>
+        <div class="note-body">
+          <h4 class="note-title">Hiérarchie de description</h4>
+          <p class="note-desc">2 lignes max, <span class="tok muted">--fg3</span> pour ne pas concurrencer le titre. Pas d'emoji. Wording neutre — "Pokémon Showdown" évité dans la version finale (remplacer par "format ranked"). ⚠ <em>Aucune mention de noms de jeux dans l'UI</em>.</p>
+          <div class="toks">
+            <span class="tok muted">--fg3</span>
+            <span class="tok muted">--fs-sm</span>
+            <span class="tok muted">lh 1.35</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       STEP 3 — STYLE
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">03</span>
+      <h2 class="spec-title">Style de jeu</h2>
+      <span class="spec-eyebrow">variante compacte · icône plus présente</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status">
+            <span>9:41</span>
+            <span class="status-icons">
+              <i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i>
+            </span>
+          </div>
+          <div class="topbar">
+            <div class="topbar-row">
+              <button class="back-btn"><i data-lucide="chevron-left"></i></button>
+              <span class="step-count">3 · 4</span>
+              <span style="width:30px"></span>
+            </div>
+            <div class="progress">
+              <span class="on"></span><span class="on"></span><span class="on now"></span><span></span>
+            </div>
+          </div>
+          <div class="body">
+            <h3 class="h-title">Comment tu joues&nbsp;?</h3>
+            <p class="h-sub">Pour des recommandations d'équipes adaptées.</p>
+            <div class="options">
+              <button class="opt compact">
+                <span class="opt-ico"><i data-lucide="zap"></i></span>
+                <span class="opt-body">
+                  <span class="opt-title-row"><span class="opt-title">Offensif</span></span>
+                  <span class="opt-desc">KO le plus vite possible</span>
+                </span>
+                <span class="opt-radio"></span>
+              </button>
+              <button class="opt compact">
+                <span class="opt-ico"><i data-lucide="timer"></i></span>
+                <span class="opt-body">
+                  <span class="opt-title-row"><span class="opt-title">Contrôle</span></span>
+                  <span class="opt-desc">Terrain, statuts, support</span>
+                </span>
+                <span class="opt-radio"></span>
+              </button>
+              <button class="opt compact selected">
+                <span class="opt-ico"><i data-lucide="scale"></i></span>
+                <span class="opt-body">
+                  <span class="opt-title-row"><span class="opt-title">Équilibré</span></span>
+                  <span class="opt-desc">Je m'adapte à l'adversaire</span>
+                </span>
+                <span class="opt-radio"></span>
+              </button>
+            </div>
+          </div>
+          <div class="action">
+            <button class="btn">Continuer</button>
+            <div class="home-indicator"></div>
+          </div>
+
+          <span class="pin" style="top: 200px; right: 14px;">1</span>
+          <span class="pin" style="top: 264px; left: 8px;">2</span>
+          <span class="pin" style="top: 396px; left: 8px;">3</span>
+        </div>
+        <div class="phone-dims">360 × 720 · variante "compact"</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note">
+        <div class="note-num">1</div>
+        <div class="note-body">
+          <h4 class="note-title">Variante compacte</h4>
+          <p class="note-desc">Mêmes tokens que les autres steps, padding réduit. Garantit que 3 cards + CTA + header tiennent sans scroll même sur iPhone SE (1ère gen, 568pt utiles).</p>
+          <div class="toks">
+            <span class="tok muted">padding 12</span>
+            <span class="tok muted">opt-ico 34×34</span>
+            <span class="tok muted">--fs-sm</span>
+            <span class="tok muted">gap 10 → 10</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">2</div>
+        <div class="note-body">
+          <h4 class="note-title">Description plus courte</h4>
+          <p class="note-desc">Une ligne, ~4 mots. L'icône fait plus de travail sémantique ici — <span class="tok muted">zap / timer / scale</span> sont des archétypes immédiats.</p>
+          <div class="toks">
+            <span class="tok muted">--fg3</span>
+            <span class="tok muted">1 ligne</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">3</div>
+        <div class="note-body">
+          <h4 class="note-title">Zone pouce — thumb-friendly</h4>
+          <p class="note-desc">3ème card et bouton tombent dans la zone naturelle du pouce (66 % bas de l'écran). C'est volontaire : aucun élément critique au-delà de la portée.</p>
+          <div class="toks">
+            <span class="tok note">UX · ergonomie</span>
+            <span class="tok muted">hit ≥ 44pt</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       STEP 4 — OBJECTIF
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">04</span>
+      <h2 class="spec-title">Objectif principal</h2>
+      <span class="spec-eyebrow">cta change · "créer mon profil"</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status">
+            <span>9:41</span>
+            <span class="status-icons">
+              <i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i>
+            </span>
+          </div>
+          <div class="topbar">
+            <div class="topbar-row">
+              <button class="back-btn"><i data-lucide="chevron-left"></i></button>
+              <span class="step-count">4 · 4</span>
+              <span style="width:30px"></span>
+            </div>
+            <div class="progress">
+              <span class="on"></span><span class="on"></span><span class="on"></span><span class="on now"></span>
+            </div>
+          </div>
+          <div class="body">
+            <h3 class="h-title">Ton objectif&nbsp;?</h3>
+            <p class="h-sub">On priorise les fonctionnalités les plus utiles pour toi.</p>
+            <div class="options">
+              <button class="opt">
+                <span class="opt-ico"><i data-lucide="book-open"></i></span>
+                <span class="opt-body">
+                  <span class="opt-title-row"><span class="opt-title">Apprendre</span></span>
+                  <span class="opt-desc">Comprendre les mécaniques et progresser</span>
+                </span>
+                <span class="opt-radio"></span>
+              </button>
+              <button class="opt selected">
+                <span class="opt-ico"><i data-lucide="trending-up"></i></span>
+                <span class="opt-body">
+                  <span class="opt-title-row"><span class="opt-title">Rank up</span></span>
+                  <span class="opt-desc">Monter dans le classement ranked</span>
+                </span>
+                <span class="opt-radio"></span>
+              </button>
+              <button class="opt">
+                <span class="opt-ico"><i data-lucide="award"></i></span>
+                <span class="opt-body">
+                  <span class="opt-title-row"><span class="opt-title">Tournois</span></span>
+                  <span class="opt-desc">Me qualifier et performer en compétition officielle</span>
+                </span>
+                <span class="opt-radio"></span>
+              </button>
+            </div>
+          </div>
+          <div class="action">
+            <button class="btn">Créer mon profil</button>
+            <div class="home-indicator"></div>
+          </div>
+
+          <span class="pin" style="top: 100px; left: 14px;">1</span>
+          <span class="pin" style="bottom: 78px; right: 14px;">2</span>
+          <span class="pin" style="bottom: 56px; left: 14px;">3</span>
+        </div>
+        <div class="phone-dims">360 × 720 · dernière étape</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note">
+        <div class="note-num">1</div>
+        <div class="note-body">
+          <h4 class="note-title">Progression complète — 4/4</h4>
+          <p class="note-desc">Tous segments en <span class="tok">--accent</span>. Le dernier vient juste de se remplir avec la même easing <span class="tok muted">cubic-bezier(0.4,0,0.2,1)</span>. Signal visuel fort : "tu y es presque".</p>
+          <div class="toks">
+            <span class="tok">--accent</span>
+            <span class="tok muted">--motion-base</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">2</div>
+        <div class="note-body">
+          <h4 class="note-title">CTA évolue — "Créer mon profil"</h4>
+          <p class="note-desc">Le label change uniquement sur l'étape 4. Aucune autre différence visuelle vs. "Continuer". Indique l'aboutissement sans rajouter de friction.</p>
+          <div class="toks">
+            <span class="tok">--accent</span>
+            <span class="tok muted">label conditionnel</span>
+            <span class="tok muted">--fs-md weight 600</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">3</div>
+        <div class="note-body">
+          <h4 class="note-title">Transition vers le résultat</h4>
+          <p class="note-desc">Tap → fade-out des 4 cards <span class="tok muted">160ms</span> → cross-fade vers écran résultat <span class="tok muted">240ms</span> → icône check scale-in <span class="tok muted">decel · 360ms</span>. Pas de loader intermédiaire.</p>
+          <div class="toks">
+            <span class="tok note">motion / sequence</span>
+            <span class="comp-pill">Fade</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       RESULT — Profil créé
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step" style="background:#B7E6C9">✓</span>
+      <h2 class="spec-title">Profil créé</h2>
+      <span class="spec-eyebrow">confirmation · sous-titre dynamique selon niveau</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status">
+            <span>9:41</span>
+            <span class="status-icons">
+              <i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i>
+            </span>
+          </div>
+          <div class="result-body">
+            <div class="check-wrap"><i data-lucide="check"></i></div>
+            <h3 class="result-title">Profil créé</h3>
+            <p class="result-sub">Toutes les fonctionnalités ranked sont actives.</p>
+            <div class="recap">
+              <div class="recap-row">
+                <span class="opt-ico"><i data-lucide="trophy"></i></span>
+                <span>Niveau</span>
+                <strong>Compétitif</strong>
+              </div>
+              <div class="recap-row">
+                <span class="opt-ico"><i data-lucide="users"></i></span>
+                <span>Format</span>
+                <strong>VGC Doubles</strong>
+              </div>
+              <div class="recap-row">
+                <span class="opt-ico"><i data-lucide="scale"></i></span>
+                <span>Style</span>
+                <strong>Équilibré</strong>
+              </div>
+              <div class="recap-row">
+                <span class="opt-ico"><i data-lucide="trending-up"></i></span>
+                <span>Objectif</span>
+                <strong>Rank up</strong>
+              </div>
+            </div>
+          </div>
+          <div class="action">
+            <button class="btn">Commencer</button>
+            <div class="home-indicator"></div>
+          </div>
+
+          <span class="pin" style="top: 70px; right: 110px;">1</span>
+          <span class="pin" style="top: 180px; left: 30px;">2</span>
+          <span class="pin" style="top: 240px; right: 30px;">3</span>
+          <span class="pin" style="top: 318px; left: 8px;">4</span>
+          <span class="pin" style="bottom: 78px; left: 14px;">5</span>
+        </div>
+        <div class="phone-dims">360 × 720 · écran de confirmation</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note">
+        <div class="note-num">1</div>
+        <div class="note-body">
+          <h4 class="note-title">Icône check animée</h4>
+          <p class="note-desc">SF Symbol <span class="tok muted">checkmark.circle</span> (Lucide <span class="tok muted">check</span> en fallback web). Scale-in <span class="tok muted">0.6 → 1</span> avec halo accent <span class="tok muted">1px · 20% opacity</span>. Pas de bounce.</p>
+          <div class="toks">
+            <span class="tok">--accent</span>
+            <span class="tok">--accent-soft</span>
+            <span class="tok muted">88×88</span>
+            <span class="tok muted">--r-pill</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">2</div>
+        <div class="note-body">
+          <h4 class="note-title">Titre — "Profil créé"</h4>
+          <p class="note-desc">Sentence case, centré. Pas d'exclamation. Pas de "Bienvenue dans Tacticx" — le ton reste sobre, professionnel.</p>
+          <div class="toks">
+            <span class="tok muted">--fs-2xl + 4</span>
+            <span class="tok muted">weight 700</span>
+            <span class="tok muted">--fg1</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">3</div>
+        <div class="note-body">
+          <h4 class="note-title">Sous-titre dynamique</h4>
+          <p class="note-desc">Une ligne selon le niveau choisi :</p>
+          <div class="toks" style="flex-direction:column; align-items:flex-start; gap:6px;">
+            <span><span class="tok muted">Casual</span> → "On commence par les bases. Tu peux évoluer à tout moment."</span>
+            <span><span class="tok muted">Compétitif</span> → "Toutes les fonctionnalités ranked sont actives."</span>
+            <span><span class="tok muted">Try Hard</span> → "Mode compétitif complet débloqué."</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">4</div>
+        <div class="note-body">
+          <h4 class="note-title">Récapitulatif — list rows</h4>
+          <p class="note-desc">4 lignes, style list-row sobre — pattern réutilisé du reste de l'app (cohérence Méta / Pokédex). Hairline <span class="tok muted">--divider</span> entre lignes. Icône à gauche, label gris, valeur en blanc à droite.</p>
+          <div class="toks">
+            <span class="tok muted">--surface</span>
+            <span class="tok muted">--border</span>
+            <span class="tok">--r-lg</span>
+            <span class="tok muted">row 44pt</span>
+            <span class="tok muted">--divider</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">5</div>
+        <div class="note-body">
+          <h4 class="note-title">CTA "Commencer"</h4>
+          <p class="note-desc">Identique au CTA des steps. Tap → dismiss onboarding + slide-up vers écran Méta. Le profil est persisté avant cette transition (<span class="tok muted">AsyncStorage</span> sur RN).</p>
+          <div class="toks">
+            <span class="tok">--accent</span>
+            <span class="tok muted">--r-md</span>
+            <span class="tok muted">h 48</span>
+            <span class="tok semantic">→ MetaScreen</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       CONSTRAINTS + COMPONENTS
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="constraints">
+    <h3>Contraintes UX — invariantes du flow</h3>
+    <ul>
+      <li>Une seule question par écran — jamais deux interactions en parallèle</li>
+      <li>CTA toujours visible sans scroll, sur tous les viewports ≥&nbsp;320pt</li>
+      <li>3 cards + CTA + header tiennent sans scroll sur iPhone SE</li>
+      <li>Bouton désactivé tant qu'aucune option n'est sélectionnée — pas de skip</li>
+      <li>Back possible à chaque étape sauf la première — geste swipe-right inclus</li>
+      <li>Toutes les cards sont dans la zone pouce (66&nbsp;% bas de l'écran)</li>
+      <li>Friction zéro — pas de compte, pas d'email, pas de mot de passe</li>
+      <li>Dark mode uniquement (MVP) — pas de variant light</li>
+      <li class="x">Pas d'image, pas d'illustration — icônes seulement</li>
+      <li class="x">Pas d'emoji dans la copy — ni dans les badges, ni dans les empty states</li>
+      <li class="x">Pas de Title Case — sentence case partout</li>
+      <li class="x">Aucune mention des noms de jeux (Pokémon, Showdown, etc.) en UI</li>
+    </ul>
+  </section>
+
+  <section class="legend">
+    <div class="legend-card">
+      <div class="legend-name">Reacticx · Radial Intro</div>
+      <div class="legend-desc">Transition d'entrée sur le premier écran (step 1). Wash radial accent depuis le centre, ~360ms, decel.</div>
+    </div>
+    <div class="legend-card">
+      <div class="legend-name">Reacticx · Progress</div>
+      <div class="legend-desc">Barre 4 segments. Active sur tous les steps. Pas affichée sur l'écran résultat.</div>
+    </div>
+    <div class="legend-card">
+      <div class="legend-name">Reacticx · Fade</div>
+      <div class="legend-desc">Apparition staggered des 3 cards à chaque nouvelle étape (60ms entre cards) + cross-fade vers écran résultat.</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // Initialize Lucide icons after DOM ready
+  if (window.lucide && window.lucide.createIcons) {
+    window.lucide.createIcons();
+  }
+</script>
+
+</body>
+</html>

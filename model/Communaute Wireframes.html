@@ -1,0 +1,1091 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>Tacticx — Communauté · Wireframes annotés</title>
+<link rel="stylesheet" href="tokens.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Patrick+Hand&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@0.461.0/dist/umd/lucide.min.js"></script>
+<style>
+  :root {
+    --paper:  #ECE6D6;
+    --ink:    #1A1A1A;
+    --ink-2:  #4A4A40;
+    --ink-3:  #87826F;
+    --hand:   "Caveat", "Patrick Hand", cursive;
+    --hand-2: "Patrick Hand", "Caveat", cursive;
+  }
+  html, body { margin: 0; }
+  body {
+    background: var(--paper);
+    background-image: radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+    background-size: 22px 22px;
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  * { box-sizing: border-box; }
+  .sheet { max-width: 1280px; margin: 0 auto; padding: 56px 48px 96px; }
+
+  .doc-head { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 32px; border-bottom: 1.5px dashed var(--ink-2); padding-bottom: 24px; margin-bottom: 40px; }
+  .doc-eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px; }
+  .doc-title { font-family: var(--hand); font-size: 64px; font-weight: 700; line-height: 0.95; letter-spacing: -1px; color: var(--ink); margin: 0; }
+  .doc-title em { font-style: normal; color: var(--accent); background: linear-gradient(180deg, transparent 60%, rgba(91,141,239,0.25) 60%); padding: 0 6px; }
+  .doc-sub { font-family: var(--hand-2); font-size: 22px; color: var(--ink-2); margin-top: 8px; line-height: 1.3; max-width: 720px; }
+  .doc-meta { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); line-height: 1.7; text-align: right; }
+  .doc-meta strong { color: var(--ink); font-weight: 500; }
+
+  .flow { background: rgba(255,255,255,0.4); border: 1.5px dashed var(--ink-2); border-radius: 18px; padding: 28px 24px 32px; margin-bottom: 64px; }
+  .flow-title { font-family: var(--hand); font-size: 28px; font-weight: 700; color: var(--ink); margin: 0 0 6px; letter-spacing: -0.5px; }
+  .flow-sub { font-family: var(--hand-2); font-size: 16px; color: var(--ink-3); margin-bottom: 22px; }
+  .flow-rail { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; align-items: start; }
+  .flow-step { display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; }
+  .flow-step + .flow-step::before { content: ""; position: absolute; left: -20px; top: 32%; width: 16px; height: 2px; background: repeating-linear-gradient(90deg, var(--ink-2) 0 4px, transparent 4px 8px); }
+  .flow-mini { width: 100%; aspect-ratio: 9 / 16; background: var(--bg); border: 1.5px solid var(--ink); border-radius: 14px; position: relative; overflow: hidden; box-shadow: 4px 5px 0 rgba(0,0,0,0.12); padding: 9% 8%; display: flex; flex-direction: column; gap: 6px; }
+  .flow-mini .mseg2 { height: 13px; background: var(--surface-sunken); border-radius: 999px; display: flex; padding: 2px; gap: 2px; }
+  .flow-mini .mseg2 span { flex: 1; border-radius: 999px; }
+  .flow-mini .mseg2 span.on { background: var(--accent); }
+  .flow-mini .msearch { height: 12px; background: var(--surface-sunken); border-radius: 999px; }
+  .flow-mini .fcard { background: var(--surface); border: 1px solid var(--border); border-radius: 7px; padding: 6px; display: flex; flex-direction: column; gap: 4px; }
+  .flow-mini .fcard .top { display: flex; align-items: center; gap: 3px; }
+  .flow-mini .fcard .top .av { width: 9px; height: 9px; border-radius: 999px; background: var(--surface-high); }
+  .flow-mini .fcard .top .nm { flex: 1; height: 3px; background: var(--surface-high); border-radius: 2px; }
+  .flow-mini .fcard .sprites { display: flex; gap: 2px; }
+  .flow-mini .fcard .sprites i { flex: 1; aspect-ratio: 1; border-radius: 999px; background: var(--surface-high); display: block; }
+  .flow-mini .fcard .meta { display: flex; gap: 3px; }
+  .flow-mini .fcard .meta b { width: 16px; height: 4px; background: var(--accent); opacity: 0.5; border-radius: 2px; display: block; }
+  .flow-mini.sheetmini::after { content:""; position:absolute; inset:0; background: rgba(11,13,16,0.55); }
+  .flow-mini.sheetmini .msheet { position: absolute; left: 4%; right: 4%; bottom: 0; height: 72%; background: var(--surface-high); border-radius: 12px 12px 0 0; border: 1.5px solid var(--border); padding: 8px; display: flex; flex-direction: column; gap: 5px; }
+  .flow-mini.sheetmini .grab { width: 20px; height: 3px; background: var(--fg-faint); border-radius: 2px; margin: 0 auto 4px; }
+  .flow-mini.sheetmini .blk { height: 14px; background: var(--surface); border-radius: 4px; }
+  .flow-mini.sheetmini .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+  .flow-mini.sheetmini .grid2 span { height: 16px; background: var(--surface); border-radius: 4px; }
+  .flow-mini.sheetmini .grid2 span.on { border: 1.5px solid var(--accent); background: var(--accent-soft); }
+  .flow-mini.sheetmini .cta { height: 14px; background: var(--accent); border-radius: 4px; margin-top: auto; }
+  .flow-mini .detail-row { display: flex; gap: 3px; }
+  .flow-mini .detail-row i { flex: 1; aspect-ratio: 0.8; border-radius: 4px; background: var(--surface); display: block; }
+  .flow-mini .lockc { flex: 1; display: grid; place-items: center; }
+  .flow-mini .lockc .lk { width: 22px; height: 22px; border-radius: 999px; background: var(--surface-high); }
+
+  .flow-num { font-family: var(--hand); font-weight: 700; font-size: 22px; color: var(--ink); background: #FFE680; border: 1.5px solid var(--ink); border-radius: 999px; width: 32px; height: 32px; display: grid; place-items: center; transform: rotate(-3deg); box-shadow: 2px 2px 0 rgba(0,0,0,0.12); }
+  .flow-label { font-family: var(--hand); font-weight: 600; font-size: 17px; color: var(--ink); text-align: center; line-height: 1.1; }
+  .flow-label small { display: block; font-family: var(--font-mono); font-size: 9px; font-weight: 400; letter-spacing: 0.6px; text-transform: uppercase; color: var(--ink-3); margin-top: 2px; }
+
+  .spec { display: grid; grid-template-columns: 380px 1fr; gap: 56px; padding: 48px 0 56px; border-top: 1.5px dashed var(--ink-2); }
+  .spec-head { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 18px; margin-bottom: 4px; flex-wrap: wrap; }
+  .spec-step { font-family: var(--hand); font-weight: 700; font-size: 22px; color: var(--ink); background: #FFE680; border: 1.5px solid var(--ink); border-radius: 999px; padding: 4px 14px; transform: rotate(-2deg); box-shadow: 2px 2px 0 rgba(0,0,0,0.12); }
+  .spec-title { font-family: var(--hand); font-size: 38px; font-weight: 700; color: var(--ink); margin: 0; letter-spacing: -0.5px; }
+  .spec-eyebrow { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); letter-spacing: 1.6px; text-transform: uppercase; margin-left: auto; }
+
+  .phone-wrap { position: sticky; top: 32px; align-self: start; width: 380px; }
+  .phone { width: 380px; height: 760px; background: var(--bg); border-radius: 38px; border: 1.5px solid var(--ink); box-shadow: 6px 8px 0 rgba(0,0,0,0.12), inset 0 0 0 8px #08090C; padding: 8px; position: relative; overflow: hidden; }
+  .phone-inner { width: 100%; height: 100%; background: var(--bg); border-radius: 30px; overflow: hidden; position: relative; display: flex; flex-direction: column; }
+  .phone-dims { position: absolute; bottom: -32px; left: 0; right: 0; text-align: center; font-family: var(--font-mono); font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--ink-3); }
+
+  .status { height: 28px; padding: 0 18px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--fg1); flex-shrink: 0; }
+  .status-icons { display: flex; align-items: center; gap: 5px; opacity: 0.9; }
+  .status-icons .lucide { width: 14px; height: 14px; stroke-width: 2; }
+
+  .head { padding: 8px 18px 12px; flex-shrink: 0; border-bottom: 1px solid var(--divider); background: var(--bg); }
+  .head-seg { display: flex; background: var(--surface-sunken); border-radius: var(--r-pill); padding: 3px; margin-bottom: 12px; }
+  .head-seg button { flex: 1; background: transparent; border: 0; padding: 9px 0; font-family: inherit; font-size: 14px; font-weight: 600; color: var(--fg2); border-radius: var(--r-pill); cursor: pointer; }
+  .head-seg button.on { background: var(--accent); color: var(--fg-inverse); }
+
+  .search-row { display: flex; gap: 8px; }
+  .search { flex: 1; height: 40px; background: var(--surface-sunken); border: 1px solid var(--border); border-radius: var(--r-md); display: flex; align-items: center; padding: 0 12px; gap: 10px; color: var(--fg3); font-size: 14px; }
+  .search .lucide { width: 16px; height: 16px; stroke-width: 1.8; color: var(--fg3); }
+  .search .ph { flex: 1; }
+  .filter-btn { flex-shrink: 0; width: 40px; height: 40px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); color: var(--fg1); display: grid; place-items: center; position: relative; cursor: pointer; }
+  .filter-btn .lucide { width: 18px; height: 18px; stroke-width: 1.8; color: var(--fg2); }
+  .filter-btn .count { position: absolute; top: -5px; right: -5px; min-width: 18px; height: 18px; background: var(--accent); color: var(--fg-inverse); border: 2px solid var(--bg); border-radius: 999px; font-size: 10px; font-weight: 700; display: grid; place-items: center; padding: 0 4px; font-variant-numeric: tabular-nums; }
+
+  .chips { display: flex; gap: 6px; overflow-x: auto; padding: 12px 18px 0; flex-shrink: 0; scrollbar-width: none; }
+  .chips::-webkit-scrollbar { display: none; }
+  .fchip { flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; padding: 5px 6px 5px 10px; background: var(--accent-soft); border: 1px solid rgba(91,141,239,0.4); border-radius: var(--r-pill); color: var(--accent); font-size: 12px; font-weight: 500; white-space: nowrap; }
+  .fchip .x { width: 16px; height: 16px; display: grid; place-items: center; background: rgba(91,141,239,0.18); border-radius: 999px; }
+  .fchip .x .lucide { width: 10px; height: 10px; stroke-width: 2.5; }
+
+  .sort-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; flex-shrink: 0; }
+  .sort-row .lbl { font-size: 11px; color: var(--fg3); }
+  .sort-drop { display: inline-flex; align-items: center; gap: 5px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 5px 10px; font-size: 12px; color: var(--fg1); font-family: inherit; cursor: pointer; }
+  .sort-drop .lucide { width: 12px; height: 12px; color: var(--fg-faint); }
+
+  .feed { flex: 1; overflow-y: auto; background: var(--bg); padding: 4px 18px 18px; }
+  .feed::-webkit-scrollbar { display: none; }
+
+  .team-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 12px 14px; margin-bottom: 10px; }
+  .tc-line1 { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .tc-av { width: 28px; height: 28px; border-radius: 999px; background: var(--surface-high); color: var(--fg2); display: grid; place-items: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+  .tc-author { font-size: 13px; font-weight: 500; color: var(--fg1); display: flex; align-items: center; gap: 4px; }
+  .tc-author .lucide { width: 13px; height: 13px; color: var(--accent); }
+  .tc-date { font-size: 11px; color: var(--fg3); margin-left: 2px; }
+  .tc-badges { margin-left: auto; display: flex; gap: 5px; }
+  .badge { font-size: 9px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; padding: 2px 7px; border-radius: var(--r-sm); color: var(--fg2); background: var(--surface-high); border: 1px solid var(--border); }
+  .badge.accent { color: var(--accent); background: var(--accent-soft); border-color: rgba(91,141,239,0.4); }
+  .badge.topcut { color: var(--warning); background: var(--warning-soft); border-color: rgba(217,165,90,0.4); }
+  .badge.valid { color: var(--success); background: var(--success-soft); border-color: rgba(95,169,120,0.4); }
+
+  .tc-sprites { display: flex; gap: 6px; margin-bottom: 10px; }
+  .tc-sp { width: 38px; height: 38px; border-radius: 999px; background: var(--surface-high); overflow: hidden; display: grid; place-items: center; flex: 1; }
+  .tc-sp img { width: 112%; height: 112%; object-fit: contain; filter: brightness(0) invert(0.62) contrast(1.1); }
+  .tc-sp.t-psychic { background: var(--t-psychic-bg); }
+  .tc-sp.t-fire { background: var(--t-fire-bg); }
+  .tc-sp.t-fighting { background: var(--t-fighting-bg); }
+  .tc-sp.t-ghost { background: var(--t-ghost-bg); }
+  .tc-sp.t-grass { background: var(--t-grass-bg); }
+  .tc-sp.t-flying { background: var(--t-flying-bg); }
+  .tc-sp.t-water { background: var(--t-water-bg); }
+  .tc-sp.t-steel { background: var(--t-steel-bg); }
+  .tc-sp.t-dragon { background: var(--t-dragon-bg); }
+  .tc-sp.t-dark { background: var(--t-dark-bg); }
+
+  .tc-line3 { display: flex; align-items: center; gap: 8px; }
+  .tc-line3 .badge.style { color: var(--fg3); background: transparent; }
+  .tc-stats { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .tc-stat { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--fg3); font-variant-numeric: tabular-nums; }
+  .tc-stat .lucide { width: 14px; height: 14px; stroke-width: 1.8; }
+
+  /* shimmer card */
+  .sk-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 12px 14px; margin-bottom: 10px; }
+  .sk { background: var(--surface-high); border-radius: 999px; }
+  .sk-line { height: 8px; }
+
+  /* Bottom sheet */
+  .scrim { position: absolute; inset: 0; background: rgba(11,13,16,0.7); backdrop-filter: blur(20px); z-index: 5; }
+  .sheet-modal { position: absolute; left: 0; right: 0; bottom: 0; background: var(--surface-high); border-radius: var(--r-xl) var(--r-xl) 0 0; border-top: 1px solid var(--border); z-index: 6; display: flex; flex-direction: column; box-shadow: var(--shadow-lg); }
+  .grab { width: 36px; height: 4px; border-radius: 999px; background: var(--fg-faint); margin: 8px auto 6px; flex-shrink: 0; }
+  .sheet-head { display: flex; align-items: center; justify-content: space-between; padding: 4px 18px 12px; border-bottom: 1px solid var(--divider); flex-shrink: 0; }
+  .sheet-head h3 { margin: 0; font-size: 18px; font-weight: 700; color: var(--fg1); }
+  .reset-link { background: transparent; border: 0; color: var(--accent); font-size: 12px; font-family: inherit; cursor: pointer; }
+  .sheet-body { flex: 1; overflow-y: auto; padding: 16px 18px; }
+  .sheet-body::-webkit-scrollbar { display: none; }
+  .filter-sec { margin-bottom: 20px; }
+  .filter-sec .eyebrow { font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--fg3); margin-bottom: 10px; }
+  .seg { display: flex; background: var(--surface-sunken); border-radius: var(--r-pill); padding: 3px; }
+  .seg button { flex: 1; background: transparent; border: 0; padding: 8px 0; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--fg2); border-radius: var(--r-pill); cursor: pointer; }
+  .seg button.on { background: var(--accent); color: var(--fg-inverse); }
+  .style-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .style-opt { display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); font-size: 13px; color: var(--fg1); cursor: pointer; }
+  .style-opt.on { background: var(--accent-soft); border: 1.5px solid var(--accent); color: var(--accent); }
+  .style-opt .chk { width: 16px; height: 16px; border-radius: var(--r-sm); border: 1.5px solid var(--border-strong); display: grid; place-items: center; flex-shrink: 0; }
+  .style-opt.on .chk { background: var(--accent); border-color: var(--accent); }
+  .style-opt.on .chk .lucide { width: 11px; height: 11px; color: var(--fg-inverse); stroke-width: 3; }
+  .vp-slider { margin-top: 4px; }
+  .vp-track { height: 5px; background: var(--surface-sunken); border-radius: 999px; position: relative; margin: 14px 0 8px; }
+  .vp-track .fill { position: absolute; left: 0; top: 0; bottom: 0; width: 35%; background: var(--accent); border-radius: 999px; }
+  .vp-track .thumb { position: absolute; left: 35%; top: 50%; transform: translate(-50%,-50%); width: 18px; height: 18px; border-radius: 999px; background: var(--accent); border: 2px solid var(--surface-high); box-shadow: var(--shadow-sm); }
+  .vp-label { font-size: 11px; color: var(--fg3); font-variant-numeric: tabular-nums; }
+  .vp-label strong { color: var(--fg1); }
+  .req-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .req-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px 4px 4px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-pill); font-size: 12px; color: var(--fg1); }
+  .req-chip .rsp { width: 22px; height: 22px; border-radius: 999px; overflow: hidden; display: grid; place-items: center; }
+  .req-chip .rsp img { width: 112%; height: 112%; object-fit: contain; filter: brightness(0) invert(0.62); }
+  .req-chip .rsp.t-fire { background: var(--t-fire-bg); }
+  .req-chip .x { color: var(--fg-faint); display: grid; place-items: center; }
+  .req-chip .x .lucide { width: 12px; height: 12px; }
+  .req-add { display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; background: transparent; border: 1px dashed var(--border-strong); border-radius: var(--r-pill); color: var(--fg2); font-size: 12px; font-family: inherit; cursor: pointer; }
+  .req-add .lucide { width: 13px; height: 13px; }
+  .sort-opt { display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--divider); font-size: 14px; color: var(--fg1); }
+  .sort-opt:last-child { border-bottom: 0; }
+  .sort-opt.on { color: var(--accent); font-weight: 600; }
+  .sort-opt .lucide { width: 16px; height: 16px; }
+  .sort-opt.locked { color: var(--fg-faint); }
+  .sort-opt .lock { color: var(--fg-faint); }
+  .sheet-foot { padding: 12px 18px 18px; border-top: 1px solid var(--divider); flex-shrink: 0; }
+  .btn-primary { width: 100%; height: 48px; background: var(--accent); color: var(--fg-inverse); border: 0; border-radius: var(--r-md); font-family: inherit; font-size: 16px; font-weight: 600; cursor: pointer; }
+  .reset-foot { display: block; width: 100%; text-align: center; background: transparent; border: 0; color: var(--fg3); font-size: 12px; padding: 10px 0 0; font-family: inherit; cursor: pointer; }
+
+  /* Fiche [id] */
+  .nav { height: 44px; padding: 0 8px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; border-bottom: 1px solid var(--divider); }
+  .nav-left { display: flex; align-items: center; gap: 4px; }
+  .nav-btn { background: transparent; border: 0; color: var(--accent); padding: 8px; display: grid; place-items: center; cursor: pointer; }
+  .nav-btn .lucide { width: 22px; height: 22px; stroke-width: 1.8; }
+  .nav-btn.muted { color: var(--fg2); }
+  .nav-meta { font-size: 13px; }
+  .nav-meta .a { color: var(--fg1); font-weight: 600; }
+  .nav-meta .d { color: var(--fg3); font-size: 11px; }
+  .nav-actions { display: flex; align-items: center; gap: 2px; }
+
+  .fiche-body { flex: 1; overflow-y: auto; padding-bottom: 80px; }
+  .fiche-body::-webkit-scrollbar { display: none; }
+  .fiche-section { padding: 16px 18px; }
+  .fiche-section + .fiche-section { border-top: 1px solid var(--divider); }
+  .fiche-eyebrow { font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--fg3); margin-bottom: 12px; }
+  .fiche-head-badges { display: flex; gap: 6px; padding: 12px 18px 0; }
+
+  .poke-scroll { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 0 -2px; padding: 0 2px; }
+  .poke-scroll::-webkit-scrollbar { display: none; }
+  .poke-card { width: 78px; flex-shrink: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); padding: 8px 6px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .poke-card .pcs { width: 46px; height: 46px; border-radius: 999px; overflow: hidden; display: grid; place-items: center; }
+  .poke-card .pcs img { width: 112%; height: 112%; object-fit: contain; filter: brightness(0) invert(0.62) contrast(1.1); }
+  .poke-card .pcs.t-psychic { background: var(--t-psychic-bg); }
+  .poke-card .pcs.t-fire { background: var(--t-fire-bg); }
+  .poke-card .pcs.t-fighting { background: var(--t-fighting-bg); }
+  .poke-card .pcs.t-ghost { background: var(--t-ghost-bg); }
+  .poke-card .pcs.t-grass { background: var(--t-grass-bg); }
+  .poke-card .pcs.t-flying { background: var(--t-flying-bg); }
+  .poke-card .pcn { font-size: 11px; font-weight: 500; color: var(--fg1); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .poke-card .pci { display: flex; align-items: center; gap: 3px; }
+  .poke-card .pci .isp { width: 14px; height: 14px; border-radius: 3px; background: var(--surface-high); display: grid; place-items: center; }
+  .poke-card .pci .isp .lucide { width: 9px; height: 9px; color: var(--fg-faint); }
+  .poke-card .pcnat { font-size: 9px; color: var(--fg3); }
+
+  .reasoning { font-size: 13px; color: var(--fg2); line-height: 1.5; }
+  .reasoning .more { color: var(--accent); font-size: 12px; display: inline-flex; align-items: center; gap: 3px; margin-top: 6px; cursor: pointer; }
+  .reasoning .more .lucide { width: 12px; height: 12px; }
+
+  /* mini coverage */
+  .cov-mini { display: grid; grid-template-columns: repeat(9, 1fr); gap: 3px; }
+  .cov-mini .cm { aspect-ratio: 1; border-radius: 4px; display: grid; place-items: center; font-size: 8px; font-weight: 700; background: var(--surface); color: var(--fg-faint); position: relative; }
+  .cov-mini .cm .dot { position: absolute; top: 2px; left: 2px; width: 5px; height: 5px; border-radius: 2px; }
+  .cov-mini .cm.x2 { background: var(--warning-soft); color: var(--warning); }
+  .cov-mini .cm.x4 { background: var(--danger-soft); color: var(--danger); border: 1px solid var(--danger); }
+  .cov-mini .cm.half { background: var(--success-soft); color: var(--success); }
+  .cov-note { font-size: 10px; color: var(--fg-faint); margin-top: 8px; }
+
+  .comments-accord { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); overflow: hidden; }
+  .ca-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: transparent; border: 0; width: 100%; font-family: inherit; cursor: pointer; }
+  .ca-head .l { font-size: 13px; font-weight: 500; color: var(--fg1); }
+  .ca-head .lucide { width: 14px; height: 14px; color: var(--fg3); }
+  .ca-body { border-top: 1px solid var(--divider); padding: 12px 14px; }
+  .comment { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--divider); }
+  .comment:last-of-type { border-bottom: 0; }
+  .comment .cav { width: 24px; height: 24px; border-radius: 999px; background: var(--surface-high); color: var(--fg2); display: grid; place-items: center; font-size: 9px; font-weight: 700; flex-shrink: 0; }
+  .comment .cbody { flex: 1; min-width: 0; }
+  .comment .ctop { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+  .comment .cauthor { font-size: 12px; font-weight: 600; color: var(--fg1); }
+  .comment .cdate { font-size: 10px; color: var(--fg-faint); }
+  .comment .ctext { font-size: 12px; color: var(--fg2); line-height: 1.35; }
+  .comment-input { margin-top: 12px; position: relative; }
+  .comment-input .ci-field { height: 40px; background: var(--surface-sunken); border: 1px solid var(--border); border-radius: var(--r-md); display: flex; align-items: center; padding: 0 12px; color: var(--fg-faint); font-size: 12px; }
+  .comment-input .ci-veil { position: absolute; inset: 0; background: rgba(11,13,16,0.5); backdrop-filter: blur(3px); border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--fg2); font-size: 11px; }
+  .comment-input .ci-veil .lucide { width: 13px; height: 13px; }
+
+  .fiche-foot { position: absolute; left: 0; right: 0; bottom: 0; padding: 10px 18px 20px; background: var(--bg); border-top: 1px solid var(--divider); display: flex; gap: 8px; z-index: 4; }
+  .fiche-foot .builder-btn { flex: 1.6; height: 46px; background: var(--accent); color: var(--fg-inverse); border: 0; border-radius: var(--r-md); font-family: inherit; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 7px; cursor: pointer; }
+  .fiche-foot .builder-btn .lucide { width: 17px; height: 17px; }
+  .fiche-foot .ghost-btn { flex: 1; height: 46px; background: transparent; border: 1px solid var(--border); color: var(--fg1); border-radius: var(--r-md); font-family: inherit; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; }
+  .fiche-foot .ghost-btn .lucide { width: 15px; height: 15px; color: var(--fg2); }
+
+  .tb { font-size: 9px; font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; padding: 2px 6px; border-radius: var(--r-sm); }
+  .tb.psychic { color: var(--t-psychic); background: var(--t-psychic-bg); }
+  .tb.ghost { color: var(--t-ghost); background: var(--t-ghost-bg); }
+  .tb.fire { color: var(--t-fire); background: var(--t-fire-bg); }
+  .tb.dark { color: var(--t-dark); background: var(--t-dark-bg); }
+  .tb.fighting { color: var(--t-fighting); background: var(--t-fighting-bg); }
+  .tb.water { color: var(--t-water); background: var(--t-water-bg); }
+  .tb.grass { color: var(--t-grass); background: var(--t-grass-bg); }
+  .tb.flying { color: var(--t-flying); background: var(--t-flying-bg); }
+
+  /* Submit / locked */
+  .locked-page { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 40px 30px; text-align: center; }
+  .locked-page .lk-circle { width: 72px; height: 72px; border-radius: 999px; background: var(--surface); display: grid; place-items: center; }
+  .locked-page .lk-circle .lucide { width: 32px; height: 32px; color: var(--fg-faint); stroke-width: 1.4; }
+  .locked-page .lt { font-size: 17px; font-weight: 700; color: var(--fg1); }
+  .locked-page .lsub { font-size: 13px; color: var(--fg3); line-height: 1.45; max-width: 250px; }
+  .locked-page .lcta { margin-top: 8px; background: var(--accent); color: var(--fg-inverse); border: 0; border-radius: var(--r-md); padding: 12px 24px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; }
+
+  .submit-field { margin-bottom: 18px; }
+  .submit-field .sl { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--fg3); margin-bottom: 10px; }
+  .submit-drop { height: 42px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); display: flex; align-items: center; justify-content: space-between; padding: 0 12px; font-size: 14px; color: var(--fg1); }
+  .submit-drop .lucide { width: 15px; height: 15px; color: var(--fg-faint); }
+  .preview-sprites { display: flex; gap: 6px; margin-top: 10px; }
+  .preview-sprites .ps { flex: 1; aspect-ratio: 1; border-radius: 999px; background: var(--surface-high); overflow: hidden; display: grid; place-items: center; }
+  .preview-sprites .ps img { width: 112%; height: 112%; object-fit: contain; filter: brightness(0) invert(0.62) contrast(1.1); }
+  .preview-sprites .ps.t-psychic { background: var(--t-psychic-bg); }
+  .preview-sprites .ps.t-fire { background: var(--t-fire-bg); }
+  .preview-sprites .ps.t-fighting { background: var(--t-fighting-bg); }
+  .preview-sprites .ps.t-ghost { background: var(--t-ghost-bg); }
+  .preview-sprites .ps.t-grass { background: var(--t-grass-bg); }
+  .preview-sprites .ps.t-flying { background: var(--t-flying-bg); }
+  .reason-area { background: var(--surface-sunken); border: 1px solid var(--border); border-radius: var(--r-md); padding: 12px; min-height: 90px; font-size: 13px; color: var(--fg-faint); line-height: 1.45; position: relative; }
+  .reason-count { position: absolute; bottom: 8px; right: 10px; font-size: 10px; color: var(--fg-faint); font-variant-numeric: tabular-nums; }
+
+  /* Pins */
+  .pin { position: absolute; font-family: var(--hand); font-size: 16px; font-weight: 700; color: var(--ink); background: #FFE680; border: 1.5px solid var(--ink); border-radius: 999px; width: 26px; height: 26px; display: grid; place-items: center; transform: rotate(-4deg); box-shadow: 2px 2px 0 rgba(0,0,0,0.15); z-index: 20; }
+
+  /* Notes */
+  .notes { display: flex; flex-direction: column; gap: 18px; padding-top: 4px; }
+  .note { display: grid; grid-template-columns: 32px 1fr; gap: 14px; align-items: start; }
+  .note-num { font-family: var(--hand); font-weight: 700; font-size: 18px; color: var(--ink); background: #FFE680; border: 1.5px solid var(--ink); border-radius: 999px; width: 28px; height: 28px; display: grid; place-items: center; transform: rotate(-3deg); box-shadow: 2px 2px 0 rgba(0,0,0,0.12); }
+  .note-body { padding-top: 2px; }
+  .note-title { font-family: var(--hand); font-weight: 600; font-size: 22px; color: var(--ink); line-height: 1.1; margin: 0 0 4px; letter-spacing: -0.3px; }
+  .note-desc { font-family: var(--hand-2); font-size: 16px; color: var(--ink-2); line-height: 1.4; margin: 0 0 8px; }
+  .toks { display: flex; flex-wrap: wrap; gap: 5px; }
+  .tok { font-family: var(--font-mono); font-size: 11px; font-weight: 500; color: var(--accent); background: #1C2027; border: 1px solid #2A2F38; border-radius: 5px; padding: 2px 7px; }
+  .tok.muted { color: var(--fg2); }
+  .tok.semantic { color: #5FA978; }
+  .tok.danger { color: #D46A6A; }
+  .tok.warning { color: #D9A55A; }
+  .tok.note { color: var(--ink-3); background: transparent; border-color: var(--ink-3); }
+  .comp-pill { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.4px; color: var(--ink); background: #FFE680; border: 1.5px solid var(--ink); border-radius: 4px; padding: 2px 6px; transform: rotate(-1deg); margin: 0 2px; }
+
+  .annexe { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-top: 36px; }
+  .ann-card { background: var(--bg); border: 1.5px solid var(--ink); border-radius: 16px; overflow: hidden; box-shadow: 4px 5px 0 rgba(0,0,0,0.12); color: var(--fg1); display: flex; flex-direction: column; }
+  .ann-title { font-family: var(--font-mono); font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--ink-3); margin: 12px 0 8px; text-align: center; }
+  .ann-card .inner { padding: 16px; min-height: 360px; display: flex; flex-direction: column; }
+
+  .constraints { margin-top: 56px; padding: 32px 28px; background: rgba(255,255,255,0.45); border: 1.5px dashed var(--ink-2); border-radius: 18px; }
+  .constraints h3 { font-family: var(--hand); font-size: 28px; font-weight: 700; margin: 0 0 18px; letter-spacing: -0.5px; color: var(--ink); }
+  .constraints ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 32px; }
+  .constraints li { font-family: var(--hand-2); font-size: 17px; color: var(--ink-2); line-height: 1.4; padding-left: 24px; position: relative; }
+  .constraints li::before { content: "✓"; position: absolute; left: 0; top: 0; color: var(--accent); font-weight: 700; font-family: var(--hand); font-size: 22px; line-height: 1; }
+  .constraints li.x::before { content: "✗"; color: var(--danger); }
+
+  .legend { margin-top: 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .legend-card { padding: 16px 18px; background: rgba(255,255,255,0.45); border: 1.5px dashed var(--ink-2); border-radius: 12px; }
+  .legend-name { font-family: var(--font-mono); font-size: 11px; color: var(--accent); letter-spacing: 0.4px; margin-bottom: 6px; }
+  .legend-desc { font-family: var(--hand-2); font-size: 16px; color: var(--ink-2); line-height: 1.35; }
+
+  .lucide { width: 22px; height: 22px; stroke-width: 1.75; }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+
+  <header class="doc-head">
+    <div>
+      <div class="doc-eyebrow">Tacticx · Spec · v01 · Communauté</div>
+      <h1 class="doc-title">Communauté — <em>wireframes annotés</em></h1>
+      <p class="doc-sub">Vit dans l'onglet Teams via un Segmented Control (pas d'onglet dédié). Feed d'équipes partagées · filtres · fiche équipe lecture seule · publication premium.</p>
+    </div>
+    <div class="doc-meta">
+      <strong>Fichiers</strong>&nbsp;·&nbsp;teams/index · community/[id] · submit<br/>
+      <strong>Tab bar</strong>&nbsp;·&nbsp;reste à 5 onglets<br/>
+      <strong>Tokens</strong>&nbsp;·&nbsp;theme.ts (DS Tacticx)<br/>
+      <strong>Composants</strong>&nbsp;·&nbsp;Reacticx kit
+    </div>
+  </header>
+
+  <section class="flow">
+    <h2 class="flow-title">Les 4 vues documentées</h2>
+    <p class="flow-sub">Feed communauté (dans Teams) · panneau filtres · fiche équipe [id] · publier (premium) — annexe pour shimmer + tri</p>
+
+    <div class="flow-rail">
+      <div class="flow-step">
+        <div class="flow-mini">
+          <div class="mseg2"><span></span><span class="on"></span></div>
+          <div class="msearch"></div>
+          <div class="fcard"><div class="top"><span class="av"></span><span class="nm"></span></div><div class="sprites"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="meta"><b></b><b></b></div></div>
+          <div class="fcard"><div class="top"><span class="av"></span><span class="nm"></span></div><div class="sprites"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="meta"><b></b><b></b></div></div>
+        </div>
+        <div class="flow-num">A</div>
+        <div class="flow-label">Feed Communauté<small>dans Teams</small></div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-mini sheetmini">
+          <div class="mseg2"><span></span><span class="on"></span></div>
+          <div class="msearch"></div>
+          <div class="msheet">
+            <div class="grab"></div>
+            <div class="blk"></div>
+            <div class="grid2"><span class="on"></span><span></span><span></span><span></span></div>
+            <div class="cta"></div>
+          </div>
+        </div>
+        <div class="flow-num">B</div>
+        <div class="flow-label">Filtres<small>bottom sheet</small></div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-mini">
+          <div class="msearch" style="height:8px;width:60%"></div>
+          <div class="detail-row"><i></i><i></i><i></i><i></i></div>
+          <div class="blk" style="height:24px;background:var(--surface);border-radius:6px"></div>
+          <div class="cov-mini-flow" style="display:grid;grid-template-columns:repeat(6,1fr);gap:2px">
+            <span style="aspect-ratio:1;background:var(--danger);border-radius:1px;opacity:.7"></span>
+            <span style="aspect-ratio:1;background:var(--surface);border-radius:1px"></span>
+            <span style="aspect-ratio:1;background:var(--warning);border-radius:1px;opacity:.6"></span>
+            <span style="aspect-ratio:1;background:var(--surface);border-radius:1px"></span>
+            <span style="aspect-ratio:1;background:var(--success);border-radius:1px;opacity:.6"></span>
+            <span style="aspect-ratio:1;background:var(--surface);border-radius:1px"></span>
+          </div>
+          <div style="display:flex;gap:4px;margin-top:auto"><span style="flex:1.6;height:12px;background:var(--accent);border-radius:4px"></span><span style="flex:1;height:12px;background:var(--surface);border:1px solid var(--border);border-radius:4px"></span></div>
+        </div>
+        <div class="flow-num">C</div>
+        <div class="flow-label">Fiche équipe<small>community/[id]</small></div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-mini">
+          <div class="msearch" style="height:8px;width:55%"></div>
+          <div class="lockc"><span class="lk"></span></div>
+          <div style="height:12px;background:var(--accent);border-radius:4px"></div>
+        </div>
+        <div class="flow-num">D</div>
+        <div class="flow-label">Publier (premium)<small>submit · gated</small></div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═════════ STATE A — FEED ═════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">A</span>
+      <h2 class="spec-title">Feed Communauté</h2>
+      <span class="spec-eyebrow">teams/index.tsx · segmented Mes équipes / Communauté</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status"><span>9:41</span><span class="status-icons"><i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i></span></div>
+
+          <div class="head">
+            <div class="head-seg">
+              <button>Mes équipes</button>
+              <button class="on">Communauté</button>
+            </div>
+            <div class="search-row">
+              <div class="search"><i data-lucide="search"></i><span class="ph">Rechercher un Pokémon...</span></div>
+              <button class="filter-btn"><i data-lucide="sliders-horizontal"></i><span class="count">2</span></button>
+            </div>
+          </div>
+
+          <div class="chips">
+            <span class="fchip">VGC<span class="x"><i data-lucide="x"></i></span></span>
+            <span class="fchip">Trick Room<span class="x"><i data-lucide="x"></i></span></span>
+          </div>
+
+          <div class="sort-row">
+            <span class="lbl">128 équipes</span>
+            <button class="sort-drop">Trier&nbsp;: Populaire<i data-lucide="chevron-down"></i></button>
+          </div>
+
+          <div class="feed">
+            <div class="team-card">
+              <div class="tc-line1">
+                <span class="tc-av">KM</span>
+                <span class="tc-author">Kaze_M<i data-lucide="badge-check"></i></span>
+                <span class="tc-date">· il y a 3 h</span>
+                <span class="tc-badges"><span class="badge accent">VGC</span><span class="badge topcut">Top Cut</span></span>
+              </div>
+              <div class="tc-sprites">
+                <span class="tc-sp t-psychic"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/898.png" alt=""/></span>
+                <span class="tc-sp t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/727.png" alt=""/></span>
+                <span class="tc-sp t-fighting"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/892.png" alt=""/></span>
+                <span class="tc-sp t-grass"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/591.png" alt=""/></span>
+                <span class="tc-sp t-flying"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/641.png" alt=""/></span>
+                <span class="tc-sp t-ghost"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/987.png" alt=""/></span>
+              </div>
+              <div class="tc-line3">
+                <span class="badge style">Trick Room</span>
+                <span class="badge">Reg MA</span>
+                <span class="tc-stats">
+                  <span class="tc-stat"><i data-lucide="heart"></i>47</span>
+                  <span class="tc-stat"><i data-lucide="message-circle"></i>8</span>
+                </span>
+              </div>
+            </div>
+
+            <div class="team-card">
+              <div class="tc-line1">
+                <span class="tc-av">RZ</span>
+                <span class="tc-author">RyzaVGC</span>
+                <span class="tc-date">· il y a 6 h</span>
+                <span class="tc-badges"><span class="badge accent">VGC</span><span class="badge valid">Validé</span></span>
+              </div>
+              <div class="tc-sprites">
+                <span class="tc-sp t-steel"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/376.png" alt=""/></span>
+                <span class="tc-sp t-dragon"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/149.png" alt=""/></span>
+                <span class="tc-sp t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/727.png" alt=""/></span>
+                <span class="tc-sp t-grass"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1017.png" alt=""/></span>
+                <span class="tc-sp t-water"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/350.png" alt=""/></span>
+                <span class="tc-sp t-dark"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1003.png" alt=""/></span>
+              </div>
+              <div class="tc-line3">
+                <span class="badge style">Balance</span>
+                <span class="badge">Reg MA</span>
+                <span class="tc-stats">
+                  <span class="tc-stat"><i data-lucide="heart"></i>31</span>
+                  <span class="tc-stat"><i data-lucide="message-circle"></i>5</span>
+                </span>
+              </div>
+            </div>
+
+            <div class="team-card">
+              <div class="tc-line1">
+                <span class="tc-av">AL</span>
+                <span class="tc-author">Alex L.</span>
+                <span class="tc-date">· il y a 1 j</span>
+                <span class="tc-badges"><span class="badge accent">VGC</span></span>
+              </div>
+              <div class="tc-sprites">
+                <span class="tc-sp t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1017.png" alt=""/></span>
+                <span class="tc-sp t-fighting"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/992.png" alt=""/></span>
+                <span class="tc-sp t-ghost"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/987.png" alt=""/></span>
+                <span class="tc-sp t-grass"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/591.png" alt=""/></span>
+                <span class="tc-sp t-water"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/892.png" alt=""/></span>
+                <span class="tc-sp t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/727.png" alt=""/></span>
+              </div>
+              <div class="tc-line3">
+                <span class="badge style">HO</span>
+                <span class="badge">Reg MA</span>
+                <span class="tc-stats">
+                  <span class="tc-stat"><i data-lucide="heart"></i>19</span>
+                  <span class="tc-stat"><i data-lucide="message-circle"></i>2</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <span class="pin" style="top: 36px; left: 50%; transform:translateX(-50%) rotate(-4deg);">1</span>
+          <span class="pin" style="top: 78px; left: 14px;">2</span>
+          <span class="pin" style="top: 78px; right: 14px;">3</span>
+          <span class="pin" style="top: 120px; left: 14px;">4</span>
+          <span class="pin" style="top: 168px; left: 14px;">5</span>
+          <span class="pin" style="top: 224px; left: 14px;">6</span>
+          <span class="pin" style="top: 280px; right: 14px;">7</span>
+        </div>
+        <div class="phone-dims">380 × 760 · Communauté actif</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><div class="note-num">1</div><div class="note-body">
+        <h4 class="note-title">Segmented Mes équipes / Communauté</h4>
+        <p class="note-desc">Pleine largeur en haut de <span class="tok muted">teams/index.tsx</span>. Bascule le contenu sans navigation — la tab bar reste à 5 onglets. Variante accent (le segment actif en <span class="tok">--accent</span>). Quand "Communauté" actif, le bouton <span class="tok muted">add-circle</span> devient <span class="tok muted">options</span> (filtres).</p>
+        <div class="toks"><span class="tok">--accent</span><span class="tok muted">--surface-sunken</span><span class="tok">--r-pill</span><span class="comp-pill">Segmented Control</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">2</div><div class="note-body">
+        <h4 class="note-title">Recherche par Pokémon</h4>
+        <p class="note-desc"><span class="comp-pill">Animated Input Bar</span> — recherche les équipes contenant un Pokémon donné (ex : "Incineroar"). Expansion au focus, temps réel.</p>
+        <div class="toks"><span class="tok muted">--surface-sunken</span><span class="tok muted">--border</span><span class="tok">--r-md</span><span class="comp-pill">Animated Input Bar</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">3</div><div class="note-body">
+        <h4 class="note-title">Bouton filtres + compteur</h4>
+        <p class="note-desc"><span class="tok muted">options-outline</span>. Badge <span class="tok">--accent</span> XS avec le nombre de filtres actifs. Tap → bottom-sheet filtres (vue B).</p>
+        <div class="toks"><span class="tok">--accent (badge)</span><span class="tok muted">--surface</span><span class="comp-pill">Badge</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">4</div><div class="note-body">
+        <h4 class="note-title">Chips filtres actifs + tri</h4>
+        <p class="note-desc">Chips supprimables (<span class="tok">--accent-soft</span>) scroll-x. Sous : compteur dynamique d'équipes + <span class="comp-pill">Dropdown</span> de tri (Récent / Populaire / Validé / Winrate premium).</p>
+        <div class="toks"><span class="tok">--accent-soft</span><span class="tok">--r-pill</span><span class="comp-pill">Dropdown</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">5</div><div class="note-body">
+        <h4 class="note-title">Card équipe — ligne 1 auteur</h4>
+        <p class="note-desc">Avatar initiales 28pt + pseudo + <span class="tok muted">checkmark-circle</span> en <span class="tok">--accent</span> si vérifié + date relative. Badges format + Top Cut (<span class="tok warning">--warning</span>) ou Validé (<span class="tok semantic">--success</span>) à droite.</p>
+        <div class="toks"><span class="tok">--accent (vérifié)</span><span class="tok warning">--warning-soft (top cut)</span><span class="tok semantic">--success-soft (validé)</span><span class="comp-pill">Badge</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">6</div><div class="note-body">
+        <h4 class="note-title">Ligne 2 — 6 sprites</h4>
+        <p class="note-desc">6 sprites 36pt teintés par type. Tap sur un sprite → tooltip nom. <span class="comp-pill">Shimmer</span> au chargement. La card entière (120pt) → <span class="tok muted">community/[id]</span>.</p>
+        <div class="toks"><span class="tok muted">--surface-high</span><span class="tok muted">--t-{type}-bg</span><span class="tok">--r-pill</span><span class="comp-pill">Shimmer</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">7</div><div class="note-body">
+        <h4 class="note-title">Ligne 3 — tags + social</h4>
+        <p class="note-desc">Badge style (Trick Room / HO / Balance / Stall) + badge regulation. À droite : <span class="tok muted">heart-outline</span> + likes et <span class="tok muted">chatbubble-outline</span> + commentaires, tabulaires. Pas d'emoji.</p>
+        <div class="toks"><span class="tok muted">--fg3 (compteurs)</span><span class="tok muted">tabular-nums</span><span class="comp-pill">Badge</span></div>
+      </div></div>
+    </div>
+  </section>
+
+
+  <!-- ═════════ STATE B — FILTRES ═════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">B</span>
+      <h2 class="spec-title">Panneau filtres</h2>
+      <span class="spec-eyebrow">bottom sheet · format · style · budget · regulation · requis</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status"><span>9:41</span><span class="status-icons"><i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i></span></div>
+
+          <div class="head">
+            <div class="head-seg">
+              <button>Mes équipes</button>
+              <button class="on">Communauté</button>
+            </div>
+            <div class="search-row">
+              <div class="search"><i data-lucide="search"></i><span class="ph">Rechercher un Pokémon...</span></div>
+              <button class="filter-btn"><i data-lucide="sliders-horizontal"></i><span class="count">2</span></button>
+            </div>
+          </div>
+
+          <div class="scrim"></div>
+          <div class="sheet-modal" style="top: 96px;">
+            <div class="grab"></div>
+            <div class="sheet-head"><h3>Filtres</h3><button class="reset-link">Réinitialiser</button></div>
+            <div class="sheet-body">
+              <div class="filter-sec">
+                <div class="eyebrow">Format</div>
+                <div class="seg"><button class="on">VGC</button><button>Singles</button><button>Tous</button></div>
+              </div>
+              <div class="filter-sec">
+                <div class="eyebrow">Style de jeu</div>
+                <div class="style-grid">
+                  <span class="style-opt on"><span class="chk"><i data-lucide="check"></i></span>Trick Room</span>
+                  <span class="style-opt"><span class="chk"></span>Hyper Offense</span>
+                  <span class="style-opt"><span class="chk"></span>Balance</span>
+                  <span class="style-opt"><span class="chk"></span>Stall</span>
+                </div>
+              </div>
+              <div class="filter-sec">
+                <div class="eyebrow">Budget VP</div>
+                <div class="vp-slider">
+                  <div class="vp-track"><div class="fill"></div><div class="thumb"></div></div>
+                  <div class="vp-label">Équipes accessibles avec <strong>700 VP</strong></div>
+                </div>
+              </div>
+              <div class="filter-sec">
+                <div class="eyebrow">Régulation</div>
+                <div class="submit-drop"><span>Reg MA</span><i data-lucide="chevron-down"></i></div>
+              </div>
+              <div class="filter-sec">
+                <div class="eyebrow">Pokémon requis</div>
+                <div class="req-chips">
+                  <span class="req-chip"><span class="rsp t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/727.png" alt=""/></span>Incineroar<span class="x"><i data-lucide="x"></i></span></span>
+                  <button class="req-add"><i data-lucide="plus"></i>Ajouter</button>
+                </div>
+              </div>
+            </div>
+            <div class="sheet-foot">
+              <button class="btn-primary">Voir 128 équipes</button>
+              <button class="reset-foot">Réinitialiser les filtres</button>
+            </div>
+          </div>
+
+          <span class="pin" style="top: 110px; left: 18px;">1</span>
+          <span class="pin" style="top: 178px; left: 18px;">2</span>
+          <span class="pin" style="top: 250px; left: 18px;">3</span>
+          <span class="pin" style="top: 360px; left: 18px;">4</span>
+          <span class="pin" style="top: 432px; left: 18px;">5</span>
+          <span class="pin" style="bottom: 78px; right: 18px;">6</span>
+        </div>
+        <div class="phone-dims">380 × 760 · filtres ouverts</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><div class="note-num">1</div><div class="note-body">
+        <h4 class="note-title">Format (obligatoire, en 1er)</h4>
+        <p class="note-desc"><span class="comp-pill">Segmented Control</span> VGC / Singles / Tous. Premier filtre car il conditionne la méta affichée. Variante accent.</p>
+        <div class="toks"><span class="tok">--accent</span><span class="tok muted">--surface-sunken</span><span class="comp-pill">Segmented Control</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">2</div><div class="note-body">
+        <h4 class="note-title">Style — multi-select 2×2</h4>
+        <p class="note-desc">Grille de cards sélectionnables (Trick Room / Hyper Offense / Balance / Stall) avec <span class="tok muted">checkmark-outline</span>. Sélection active = <span class="tok">--accent-soft</span> + border accent. Multi-select (OR).</p>
+        <div class="toks"><span class="tok">--accent-soft</span><span class="tok muted">--surface</span><span class="tok">--r-md</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">3</div><div class="note-body">
+        <h4 class="note-title">Budget VP — slider</h4>
+        <p class="note-desc">Slider 0 → 2000 VP. Label "Équipes accessibles avec X VP" tabulaire. Thumb 18pt (touch 44pt). Filtre les équipes dont le coût total tient dans le budget.</p>
+        <div class="toks"><span class="tok">--accent (fill/thumb)</span><span class="tok muted">--surface-sunken (track)</span><span class="tok muted">tabular-nums</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">4</div><div class="note-body">
+        <h4 class="note-title">Régulation — Dropdown</h4>
+        <p class="note-desc"><span class="comp-pill">Dropdown</span> : Reg MA / Reg M / Toutes. Filtre sur la régulation déclarée à la publication.</p>
+        <div class="toks"><span class="tok muted">--surface</span><span class="tok muted">--border</span><span class="tok">--r-md</span><span class="comp-pill">Dropdown</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">5</div><div class="note-body">
+        <h4 class="note-title">Pokémon requis — chips ajoutables</h4>
+        <p class="note-desc">Search inline → jusqu'à 3 Pokémon obligatoires. Chaque ajout = chip avec sprite 20pt + nom + <span class="tok muted">close</span>. Bouton "Ajouter" dashed tant que &lt; 3.</p>
+        <div class="toks"><span class="tok muted">--surface</span><span class="tok muted">--border-strong dashed</span><span class="tok">--r-pill</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">6</div><div class="note-body">
+        <h4 class="note-title">CTA compteur dynamique</h4>
+        <p class="note-desc">"Voir X équipes" — nombre mis à jour en temps réel selon les filtres. <span class="tok">--accent</span> primaire. "Réinitialiser les filtres" en lien secondaire dessous.</p>
+        <div class="toks"><span class="tok">--accent</span><span class="tok muted">--fg-inverse</span><span class="tok muted">--fg3 (reset)</span><span class="comp-pill">Rolling Counter</span></div>
+      </div></div>
+    </div>
+  </section>
+
+
+  <!-- ═════════ STATE C — FICHE ÉQUIPE ═════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">C</span>
+      <h2 class="spec-title">Fiche équipe</h2>
+      <span class="spec-eyebrow">community/[id].tsx · lecture seule · footer sticky</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status"><span>9:41</span><span class="status-icons"><i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i></span></div>
+
+          <div class="nav">
+            <div class="nav-left">
+              <button class="nav-btn"><i data-lucide="chevron-left"></i></button>
+              <span class="nav-meta"><span class="a">Kaze_M</span> <span class="d">· il y a 3 h</span></span>
+            </div>
+            <div class="nav-actions">
+              <button class="nav-btn muted"><i data-lucide="heart"></i></button>
+              <button class="nav-btn muted"><i data-lucide="share"></i></button>
+            </div>
+          </div>
+          <div class="fiche-head-badges">
+            <span class="badge accent">VGC</span>
+            <span class="badge style" style="color:var(--fg2);background:var(--surface-high)">Trick Room</span>
+            <span class="badge topcut">Top Cut</span>
+          </div>
+
+          <div class="fiche-body">
+            <div class="fiche-section">
+              <div class="fiche-eyebrow">Les 6 Pokémon</div>
+              <div class="poke-scroll">
+                <div class="poke-card">
+                  <span class="pcs t-psychic"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/898.png" alt=""/></span>
+                  <span class="pcn">Calyrex-S</span>
+                  <span class="pci"><span class="isp"><i data-lucide="circle"></i></span><span class="pcnat" style="font-size:8px">Choix</span></span>
+                  <span class="pcnat">Timide</span>
+                </div>
+                <div class="poke-card">
+                  <span class="pcs t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/727.png" alt=""/></span>
+                  <span class="pcn">Incineroar</span>
+                  <span class="pci"><span class="isp"><i data-lucide="circle"></i></span><span class="pcnat" style="font-size:8px">Veste</span></span>
+                  <span class="pcnat">Prudent</span>
+                </div>
+                <div class="poke-card">
+                  <span class="pcs t-grass"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/591.png" alt=""/></span>
+                  <span class="pcn">Amoonguss</span>
+                  <span class="pci"><span class="isp"><i data-lucide="circle"></i></span><span class="pcnat" style="font-size:8px">Sitrus</span></span>
+                  <span class="pcnat">Calme</span>
+                </div>
+                <div class="poke-card">
+                  <span class="pcs t-fighting"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/892.png" alt=""/></span>
+                  <span class="pcn">Shifours</span>
+                  <span class="pci"><span class="isp"><i data-lucide="circle"></i></span><span class="pcnat" style="font-size:8px">Focus</span></span>
+                  <span class="pcnat">Joyeux</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="fiche-section">
+              <div class="fiche-eyebrow">Raisonnement stratégique</div>
+              <div class="reasoning">
+                Trick Room offensif autour de Calyrex-S sous vitesse inversée. Amoonguss installe le TR et redirige avec Pollen, Incineroar gère les menaces rapides hors-TR via Intimidation.
+                <span class="more">Lire la suite<i data-lucide="chevron-down"></i></span>
+              </div>
+            </div>
+
+            <div class="fiche-section">
+              <div class="fiche-eyebrow">Couverture défensive</div>
+              <div class="cov-mini">
+                <div class="cm x2"><span class="dot" style="background:var(--t-ghost)"></span>2×</div>
+                <div class="cm"><span class="dot" style="background:var(--t-dark)"></span></div>
+                <div class="cm x4"><span class="dot" style="background:var(--t-fairy)"></span>4×</div>
+                <div class="cm half"><span class="dot" style="background:var(--t-grass)"></span>½</div>
+                <div class="cm"><span class="dot" style="background:var(--t-water)"></span></div>
+                <div class="cm x2"><span class="dot" style="background:var(--t-fire)"></span>2×</div>
+                <div class="cm half"><span class="dot" style="background:var(--t-electric)"></span>½</div>
+                <div class="cm"><span class="dot" style="background:var(--t-ground)"></span></div>
+                <div class="cm x2"><span class="dot" style="background:var(--t-ice)"></span>2×</div>
+              </div>
+              <div class="cov-note">Recalculé depuis les 6 Pokémon · lecture seule</div>
+            </div>
+
+            <div class="fiche-section">
+              <div class="fiche-eyebrow">Commentaires</div>
+              <div class="comments-accord">
+                <button class="ca-head"><span class="l">8 commentaires</span><i data-lucide="chevron-down"></i></button>
+                <div class="ca-body">
+                  <div class="comment">
+                    <span class="cav">TM</span>
+                    <span class="cbody"><span class="ctop"><span class="cauthor">TheoM</span><span class="cdate">il y a 1 h</span></span><span class="ctext">Le spread d'Amoonguss tient bien le Flutter Mane Booster ?</span></span>
+                  </div>
+                  <div class="comment">
+                    <span class="cav">KM</span>
+                    <span class="cbody"><span class="ctop"><span class="cauthor">Kaze_M</span><span class="cdate">il y a 40 min</span></span><span class="ctext">Oui, 252 DéfSp + Prudent survit au +SpA.</span></span>
+                  </div>
+                  <div class="comment-input">
+                    <div class="ci-field">Ajouter un commentaire...</div>
+                    <div class="ci-veil"><i data-lucide="lock"></i>Commenter en Premium</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fiche-foot">
+            <button class="builder-btn"><i data-lucide="hammer"></i>Ouvrir dans le builder</button>
+            <button class="ghost-btn"><i data-lucide="download"></i>Pokepaste</button>
+          </div>
+
+          <span class="pin" style="top: 38px; right: 14px;">1</span>
+          <span class="pin" style="top: 130px; left: 14px;">2</span>
+          <span class="pin" style="top: 268px; left: 14px;">3</span>
+          <span class="pin" style="top: 366px; left: 14px;">4</span>
+          <span class="pin" style="top: 480px; right: 14px;">5</span>
+          <span class="pin" style="bottom: 74px; left: 14px;">6</span>
+        </div>
+        <div class="phone-dims">380 × 760 · fiche lecture seule</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><div class="note-num">1</div><div class="note-body">
+        <h4 class="note-title">Nav + actions sociales</h4>
+        <p class="note-desc">Back chevron <span class="tok">--accent</span> + pseudo/date. À droite : <span class="tok muted">heart-outline</span> like et <span class="tok muted">share-outline</span> partager. Badges format + style + Top Cut sous la nav.</p>
+        <div class="toks"><span class="tok">--accent (back)</span><span class="tok muted">--fg2 (actions)</span><span class="comp-pill">Badge</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">2</div><div class="note-body">
+        <h4 class="note-title">6 Pokémon — cards scrollables</h4>
+        <p class="note-desc">Row horizontale de 6 cards 78pt : sprite 46pt + nom + item (sprite 16pt) + nature (<span class="tok muted">--fg3</span>). Tap → bottom-sheet du Pokémon (sprite 80, ability, item, 4 moves, 6 barres <span class="comp-pill">Progress</span> SP en lecture seule, valeur + stat finale).</p>
+        <div class="toks"><span class="tok muted">--surface</span><span class="tok muted">--border</span><span class="tok">--r-md</span><span class="comp-pill">Progress</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">3</div><div class="note-body">
+        <h4 class="note-title">Raisonnement — Accordion</h4>
+        <p class="note-desc">Texte libre de l'auteur (max 500 car.). <span class="comp-pill">Accordion</span> "Lire la suite" si &gt; 3 lignes. Vocabulaire compétitif assumé (TR, Intimidation, Pollen) — pas d'explication des termes.</p>
+        <div class="toks"><span class="tok muted">--fg2</span><span class="tok">--accent (lire la suite)</span><span class="comp-pill">Accordion</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">4</div><div class="note-body">
+        <h4 class="note-title">Couverture défensive (lecture seule)</h4>
+        <p class="note-desc">Version compactée de la matrice du builder, non-interactive. Recalculée depuis les 6 Pokémon. Mêmes codes couleur (4× danger, 2× warning, ½ success). Note explicite "lecture seule".</p>
+        <div class="toks"><span class="tok danger">--danger-soft (4×)</span><span class="tok warning">--warning-soft (2×)</span><span class="tok semantic">--success-soft (½)</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">5</div><div class="note-body">
+        <h4 class="note-title">Commentaires — lecture gratuite, écriture premium</h4>
+        <p class="note-desc"><span class="comp-pill">Accordion</span> "8 commentaires" fermé par défaut. FlashList des 5 derniers. Lecture <strong>gratuite</strong>. Champ d'ajout voilé (blur + <span class="tok muted">lock</span>) "Commenter en Premium" si free.</p>
+        <div class="toks"><span class="tok muted">--surface</span><span class="tok muted">blur 3px (champ)</span><span class="tok note">premium gating</span><span class="comp-pill">Accordion</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">6</div><div class="note-body">
+        <h4 class="note-title">Footer sticky — 2 actions</h4>
+        <p class="note-desc">"Ouvrir dans le builder" (<span class="tok">--accent</span> primaire, <span class="tok muted">hammer</span>) → copie l'équipe dans Mes équipes + <span class="comp-pill">Toast</span> "Équipe copiée !" + redirige vers le builder. "Pokepaste" ghost → import. Safe area basse respectée.</p>
+        <div class="toks"><span class="tok">--accent</span><span class="tok muted">--border (ghost)</span><span class="comp-pill">Toast</span></div>
+      </div></div>
+    </div>
+  </section>
+
+
+  <!-- ═════════ STATE D — PUBLIER ═════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">D</span>
+      <h2 class="spec-title">Publier une équipe</h2>
+      <span class="spec-eyebrow">community/submit.tsx · premium · gated si free</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status"><span>9:41</span><span class="status-icons"><i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i></span></div>
+
+          <div class="nav">
+            <div class="nav-left">
+              <button class="nav-btn"><i data-lucide="chevron-left"></i></button>
+              <span class="nav-meta"><span class="a">Publier une équipe</span></span>
+            </div>
+          </div>
+
+          <div class="fiche-body" style="padding:16px 18px">
+            <div class="submit-field">
+              <div class="sl">Équipe à publier</div>
+              <div class="submit-drop"><span>Trick Room Cavalier</span><i data-lucide="chevron-down"></i></div>
+              <div class="preview-sprites">
+                <span class="ps t-psychic"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/898.png" alt=""/></span>
+                <span class="ps t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/727.png" alt=""/></span>
+                <span class="ps t-fighting"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/892.png" alt=""/></span>
+                <span class="ps t-grass"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/591.png" alt=""/></span>
+                <span class="ps t-flying"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/641.png" alt=""/></span>
+                <span class="ps t-ghost"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/987.png" alt=""/></span>
+              </div>
+            </div>
+
+            <div class="submit-field">
+              <div class="sl">Format</div>
+              <div class="seg"><button class="on">VGC</button><button>Singles</button></div>
+            </div>
+
+            <div class="submit-field">
+              <div class="sl">Style</div>
+              <div class="style-grid">
+                <span class="style-opt on"><span class="chk"><i data-lucide="check"></i></span>Trick Room</span>
+                <span class="style-opt"><span class="chk"></span>Hyper Offense</span>
+                <span class="style-opt"><span class="chk"></span>Balance</span>
+                <span class="style-opt"><span class="chk"></span>Stall</span>
+              </div>
+            </div>
+
+            <div class="submit-field">
+              <div class="sl">Régulation</div>
+              <div class="submit-drop"><span>Reg MA</span><i data-lucide="chevron-down"></i></div>
+            </div>
+
+            <div class="submit-field">
+              <div class="sl">Raisonnement stratégique</div>
+              <div class="reason-area">Décris le plan de jeu, les matchups clés, pourquoi tu as choisi ces Pokémon...<span class="reason-count">0 / 500</span></div>
+            </div>
+
+            <button class="btn-primary">Publier l'équipe</button>
+          </div>
+
+          <span class="pin" style="top: 92px; right: 14px;">1</span>
+          <span class="pin" style="top: 168px; right: 14px;">2</span>
+          <span class="pin" style="top: 234px; left: 14px;">3</span>
+          <span class="pin" style="top: 430px; right: 14px;">4</span>
+          <span class="pin" style="bottom: 70px; left: 14px;">5</span>
+        </div>
+        <div class="phone-dims">380 × 760 · publier (abonné)</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><div class="note-num">1</div><div class="note-body">
+        <h4 class="note-title">Sélection équipe + preview</h4>
+        <p class="note-desc"><span class="comp-pill">Dropdown</span> des équipes de Mes équipes. Preview 6 mini-sprites de l'équipe choisie dessous. Confirme visuellement avant publication.</p>
+        <div class="toks"><span class="tok muted">--surface</span><span class="tok muted">--surface-high (sprites)</span><span class="tok">--r-md</span><span class="comp-pill">Dropdown</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">2</div><div class="note-body">
+        <h4 class="note-title">Format (tag obligatoire)</h4>
+        <p class="note-desc"><span class="comp-pill">Segmented Control</span> VGC / Singles. Tag obligatoire — détermine où l'équipe apparaît dans le feed filtré.</p>
+        <div class="toks"><span class="tok">--accent</span><span class="comp-pill">Segmented Control</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">3</div><div class="note-body">
+        <h4 class="note-title">Style + Régulation (obligatoires)</h4>
+        <p class="note-desc">Style en grille 2×2 sélectionnable (single-select à la publication). Régulation en <span class="comp-pill">Dropdown</span>. Ces tags alimentent les filtres du feed.</p>
+        <div class="toks"><span class="tok">--accent-soft (sélection)</span><span class="tok muted">--surface</span><span class="comp-pill">Dropdown</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">4</div><div class="note-body">
+        <h4 class="note-title">Raisonnement (optionnel, encouragé)</h4>
+        <p class="note-desc"><span class="comp-pill">Animated Input Bar</span> multiligne, placeholder explicatif. Compteur "X / 500" tabulaire. Encouragé pour la qualité du feed mais non bloquant.</p>
+        <div class="toks"><span class="tok muted">--surface-sunken</span><span class="tok muted">--fg-faint (placeholder)</span><span class="tok muted">tabular-nums</span><span class="comp-pill">Animated Input Bar</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">5</div><div class="note-body">
+        <h4 class="note-title">Publier + écran gated</h4>
+        <p class="note-desc">Primaire "Publier l'équipe" → <span class="comp-pill">Toast</span> "Équipe publiée ! Elle apparaîtra dans le feed sous peu." + retour au feed. <strong>Si free</strong> : tout l'écran est remplacé par un blocage (lock centré + message + "Passer à Premium") — voir annexe.</p>
+        <div class="toks"><span class="tok">--accent</span><span class="tok note">premium gating</span><span class="comp-pill">Toast</span></div>
+      </div></div>
+    </div>
+  </section>
+
+
+  <!-- ═════════ ANNEXE ═════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step" style="background:#B7E6C9">∞</span>
+      <h2 class="spec-title">Annexe — états</h2>
+      <span class="spec-eyebrow">shimmer feed · tri dropdown · publier gated</span>
+    </div>
+
+    <div class="annexe" style="grid-column: 1 / -1;">
+      <div>
+        <div class="ann-title">Feed · chargement Shimmer</div>
+        <div class="ann-card">
+          <div class="inner">
+            <div class="sk-card">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span class="sk" style="width:28px;height:28px;border-radius:999px"></span><span class="sk sk-line" style="width:80px"></span><span class="sk sk-line" style="width:40px;margin-left:auto"></span></div>
+              <div style="display:flex;gap:6px;margin-bottom:10px"><span class="sk" style="flex:1;aspect-ratio:1;border-radius:999px"></span><span class="sk" style="flex:1;aspect-ratio:1;border-radius:999px"></span><span class="sk" style="flex:1;aspect-ratio:1;border-radius:999px"></span><span class="sk" style="flex:1;aspect-ratio:1;border-radius:999px"></span><span class="sk" style="flex:1;aspect-ratio:1;border-radius:999px"></span><span class="sk" style="flex:1;aspect-ratio:1;border-radius:999px"></span></div>
+              <div style="display:flex;gap:8px"><span class="sk sk-line" style="width:60px"></span><span class="sk sk-line" style="width:40px"></span></div>
+            </div>
+            <div class="sk-card">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span class="sk" style="width:28px;height:28px;border-radius:999px"></span><span class="sk sk-line" style="width:70px"></span><span class="sk sk-line" style="width:40px;margin-left:auto"></span></div>
+              <div style="display:flex;gap:6px;margin-bottom:10px"><span class="sk" style="flex:1;aspect-ratio:1;border-radius:999px"></span><span class="sk" style="flex:1;aspect-ratio:1;border-radius:999px"></span><span class="sk" style="flex:1;aspect-ratio:1;border-radius:999px"></span><span class="sk" style="flex:1;aspect-ratio:1;border-radius:999px"></span><span class="sk" style="flex:1;aspect-ratio:1;border-radius:999px"></span><span class="sk" style="flex:1;aspect-ratio:1;border-radius:999px"></span></div>
+              <div style="display:flex;gap:8px"><span class="sk sk-line" style="width:60px"></span><span class="sk sk-line" style="width:40px"></span></div>
+            </div>
+            <div style="margin-top:auto;padding-top:12px">
+              <div style="font-family:var(--hand);font-size:18px;color:var(--ink-2);line-height:1.2;margin-bottom:4px;">Skeleton card 120pt — pas de spinner</div>
+              <div class="toks"><span class="tok muted">--surface-high</span><span class="comp-pill">Shimmer</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="ann-title">Tri · Dropdown (winrate premium)</div>
+        <div class="ann-card">
+          <div class="inner" style="padding:0;background:var(--surface-high)">
+            <div style="width:36px;height:4px;border-radius:999px;background:var(--fg-faint);margin:8px auto 6px"></div>
+            <div style="padding:4px 18px 12px;border-bottom:1px solid var(--divider);font-size:16px;font-weight:700;color:var(--fg1)">Trier par</div>
+            <div style="padding:6px 18px 16px">
+              <div class="sort-opt"><span>Récent</span></div>
+              <div class="sort-opt on"><span>Populaire (likes)</span><i data-lucide="check"></i></div>
+              <div class="sort-opt"><span>Validé par la communauté</span></div>
+              <div class="sort-opt locked"><span>Winrate le plus élevé</span><span class="lock"><i data-lucide="lock"></i></span></div>
+            </div>
+            <div style="padding:0 18px 16px;margin-top:auto">
+              <div style="font-family:var(--hand);font-size:17px;color:var(--ink-2);line-height:1.2;margin-bottom:4px;">Tri winrate gated — visible + lock</div>
+              <div class="toks"><span class="tok">--accent (actif)</span><span class="tok muted">--fg-faint (locked)</span><span class="comp-pill">Dropdown</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="ann-title">Publier · bloqué (FREE)</div>
+        <div class="ann-card">
+          <div class="inner" style="padding:0">
+            <div class="nav" style="border-radius:0"><div class="nav-left"><button class="nav-btn"><i data-lucide="chevron-left"></i></button><span class="nav-meta"><span class="a">Publier une équipe</span></span></div></div>
+            <div class="locked-page">
+              <span class="lk-circle"><i data-lucide="lock"></i></span>
+              <div class="lt">Publication réservée à Premium</div>
+              <div class="lsub">Partage tes équipes avec la communauté et reçois des retours des meilleurs joueurs.</div>
+              <button class="lcta">Passer à Premium</button>
+            </div>
+            <div style="padding:0 16px 14px">
+              <div style="font-family:var(--hand);font-size:16px;color:var(--ink-2);line-height:1.2;margin-bottom:4px;">Page entière bloquée si free</div>
+              <div class="toks"><span class="tok muted">--surface (cercle)</span><span class="tok">--accent (cta)</span><span class="tok note">premium gating</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="constraints">
+    <h3>Contraintes UX — invariantes de la Communauté</h3>
+    <ul>
+      <li>Vit dans Teams via Segmented — pas d'onglet tab bar dédié (reste à 5)</li>
+      <li>Bascule de contenu sans navigation supplémentaire</li>
+      <li>FlashList pour le feed et les listes de commentaires</li>
+      <li>Shimmer skeleton 120pt pour les cards en chargement</li>
+      <li>Recherche par Pokémon inclus dans l'équipe</li>
+      <li>Filtres : compteur dynamique sur le CTA d'application</li>
+      <li>Fiche équipe : couverture défensive recalculée, lecture seule</li>
+      <li>"Ouvrir dans le builder" copie l'équipe + Toast + redirige</li>
+      <li>Commentaires : lecture gratuite, écriture premium</li>
+      <li>Touch targets 44×44pt · safe area haut et bas</li>
+      <li class="x">Pas d'emoji dans notre copy — Ionicons -outline uniquement</li>
+      <li class="x">Premium (publier, winrate, commenter) : visible + flou + lock</li>
+    </ul>
+  </section>
+
+  <section class="legend">
+    <div class="legend-card"><div class="legend-name">Reacticx · Segmented Control</div><div class="legend-desc">Mes équipes / Communauté (header Teams) + Format dans filtres et submit.</div></div>
+    <div class="legend-card"><div class="legend-name">Reacticx · Animated Input Bar</div><div class="legend-desc">Recherche par Pokémon (feed) + zone de raisonnement stratégique (submit).</div></div>
+    <div class="legend-card"><div class="legend-name">Reacticx · Dropdown</div><div class="legend-desc">Tri du feed, régulation (filtres + submit), sélection d'équipe à publier.</div></div>
+    <div class="legend-card"><div class="legend-name">Reacticx · Badge</div><div class="legend-desc">Format, style, Top Cut, Validé, compte vérifié, compteur de filtres.</div></div>
+    <div class="legend-card"><div class="legend-name">Reacticx · Progress</div><div class="legend-desc">SP spreads en lecture seule dans le sheet Pokémon de la fiche équipe.</div></div>
+    <div class="legend-card"><div class="legend-name">Reacticx · Shimmer / Accordion / Toast</div><div class="legend-desc">Skeleton feed · raisonnement &amp; commentaires repliables · confirmations de copie/publication.</div></div>
+  </section>
+
+</div>
+
+<script>
+  if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+  document.querySelectorAll('img').forEach(img => {
+    img.addEventListener('error', () => { img.style.display = 'none'; }, { once: true });
+  });
+</script>
+
+</body>
+</html>

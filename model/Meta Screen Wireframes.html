@@ -1,0 +1,2211 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>Tacticx — Meta · Wireframes annotés</title>
+<link rel="stylesheet" href="tokens.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Patrick+Hand&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@0.461.0/dist/umd/lucide.min.js"></script>
+<style>
+  /* ───── Paper / spec-sheet background ───── */
+  :root {
+    --paper:        #ECE6D6;
+    --paper-2:      #E2DCC8;
+    --ink:          #1A1A1A;
+    --ink-2:        #4A4A40;
+    --ink-3:        #87826F;
+    --hand:         "Caveat", "Patrick Hand", cursive;
+    --hand-2:       "Patrick Hand", "Caveat", cursive;
+  }
+  html, body { margin: 0; }
+  body {
+    background: var(--paper);
+    background-image: radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+    background-size: 22px 22px;
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  * { box-sizing: border-box; }
+
+  .sheet { max-width: 1280px; margin: 0 auto; padding: 56px 48px 96px; }
+
+  /* ───── Doc header ───── */
+  .doc-head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 32px;
+    border-bottom: 1.5px dashed var(--ink-2);
+    padding-bottom: 24px;
+    margin-bottom: 40px;
+  }
+  .doc-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 10px;
+  }
+  .doc-title {
+    font-family: var(--hand);
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -1px;
+    color: var(--ink);
+    margin: 0;
+  }
+  .doc-title em {
+    font-style: normal;
+    color: var(--accent);
+    background: linear-gradient(180deg, transparent 60%, rgba(91,141,239,0.25) 60%);
+    padding: 0 6px;
+  }
+  .doc-sub {
+    font-family: var(--hand-2);
+    font-size: 22px;
+    color: var(--ink-2);
+    margin-top: 8px;
+    line-height: 1.3;
+    max-width: 700px;
+  }
+  .doc-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    line-height: 1.7;
+    text-align: right;
+  }
+  .doc-meta strong { color: var(--ink); font-weight: 500; }
+
+  /* ───── Flow overview ───── */
+  .flow {
+    background: rgba(255,255,255,0.4);
+    border: 1.5px dashed var(--ink-2);
+    border-radius: 18px;
+    padding: 28px 24px 32px;
+    margin-bottom: 64px;
+  }
+  .flow-title {
+    font-family: var(--hand);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 6px;
+    letter-spacing: -0.5px;
+  }
+  .flow-sub {
+    font-family: var(--hand-2);
+    font-size: 16px;
+    color: var(--ink-3);
+    margin-bottom: 22px;
+  }
+  .flow-rail {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    align-items: start;
+  }
+  .flow-step { display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; }
+  .flow-step + .flow-step::before {
+    content: "";
+    position: absolute;
+    left: -20px;
+    top: 36%;
+    width: 16px;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, var(--ink-2) 0 4px, transparent 4px 8px);
+  }
+  .flow-mini {
+    width: 100%;
+    aspect-ratio: 9 / 16;
+    background: var(--bg);
+    border: 1.5px solid var(--ink);
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 4px 5px 0 rgba(0,0,0,0.12);
+  }
+  .flow-mini .m-head {
+    position: absolute; left: 8%; right: 8%; top: 10%; height: 16px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .flow-mini .m-head::before {
+    content: ""; width: 30%; height: 6px; background: var(--fg1); border-radius: 2px;
+  }
+  .flow-mini .m-seg {
+    position: absolute; left: 8%; right: 8%; top: 22%; height: 18px;
+    background: var(--surface-sunken); border-radius: 999px;
+    display: flex; padding: 2px;
+  }
+  .flow-mini .m-seg span { flex: 1; border-radius: 999px; }
+  .flow-mini .m-seg span.on { background: var(--accent); }
+  .flow-mini .m-chips {
+    position: absolute; left: 8%; right: 8%; top: 34%; height: 14px;
+    display: flex; gap: 4px;
+  }
+  .flow-mini .m-chips span { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; }
+  .flow-mini .m-tabs {
+    position: absolute; left: 8%; right: 8%; top: 44%; height: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex; gap: 10px;
+  }
+  .flow-mini .m-tabs span { width: 24%; border-bottom: 2px solid transparent; }
+  .flow-mini .m-tabs span.on { border-color: var(--accent); }
+  .flow-mini .m-rows {
+    position: absolute; left: 8%; right: 8%; top: 53%; display: flex; flex-direction: column; gap: 4px;
+  }
+  .flow-mini .m-row { height: 18px; background: var(--surface); border-radius: 4px; position: relative; }
+  .flow-mini .m-row::after {
+    content:""; position: absolute; left: 8%; top: 50%; transform:translateY(-50%);
+    width: 40%; height: 3px; background: var(--accent); border-radius: 2px; opacity: 0.55;
+  }
+  .flow-mini.modal::after {
+    content:""; position:absolute; inset:0; background: rgba(11,13,16,0.6);
+  }
+  .flow-mini.modal .m-sheet {
+    position: absolute; left: 4%; right: 4%; bottom: 0; height: 76%;
+    background: var(--surface-high); border-radius: 14px 14px 0 0; border: 1.5px solid var(--border);
+    padding: 8px 8px 0;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .flow-mini.modal .m-sheet .grab { width: 24px; height: 3px; border-radius: 2px; background: var(--fg-faint); margin: 0 auto 4px; }
+  .flow-mini.modal .m-sheet .sprite-big { width: 26px; height: 26px; border-radius: 999px; background: var(--accent-soft); border: 1px solid var(--accent); margin: 0 auto; }
+  .flow-mini.modal .m-sheet .name-line { width: 50%; height: 5px; background: var(--fg1); border-radius: 2px; margin: 4px auto 2px; }
+  .flow-mini.modal .m-sheet .sub-line { width: 36%; height: 3px; background: var(--fg3); border-radius: 2px; margin: 0 auto 6px; }
+  .flow-mini.modal .m-sheet .bars { display: flex; flex-direction: column; gap: 2px; padding: 0 4px; }
+  .flow-mini.modal .m-sheet .bars span { height: 3px; background: var(--surface); border-radius: 2px; position: relative; }
+  .flow-mini.modal .m-sheet .bars span::before { content:""; position:absolute; left:0; top:0; bottom:0; width: 60%; background: var(--accent); border-radius: 2px; opacity: 0.6; }
+  .flow-mini.modal2 .m-sheet { height: 92%; }
+
+  .flow-num {
+    font-family: var(--hand);
+    font-weight: 700; font-size: 22px;
+    color: var(--ink); background: #FFE680;
+    border: 1.5px solid var(--ink); border-radius: 999px;
+    width: 32px; height: 32px; display: grid; place-items: center;
+    transform: rotate(-3deg); box-shadow: 2px 2px 0 rgba(0,0,0,0.12);
+  }
+  .flow-label {
+    font-family: var(--hand); font-weight: 600; font-size: 18px;
+    color: var(--ink); text-align: center; line-height: 1.1;
+  }
+  .flow-label small {
+    display: block; font-family: var(--font-mono); font-size: 10px; font-weight: 400;
+    letter-spacing: 0.8px; text-transform: uppercase; color: var(--ink-3); margin-top: 2px;
+  }
+
+  /* ───── Spec sections ───── */
+  .spec {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 56px;
+    padding: 48px 0 56px;
+    border-top: 1.5px dashed var(--ink-2);
+  }
+  .spec-head {
+    grid-column: 1 / -1;
+    display: flex; align-items: baseline; gap: 18px; margin-bottom: 4px;
+    flex-wrap: wrap;
+  }
+  .spec-step {
+    font-family: var(--hand); font-weight: 700; font-size: 22px;
+    color: var(--ink); background: #FFE680;
+    border: 1.5px solid var(--ink); border-radius: 999px;
+    padding: 4px 14px; transform: rotate(-2deg);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.12);
+  }
+  .spec-title {
+    font-family: var(--hand); font-size: 38px; font-weight: 700;
+    color: var(--ink); margin: 0; letter-spacing: -0.5px;
+  }
+  .spec-eyebrow {
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-3);
+    letter-spacing: 1.6px; text-transform: uppercase; margin-left: auto;
+  }
+
+  /* ───── Phone frame ───── */
+  .phone-wrap { position: sticky; top: 32px; align-self: start; width: 380px; }
+  .phone {
+    width: 380px; height: 760px;
+    background: var(--bg); border-radius: 38px; border: 1.5px solid var(--ink);
+    box-shadow: 6px 8px 0 rgba(0,0,0,0.12), inset 0 0 0 8px #08090C;
+    padding: 8px; position: relative; overflow: hidden;
+  }
+  .phone-inner {
+    width: 100%; height: 100%;
+    background: var(--bg); border-radius: 30px;
+    overflow: hidden; position: relative;
+    display: flex; flex-direction: column;
+  }
+  .phone-dims {
+    position: absolute; bottom: -32px; left: 0; right: 0;
+    text-align: center; font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+
+  /* ───── Status bar ───── */
+  .status {
+    height: 28px; padding: 0 18px;
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 12px; font-weight: 600; color: var(--fg1); flex-shrink: 0;
+  }
+  .status-icons { display: flex; align-items: center; gap: 5px; opacity: 0.9; }
+
+  /* ───── Header (Meta title + freshness + segmented) ───── */
+  .head {
+    padding: 8px 18px 14px;
+    background: var(--bg);
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--divider);
+  }
+  .head-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px; height: 36px;
+  }
+  .h1 {
+    font-size: 28px; font-weight: 700;
+    letter-spacing: -0.6px; color: var(--fg1); margin: 0; line-height: 1;
+  }
+  .freshness {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 12px; color: var(--fg3);
+    font-variant-numeric: tabular-nums;
+  }
+  .freshness .lucide { width: 13px; height: 13px; stroke-width: 1.8; }
+
+  /* ───── Segmented control ───── */
+  .seg {
+    display: flex;
+    background: var(--surface-sunken);
+    border-radius: var(--r-pill);
+    padding: 3px;
+    position: relative;
+  }
+  .seg button {
+    flex: 1;
+    background: transparent;
+    border: 0;
+    padding: 8px 0;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--fg2);
+    border-radius: var(--r-pill);
+    cursor: pointer;
+  }
+  .seg button.on {
+    background: var(--surface-high);
+    color: var(--fg1);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  }
+  .seg.accent button.on {
+    background: var(--accent);
+    color: var(--fg-inverse);
+  }
+
+  /* ───── Trends strip ───── */
+  .trends {
+    padding: 14px 18px 12px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--divider);
+    scrollbar-width: none;
+  }
+  .trends::-webkit-scrollbar { display: none; }
+  .chip {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 11px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-pill);
+    font-size: 12px;
+    color: var(--fg2);
+    white-space: nowrap;
+  }
+  .chip .lucide { width: 13px; height: 13px; stroke-width: 2; }
+  .chip strong { color: var(--accent); font-weight: 500; font-variant-numeric: tabular-nums; }
+  .chip.up .lucide { color: var(--success); }
+  .chip.down .lucide { color: var(--danger); }
+  .chip.speed .lucide { color: var(--warning); }
+  .chip.tier .lucide { color: var(--fg2); }
+
+  /* ───── Tabs ───── */
+  .tabs {
+    display: flex;
+    padding: 0 18px;
+    border-bottom: 1px solid var(--divider);
+    flex-shrink: 0;
+  }
+  .tab {
+    padding: 13px 0;
+    margin-right: 24px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--fg3);
+    background: transparent;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .tab.on {
+    color: var(--fg1);
+    border-bottom-color: var(--accent);
+  }
+  .tab.locked {
+    color: var(--fg-faint);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .tab.locked .lucide { width: 11px; height: 11px; stroke-width: 2; }
+
+  /* ───── List body ───── */
+  .list {
+    flex: 1;
+    overflow-y: auto;
+    background: var(--bg);
+  }
+  .list::-webkit-scrollbar { display: none; }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    height: 64px;
+    position: relative;
+  }
+  .row + .row::before {
+    content: "";
+    position: absolute;
+    left: 76px; right: 18px; top: 0;
+    height: 1px;
+    background: var(--border);
+  }
+  .rank {
+    width: 22px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    color: var(--fg3);
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .sprite {
+    width: 40px; height: 40px;
+    border-radius: 999px;
+    background: var(--surface-high);
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+  .sprite img {
+    width: 110%; height: 110%;
+    object-fit: contain;
+    filter: brightness(0) invert(0.55) contrast(1.1);
+  }
+  .sprite.small { width: 32px; height: 32px; }
+  .sprite.big { width: 80px; height: 80px; }
+  .sprite.big img { filter: brightness(0) invert(0.65) contrast(1.1); }
+
+  /* Sprite background tints by primary type */
+  .sprite.t-fire     { background: var(--t-fire-bg);     box-shadow: inset 0 0 0 1px rgba(217,140,106,0.18); }
+  .sprite.t-water    { background: var(--t-water-bg);    box-shadow: inset 0 0 0 1px rgba(111,160,204,0.18); }
+  .sprite.t-grass    { background: var(--t-grass-bg);    box-shadow: inset 0 0 0 1px rgba(127,169,120,0.18); }
+  .sprite.t-electric { background: var(--t-electric-bg); box-shadow: inset 0 0 0 1px rgba(217,194,106,0.18); }
+  .sprite.t-psychic  { background: var(--t-psychic-bg);  box-shadow: inset 0 0 0 1px rgba(212,139,168,0.18); }
+  .sprite.t-fighting { background: var(--t-fighting-bg); box-shadow: inset 0 0 0 1px rgba(199,120,120,0.18); }
+  .sprite.t-fairy    { background: var(--t-fairy-bg);    box-shadow: inset 0 0 0 1px rgba(212,154,184,0.18); }
+  .sprite.t-ghost    { background: var(--t-ghost-bg);    box-shadow: inset 0 0 0 1px rgba(144,128,184,0.18); }
+  .sprite.t-dark     { background: var(--t-dark-bg);     box-shadow: inset 0 0 0 1px rgba(138,132,120,0.18); }
+  .sprite.t-poison   { background: var(--t-poison-bg);   box-shadow: inset 0 0 0 1px rgba(169,136,194,0.18); }
+  .sprite.t-flying   { background: var(--t-flying-bg);   box-shadow: inset 0 0 0 1px rgba(160,176,212,0.18); }
+  .sprite.t-steel    { background: var(--t-steel-bg);    box-shadow: inset 0 0 0 1px rgba(155,168,181,0.18); }
+  .sprite.t-rock     { background: var(--t-rock-bg);     box-shadow: inset 0 0 0 1px rgba(184,156,122,0.18); }
+  .sprite.t-ice      { background: var(--t-ice-bg);      box-shadow: inset 0 0 0 1px rgba(143,192,199,0.18); }
+  .sprite.t-ground   { background: var(--t-ground-bg);   box-shadow: inset 0 0 0 1px rgba(194,154,106,0.18); }
+  .sprite.t-dragon   { background: var(--t-dragon-bg);   box-shadow: inset 0 0 0 1px rgba(123,143,217,0.18); }
+  .sprite.t-bug      { background: var(--t-bug-bg);      box-shadow: inset 0 0 0 1px rgba(168,184,106,0.18); }
+  .sprite.t-normal   { background: var(--t-normal-bg);   box-shadow: inset 0 0 0 1px rgba(184,176,164,0.18); }
+
+  .row-name {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .row-name .nm {
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--fg1);
+    letter-spacing: -0.1px;
+  }
+  .row-types { display: flex; gap: 4px; }
+  .tb {
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: var(--r-sm);
+  }
+  .tb.fire     { color: var(--t-fire);     background: var(--t-fire-bg); }
+  .tb.water    { color: var(--t-water);    background: var(--t-water-bg); }
+  .tb.grass    { color: var(--t-grass);    background: var(--t-grass-bg); }
+  .tb.electric { color: var(--t-electric); background: var(--t-electric-bg); }
+  .tb.psychic  { color: var(--t-psychic);  background: var(--t-psychic-bg); }
+  .tb.fighting { color: var(--t-fighting); background: var(--t-fighting-bg); }
+  .tb.fairy    { color: var(--t-fairy);    background: var(--t-fairy-bg); }
+  .tb.ghost    { color: var(--t-ghost);    background: var(--t-ghost-bg); }
+  .tb.dark     { color: var(--t-dark);     background: var(--t-dark-bg); }
+  .tb.poison   { color: var(--t-poison);   background: var(--t-poison-bg); }
+  .tb.flying   { color: var(--t-flying);   background: var(--t-flying-bg); }
+  .tb.steel    { color: var(--t-steel);    background: var(--t-steel-bg); }
+  .tb.rock     { color: var(--t-rock);     background: var(--t-rock-bg); }
+  .tb.ice      { color: var(--t-ice);      background: var(--t-ice-bg); }
+  .tb.ground   { color: var(--t-ground);   background: var(--t-ground-bg); }
+  .tb.dragon   { color: var(--t-dragon);   background: var(--t-dragon-bg); }
+  .tb.bug      { color: var(--t-bug);      background: var(--t-bug-bg); }
+  .tb.normal   { color: var(--t-normal);   background: var(--t-normal-bg); }
+
+  .row-meter {
+    display: flex; flex-direction: column; gap: 5px; align-items: flex-end;
+    width: 96px; flex-shrink: 0;
+  }
+  .row-meter .pct {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--fg1);
+    font-variant-numeric: tabular-nums;
+  }
+  .row-meter .pct.up { color: var(--success); }
+  .row-meter .pct.down { color: var(--danger); }
+  .bar {
+    width: 100%;
+    height: 3px;
+    background: var(--surface-high);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .bar > span {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    border-radius: 999px;
+  }
+  .bar.success > span { background: var(--success); }
+  .bar.warning > span { background: var(--warning); }
+  .bar.danger > span  { background: var(--danger); }
+
+  .trend-ico {
+    width: 18px; display: grid; place-items: center; flex-shrink: 0;
+  }
+  .trend-ico .lucide { width: 16px; height: 16px; stroke-width: 2; }
+  .trend-ico.up .lucide { color: var(--success); }
+  .trend-ico.down .lucide { color: var(--danger); }
+  .trend-ico.flat .lucide { color: var(--fg-faint); }
+
+  /* ───── Cores row variation ───── */
+  .row.core .core-sprites {
+    display: flex; flex-shrink: 0;
+  }
+  .row.core .core-sprites .sprite + .sprite {
+    margin-left: -10px;
+    border: 2px solid var(--bg);
+  }
+  .row.core .row-name .nm {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 13.5px;
+  }
+  .row.core .row-name .nm em {
+    font-style: normal; color: var(--fg3); font-weight: 400;
+    margin: 0 2px;
+  }
+  .row.core .role {
+    font-size: 10.5px;
+    color: var(--fg3);
+    letter-spacing: 0.4px;
+  }
+
+  /* ───── Modal sheet ───── */
+  .scrim {
+    position: absolute;
+    inset: 0;
+    background: rgba(11,13,16,0.7);
+    backdrop-filter: blur(20px);
+    z-index: 5;
+  }
+  .sheet-modal {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    background: var(--surface-high);
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+    border-top: 1px solid var(--border);
+    z-index: 6;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-lg);
+  }
+  .grab {
+    width: 36px; height: 4px;
+    border-radius: 999px;
+    background: var(--fg-faint);
+    margin: 8px auto 6px;
+    flex-shrink: 0;
+  }
+  .modal-close {
+    position: absolute;
+    top: 14px; right: 14px;
+    width: 28px; height: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--fg2);
+    display: grid; place-items: center;
+    cursor: pointer; padding: 0;
+    z-index: 1;
+  }
+  .modal-close .lucide { width: 14px; height: 14px; stroke-width: 2; }
+
+  .modal-hero {
+    padding: 12px 20px 16px;
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center;
+    border-bottom: 1px solid var(--divider);
+    position: relative;
+  }
+  .modal-hero::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(at top, var(--accent-soft) 0%, transparent 60%);
+    opacity: 0.5;
+    pointer-events: none;
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+  }
+  .modal-hero > * { position: relative; z-index: 1; }
+  .modal-name {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+    color: var(--fg1);
+    margin: 10px 0 6px;
+  }
+  .modal-types {
+    display: flex; gap: 6px; justify-content: center;
+    margin-bottom: 8px;
+  }
+  .modal-meta-line {
+    font-size: 12px;
+    color: var(--fg3);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.2px;
+  }
+  .tier-pill {
+    position: absolute; top: 14px; left: 14px;
+    display: inline-flex; align-items: center;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border-radius: var(--r-sm);
+    z-index: 2;
+  }
+  .tier-pill.s { color: var(--tier-s); background: var(--tier-s-bg); border: 1px solid var(--tier-s); }
+  .tier-pill.a { color: var(--tier-a); background: var(--tier-a-bg); border: 1px solid var(--tier-a); }
+
+  .modal-format-switch {
+    padding: 12px 20px 0;
+    flex-shrink: 0;
+  }
+  .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 0;
+  }
+  .modal-body::-webkit-scrollbar { display: none; }
+
+  .section {
+    padding: 0 20px 24px;
+  }
+  .section + .section { border-top: 1px solid var(--divider); padding-top: 20px; }
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--fg3);
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .eyebrow .plus {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    padding: 2px 5px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 4px;
+    letter-spacing: 0.8px;
+  }
+
+  /* Stats de base */
+  .stat-row {
+    display: grid;
+    grid-template-columns: 56px 36px 1fr;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .stat-row .lbl {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--fg3);
+  }
+  .stat-row .val {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--fg1);
+    text-align: right;
+  }
+  .stat-total {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 10px;
+    margin-top: 6px;
+    border-top: 1px solid var(--divider);
+    font-size: 12px;
+    color: var(--fg3);
+  }
+  .stat-total strong {
+    color: var(--fg1);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Move row */
+  .move-row, .item-row {
+    display: grid;
+    grid-template-columns: 18px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 0;
+    border-top: 1px solid var(--divider);
+  }
+  .move-row:first-of-type, .item-row:first-of-type { border-top: 0; padding-top: 0; }
+  .move-row .num, .item-row .num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--fg3);
+    text-align: center;
+  }
+  .move-info, .item-info { min-width: 0; }
+  .move-name, .item-name {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--fg1);
+    margin-bottom: 3px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .cat {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 2px 5px;
+    border-radius: var(--r-sm);
+  }
+  .cat.phys { color: var(--danger); background: var(--danger-soft); }
+  .cat.spe  { color: var(--info);   background: var(--info-soft); }
+  .cat.stat { color: var(--warning); background: var(--warning-soft); }
+  .item-effect, .move-bar-wrap {
+    font-size: 11px; color: var(--fg-faint);
+    line-height: 1.3;
+  }
+  .move-bar-wrap { display: flex; align-items: center; gap: 8px; }
+  .move-bar-wrap .bar { width: 80px; height: 2px; }
+  .move-bar-wrap .pct {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--fg2);
+    font-variant-numeric: tabular-nums;
+  }
+  .item-icon {
+    width: 28px; height: 28px;
+    border-radius: var(--r-sm);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .item-icon .lucide { width: 14px; height: 14px; color: var(--fg-faint); }
+  .item-row {
+    grid-template-columns: 18px 28px 1fr auto;
+  }
+
+  /* Partner row */
+  .partner-row {
+    display: grid;
+    grid-template-columns: 18px 36px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 0;
+    border-top: 1px solid var(--divider);
+  }
+  .partner-row:first-of-type { border-top: 0; padding-top: 0; }
+  .partner-row .role-badge {
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: var(--r-sm);
+    color: var(--fg2);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    margin-right: 8px;
+  }
+
+  /* Spread row */
+  .spread-row {
+    padding: 10px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    margin-bottom: 8px;
+  }
+  .spread-numbers {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    color: var(--fg1);
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
+  }
+  .spread-nature {
+    font-size: 11px;
+    color: var(--fg3);
+    display: flex; justify-content: space-between;
+  }
+  .spread-nature strong {
+    color: var(--accent);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Speed tiers teaser */
+  .teaser {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    font-size: 12px;
+    color: var(--fg2);
+  }
+  .teaser .lucide { width: 16px; height: 16px; color: var(--accent); flex-shrink: 0; }
+  .teaser strong { color: var(--fg1); font-weight: 500; }
+
+  /* Counter pills */
+  .counter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .counter-col .col-eyebrow {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--fg3);
+    margin-bottom: 8px;
+  }
+  .counter-list { display: flex; flex-direction: column; gap: 6px; }
+  .counter-pill {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    font-size: 12px;
+    color: var(--fg1);
+  }
+  .counter-pill .sprite { width: 22px; height: 22px; }
+
+  /* Sparkline premium */
+  .premium-card {
+    position: relative;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    overflow: hidden;
+  }
+  .premium-card .lock-veil {
+    position: absolute;
+    inset: 0;
+    background: rgba(11,13,16,0.5);
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--fg2);
+    font-size: 12px;
+    z-index: 2;
+  }
+  .premium-card .lock-veil .lucide { width: 14px; height: 14px; }
+  .spark-wrap { display: flex; align-items: end; justify-content: space-between; gap: 8px; }
+  .spark-wrap .label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--fg3);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+  .spark-wrap .now {
+    font-family: var(--font-sans);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--fg1);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.4px;
+  }
+  .scroll-fade {
+    position: absolute;
+    left: 8px; right: 8px; bottom: 8px;
+    height: 60px;
+    background: linear-gradient(to bottom, transparent, var(--surface-high));
+    pointer-events: none;
+    border-radius: 0 0 30px 30px;
+  }
+
+  /* ───── Annexe cards (states) ───── */
+  .annexe {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-top: 36px;
+  }
+  .ann-card {
+    padding: 0;
+    background: var(--bg);
+    border: 1.5px solid var(--ink);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 4px 5px 0 rgba(0,0,0,0.12);
+    color: var(--fg1);
+    display: flex; flex-direction: column;
+  }
+  .ann-title {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 12px 0 8px;
+    text-align: center;
+  }
+  .ann-card .inner { padding: 22px 16px; min-height: 280px; display: flex; flex-direction: column; }
+  .ann-empty, .ann-error {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    text-align: center; justify-content: center; flex: 1;
+  }
+  .ann-empty .lucide, .ann-error .lucide { width: 32px; height: 32px; color: var(--fg-faint); stroke-width: 1.2; }
+  .ann-empty .ttl, .ann-error .ttl { font-size: 15px; font-weight: 600; color: var(--fg1); }
+  .ann-empty .sub, .ann-error .sub {
+    font-size: 12px; color: var(--fg3);
+    max-width: 220px; line-height: 1.4;
+  }
+  .ann-btn {
+    margin-top: 12px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--fg1);
+    padding: 8px 18px;
+    border-radius: var(--r-md);
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .shimmer-rows .row .sk { background: var(--surface-high); border-radius: 999px; height: 8px; }
+  .shimmer-rows .row { gap: 12px; }
+  .shimmer-rows .row .sk.circle { width: 40px; height: 40px; border-radius: 999px; }
+  .shimmer-rows .row .sk.line { flex: 1; }
+  .shimmer-rows .row .sk.short { width: 50px; }
+
+  /* ───── Pins ───── */
+  .pin {
+    position: absolute;
+    font-family: var(--hand);
+    font-size: 16px; font-weight: 700;
+    color: var(--ink);
+    background: #FFE680;
+    border: 1.5px solid var(--ink); border-radius: 999px;
+    width: 26px; height: 26px;
+    display: grid; place-items: center;
+    transform: rotate(-4deg);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.15);
+    z-index: 20;
+  }
+
+  /* ───── Notes column ───── */
+  .notes { display: flex; flex-direction: column; gap: 18px; padding-top: 4px; }
+  .note { display: grid; grid-template-columns: 32px 1fr; gap: 14px; align-items: start; }
+  .note-num {
+    font-family: var(--hand); font-weight: 700; font-size: 18px;
+    color: var(--ink); background: #FFE680;
+    border: 1.5px solid var(--ink); border-radius: 999px;
+    width: 28px; height: 28px; display: grid; place-items: center;
+    transform: rotate(-3deg); box-shadow: 2px 2px 0 rgba(0,0,0,0.12);
+  }
+  .note-body { padding-top: 2px; }
+  .note-title {
+    font-family: var(--hand); font-weight: 600; font-size: 22px;
+    color: var(--ink); line-height: 1.1; margin: 0 0 4px;
+    letter-spacing: -0.3px;
+  }
+  .note-desc {
+    font-family: var(--hand-2); font-size: 16px; color: var(--ink-2);
+    line-height: 1.4; margin: 0 0 8px;
+  }
+  .toks { display: flex; flex-wrap: wrap; gap: 5px; }
+  .tok {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+    color: var(--accent); background: #1C2027;
+    border: 1px solid #2A2F38; border-radius: 5px;
+    padding: 2px 7px;
+  }
+  .tok.muted { color: var(--fg2); }
+  .tok.semantic { color: #5FA978; }
+  .tok.danger { color: #D46A6A; }
+  .tok.warning { color: #D9A55A; }
+  .tok.note { color: var(--ink-3); background: transparent; border-color: var(--ink-3); }
+  .comp-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.4px; color: var(--ink);
+    background: #FFE680; border: 1.5px solid var(--ink); border-radius: 4px;
+    padding: 2px 6px; transform: rotate(-1deg); margin: 0 2px;
+  }
+
+  /* ───── Constraints / legend ───── */
+  .constraints {
+    margin-top: 56px;
+    padding: 32px 28px;
+    background: rgba(255,255,255,0.45);
+    border: 1.5px dashed var(--ink-2);
+    border-radius: 18px;
+  }
+  .constraints h3 {
+    font-family: var(--hand); font-size: 28px; font-weight: 700;
+    margin: 0 0 18px; letter-spacing: -0.5px; color: var(--ink);
+  }
+  .constraints ul {
+    list-style: none; padding: 0; margin: 0;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px 32px;
+  }
+  .constraints li {
+    font-family: var(--hand-2); font-size: 17px; color: var(--ink-2);
+    line-height: 1.4; padding-left: 24px; position: relative;
+  }
+  .constraints li::before {
+    content: "✓"; position: absolute; left: 0; top: 0;
+    color: var(--accent); font-weight: 700; font-family: var(--hand);
+    font-size: 22px; line-height: 1;
+  }
+  .constraints li.x::before { content: "✗"; color: var(--danger); }
+
+  .legend {
+    margin-top: 40px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  }
+  .legend-card {
+    padding: 16px 18px;
+    background: rgba(255,255,255,0.45);
+    border: 1.5px dashed var(--ink-2);
+    border-radius: 12px;
+  }
+  .legend-name {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--accent); letter-spacing: 0.4px; margin-bottom: 6px;
+  }
+  .legend-desc {
+    font-family: var(--hand-2); font-size: 16px; color: var(--ink-2);
+    line-height: 1.35;
+  }
+
+  /* ───── Lucide sizing ───── */
+  .lucide { width: 22px; height: 22px; stroke-width: 1.75; }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       DOC HEADER
+       ═══════════════════════════════════════════════════════════ -->
+  <header class="doc-head">
+    <div>
+      <div class="doc-eyebrow">Tacticx · Spec · v01 · Meta</div>
+      <h1 class="doc-title">Meta — <em>wireframes annotés</em></h1>
+      <p class="doc-sub">Écran d'accueil post-onboarding. Reproduit et dépasse le Battle Data natif. Top 20, trois lectures (usage · winrate · cores), modal détail bottom-sheet.</p>
+    </div>
+    <div class="doc-meta">
+      <strong>Plateforme</strong>&nbsp;·&nbsp;iOS + Android (RN / Expo 56)<br/>
+      <strong>Liste</strong>&nbsp;·&nbsp;FlashList · 20 items<br/>
+      <strong>Tokens</strong>&nbsp;·&nbsp;theme.ts (DS Tacticx)<br/>
+      <strong>Composants</strong>&nbsp;·&nbsp;Reacticx kit
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FLOW OVERVIEW
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="flow">
+    <h2 class="flow-title">Les 4 états documentés</h2>
+    <p class="flow-sub">Liste Usage · Liste Cores · Modal détail (haut) · Modal détail (bas) — annexe à part pour shimmer / vide / erreur / premium</p>
+
+    <div class="flow-rail">
+      <div class="flow-step">
+        <div class="flow-mini">
+          <div class="m-head"></div>
+          <div class="m-seg"><span class="on"></span><span></span></div>
+          <div class="m-chips"><span></span><span></span><span></span><span></span></div>
+          <div class="m-tabs"><span class="on"></span><span></span><span></span></div>
+          <div class="m-rows"><div class="m-row"></div><div class="m-row"></div><div class="m-row"></div><div class="m-row"></div><div class="m-row"></div></div>
+        </div>
+        <div class="flow-num">A</div>
+        <div class="flow-label">Liste Usage<small>doubles · onglet 1</small></div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-mini">
+          <div class="m-head"></div>
+          <div class="m-seg"><span class="on"></span><span></span></div>
+          <div class="m-chips"><span></span><span></span><span></span><span></span></div>
+          <div class="m-tabs"><span></span><span></span><span class="on"></span></div>
+          <div class="m-rows"><div class="m-row"></div><div class="m-row"></div><div class="m-row"></div><div class="m-row"></div><div class="m-row"></div></div>
+        </div>
+        <div class="flow-num">B</div>
+        <div class="flow-label">Liste Cores<small>duos · onglet 3</small></div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-mini modal">
+          <div class="m-head"></div>
+          <div class="m-rows"><div class="m-row"></div><div class="m-row"></div></div>
+          <div class="m-sheet">
+            <div class="grab"></div>
+            <div class="sprite-big"></div>
+            <div class="name-line"></div>
+            <div class="sub-line"></div>
+            <div class="bars"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          </div>
+        </div>
+        <div class="flow-num">C</div>
+        <div class="flow-label">Modal · haut<small>hero · stats · battle data</small></div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-mini modal modal2">
+          <div class="m-sheet">
+            <div class="grab"></div>
+            <div class="sub-line" style="margin-top:6px"></div>
+            <div class="bars"><span></span><span></span><span></span></div>
+            <div class="sub-line"></div>
+            <div class="bars"><span></span><span></span><span></span><span></span></div>
+            <div class="sub-line"></div>
+            <div class="bars"><span></span><span></span></div>
+          </div>
+        </div>
+        <div class="flow-num">D</div>
+        <div class="flow-label">Modal · bas<small>plus-values tacticx</small></div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       STATE A — LISTE USAGE
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">A</span>
+      <h2 class="spec-title">Liste — onglet Usage</h2>
+      <span class="spec-eyebrow">format Doubles (VGC) · saison M-2 · semaine 3</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status">
+            <span>9:41</span>
+            <span class="status-icons"><i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i></span>
+          </div>
+
+          <!-- Header -->
+          <div class="head">
+            <div class="head-top">
+              <h1 class="h1">Meta</h1>
+              <span class="freshness"><i data-lucide="clock"></i>Mis à jour il y a 2&nbsp;h</span>
+            </div>
+            <div class="seg accent">
+              <button class="on">Doubles</button>
+              <button>Singles</button>
+            </div>
+          </div>
+
+          <!-- Trends -->
+          <div class="trends">
+            <span class="chip up"><i data-lucide="trending-up"></i>En hausse · <strong>Ogerpon</strong></span>
+            <span class="chip down"><i data-lucide="trending-down"></i>En baisse · <strong>Heatran</strong></span>
+            <span class="chip speed"><i data-lucide="zap"></i>Speed king · <strong>Flutter Mane</strong></span>
+            <span class="chip tier"><i data-lucide="shield"></i>Tier S · <strong>Calyrex-S</strong></span>
+          </div>
+
+          <!-- Tabs -->
+          <div class="tabs">
+            <button class="tab on">Usage</button>
+            <button class="tab">Winrate</button>
+            <button class="tab">Cores</button>
+          </div>
+
+          <!-- List -->
+          <div class="list">
+            <div class="row">
+              <span class="rank">#1</span>
+              <span class="sprite t-psychic"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/898.png" alt="" loading="lazy"/></span>
+              <span class="row-name"><span class="nm">Calyrex-Cavalier d'Effroi</span><span class="row-types"><span class="tb psychic">Psy</span><span class="tb ghost">Spectre</span></span></span>
+              <span class="row-meter"><span class="pct">38.2&nbsp;%</span><span class="bar"><span style="width:100%"></span></span></span>
+              <span class="trend-ico up"><i data-lucide="trending-up"></i></span>
+            </div>
+            <div class="row">
+              <span class="rank">#2</span>
+              <span class="sprite t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/727.png" alt="" loading="lazy"/></span>
+              <span class="row-name"><span class="nm">Incineroar</span><span class="row-types"><span class="tb fire">Feu</span><span class="tb dark">Ténèbres</span></span></span>
+              <span class="row-meter"><span class="pct">32.1&nbsp;%</span><span class="bar"><span style="width:84%"></span></span></span>
+              <span class="trend-ico flat"><i data-lucide="minus"></i></span>
+            </div>
+            <div class="row">
+              <span class="rank">#3</span>
+              <span class="sprite t-fighting"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/892.png" alt="" loading="lazy"/></span>
+              <span class="row-name"><span class="nm">Shifours-Mille Poings</span><span class="row-types"><span class="tb fighting">Combat</span><span class="tb water">Eau</span></span></span>
+              <span class="row-meter"><span class="pct">28.4&nbsp;%</span><span class="bar"><span style="width:74%"></span></span></span>
+              <span class="trend-ico up"><i data-lucide="trending-up"></i></span>
+            </div>
+            <div class="row">
+              <span class="rank">#4</span>
+              <span class="sprite t-ghost"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/987.png" alt="" loading="lazy"/></span>
+              <span class="row-name"><span class="nm">Flutter Mane</span><span class="row-types"><span class="tb ghost">Spectre</span><span class="tb fairy">Fée</span></span></span>
+              <span class="row-meter"><span class="pct">25.9&nbsp;%</span><span class="bar"><span style="width:68%"></span></span></span>
+              <span class="trend-ico down"><i data-lucide="trending-down"></i></span>
+            </div>
+            <div class="row">
+              <span class="rank">#5</span>
+              <span class="sprite t-grass"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/812.png" alt="" loading="lazy"/></span>
+              <span class="row-name"><span class="nm">Gorythmic</span><span class="row-types"><span class="tb grass">Plante</span></span></span>
+              <span class="row-meter"><span class="pct">22.6&nbsp;%</span><span class="bar"><span style="width:59%"></span></span></span>
+              <span class="trend-ico flat"><i data-lucide="minus"></i></span>
+            </div>
+            <div class="row">
+              <span class="rank">#6</span>
+              <span class="sprite t-grass"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1017.png" alt="" loading="lazy"/></span>
+              <span class="row-name"><span class="nm">Ogerpon-Foyer</span><span class="row-types"><span class="tb grass">Plante</span><span class="tb fire">Feu</span></span></span>
+              <span class="row-meter"><span class="pct">19.8&nbsp;%</span><span class="bar"><span style="width:52%"></span></span></span>
+              <span class="trend-ico up"><i data-lucide="trending-up"></i></span>
+            </div>
+            <div class="row">
+              <span class="rank">#7</span>
+              <span class="sprite t-fighting"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/992.png" alt="" loading="lazy"/></span>
+              <span class="row-name"><span class="nm">Iron Hands</span><span class="row-types"><span class="tb fighting">Combat</span><span class="tb electric">Élec.</span></span></span>
+              <span class="row-meter"><span class="pct">17.4&nbsp;%</span><span class="bar"><span style="width:46%"></span></span></span>
+              <span class="trend-ico down"><i data-lucide="trending-down"></i></span>
+            </div>
+          </div>
+
+          <!-- pins -->
+          <span class="pin" style="top: 50px; left: 18px;">1</span>
+          <span class="pin" style="top: 50px; right: 18px;">2</span>
+          <span class="pin" style="top: 108px; left: 18px;">3</span>
+          <span class="pin" style="top: 160px; right: 18px;">4</span>
+          <span class="pin" style="top: 224px; left: 18px;">5</span>
+          <span class="pin" style="top: 296px; left: 64px;">6</span>
+          <span class="pin" style="top: 302px; right: 110px;">7</span>
+          <span class="pin" style="top: 296px; right: 18px;">8</span>
+        </div>
+        <div class="phone-dims">380 × 760 · scale 1:1</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note">
+        <div class="note-num">1</div>
+        <div class="note-body">
+          <h4 class="note-title">Titre "Meta"</h4>
+          <p class="note-desc">Sentence case, sobre. Pas de sous-titre — la donnée parle d'elle-même. Hauteur ligne tight pour ancrer le header.</p>
+          <div class="toks">
+            <span class="tok">--fs-2xl</span>
+            <span class="tok muted">weight 700</span>
+            <span class="tok muted">--tr-tight</span>
+            <span class="tok muted">--fg1</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">2</div>
+        <div class="note-body">
+          <h4 class="note-title">Fraîcheur des données</h4>
+          <p class="note-desc">Icône <span class="tok muted">clock</span> + texte tabulaire. Couleur <span class="tok muted">--fg3</span> pour rester discret — la donnée seule importe. Tap : tooltip avec source + horaire de pull.</p>
+          <div class="toks">
+            <span class="tok muted">--fg3</span>
+            <span class="tok muted">--fs-sm</span>
+            <span class="tok muted">tabular-nums</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">3</div>
+        <div class="note-body">
+          <h4 class="note-title">Segmented control Doubles / Singles</h4>
+          <p class="note-desc">Largeur 100&nbsp;%. Variante <em>accent</em> — le segment actif passe en <span class="tok">--accent</span> car c'est le switch principal de l'écran. Persiste entre sessions (<span class="tok muted">AsyncStorage</span>). Au switch : tout le contenu se recharge avec <span class="comp-pill">Shimmer</span>.</p>
+          <div class="toks">
+            <span class="tok">--accent</span>
+            <span class="tok muted">--surface-sunken</span>
+            <span class="tok">--r-pill</span>
+            <span class="tok muted">--fg-inverse</span>
+            <span class="comp-pill">Reacticx · Segmented Control</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">4</div>
+        <div class="note-body">
+          <h4 class="note-title">Bande de tendances</h4>
+          <p class="note-desc">3-4 chips informatifs, non-cliquables, scroll horizontal libre. Icône Ionicons en couleur sémantique (<span class="tok semantic">success</span> / <span class="tok danger">danger</span> / <span class="tok warning">warning</span>) — la valeur Pokémon reste en <span class="tok">--accent</span>. Disparaît proprement sur les bords (pas de fondu — coupure nette acceptable).</p>
+          <div class="toks">
+            <span class="tok muted">--surface</span>
+            <span class="tok muted">--border</span>
+            <span class="tok">--r-pill</span>
+            <span class="tok muted">padding 6 · 11</span>
+            <span class="tok muted">--fs-sm</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">5</div>
+        <div class="note-body">
+          <h4 class="note-title">Tabs Usage / Winrate / Cores</h4>
+          <p class="note-desc">Underline accent sur l'onglet actif (pas de pill). Inactifs en <span class="tok muted">--fg3</span> — pas de texture, pas de fond. Onglet Winrate possiblement gated (lock icon) selon les données disponibles.</p>
+          <div class="toks">
+            <span class="tok">--accent</span>
+            <span class="tok muted">--fg1 / --fg3</span>
+            <span class="tok muted">border-bottom 2px</span>
+            <span class="comp-pill">Reacticx · Tabs</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">6</div>
+        <div class="note-body">
+          <h4 class="note-title">Sprite + nom + types</h4>
+          <p class="note-desc">Sprite 40×40 sur fond teinté du type primaire (<span class="tok muted">--t-{type}-bg</span>). Filtre silhouette appliqué — pas de sticker art coloré (cf. DS § Imagery). Nom en <span class="tok muted">weight 500</span> ; 2 badges de type max sous le nom, casing sentence.</p>
+          <div class="toks">
+            <span class="tok muted">--t-fire / --t-water / …</span>
+            <span class="tok muted">--t-fire-bg / --t-water-bg / …</span>
+            <span class="tok muted">--r-pill</span>
+            <span class="tok muted">--r-sm</span>
+            <span class="tok note">filter: brightness(0) invert</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">7</div>
+        <div class="note-body">
+          <h4 class="note-title">Barre d'usage + %</h4>
+          <p class="note-desc">Barre relative au #1 (rang 1 = 100&nbsp;% largeur). Hauteur 3pt — fine, presque graphique. % en <span class="tok muted">tabular-nums</span> espace insécable avant le signe. Animation à l'apparition via <span class="comp-pill">Reacticx · Rolling Counter</span>.</p>
+          <div class="toks">
+            <span class="tok">--accent</span>
+            <span class="tok muted">--surface-high (rail)</span>
+            <span class="tok muted">--r-pill</span>
+            <span class="tok muted">--fs-sm weight 600</span>
+            <span class="comp-pill">Progress</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">8</div>
+        <div class="note-body">
+          <h4 class="note-title">Trend W/W</h4>
+          <p class="note-desc">Icône seule, pas de chiffre — la magnitude est dans la barre. <span class="tok semantic">success</span> pour hausse, <span class="tok danger">danger</span> pour baisse, <span class="tok muted">--fg-faint</span> pour stable. Hit-slop élargi (icône 16pt, target 44pt).</p>
+          <div class="toks">
+            <span class="tok semantic">--success</span>
+            <span class="tok danger">--danger</span>
+            <span class="tok muted">--fg-faint (stable)</span>
+            <span class="tok muted">trending-up / -down / minus</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num" style="background:transparent; border-style:dashed;">·</div>
+        <div class="note-body">
+          <h4 class="note-title" style="color:var(--ink-2)">Séparateur de row</h4>
+          <p class="note-desc">Hairline 1px <span class="tok muted">--border</span> avec inset gauche aligné sur le nom (76pt depuis le bord). Pas de divider entre rank et sprite — l'œil suit la colonne.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       STATE B — LISTE CORES
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">B</span>
+      <h2 class="spec-title">Liste — onglet Cores</h2>
+      <span class="spec-eyebrow">duos · co-présence ranked · plus-value vs. Battle Data natif</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status">
+            <span>9:41</span>
+            <span class="status-icons"><i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i></span>
+          </div>
+
+          <div class="head">
+            <div class="head-top">
+              <h1 class="h1">Meta</h1>
+              <span class="freshness"><i data-lucide="clock"></i>Mis à jour il y a 2&nbsp;h</span>
+            </div>
+            <div class="seg accent">
+              <button class="on">Doubles</button>
+              <button>Singles</button>
+            </div>
+          </div>
+
+          <div class="trends">
+            <span class="chip up"><i data-lucide="trending-up"></i>En hausse · <strong>Ogerpon</strong></span>
+            <span class="chip down"><i data-lucide="trending-down"></i>En baisse · <strong>Heatran</strong></span>
+            <span class="chip speed"><i data-lucide="zap"></i>Speed king · <strong>Flutter Mane</strong></span>
+            <span class="chip tier"><i data-lucide="shield"></i>Tier S · <strong>Calyrex-S</strong></span>
+          </div>
+
+          <div class="tabs">
+            <button class="tab">Usage</button>
+            <button class="tab">Winrate</button>
+            <button class="tab on">Cores</button>
+          </div>
+
+          <div class="list">
+            <div class="row core">
+              <span class="rank">#1</span>
+              <span class="core-sprites">
+                <span class="sprite small t-psychic"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/898.png" alt="" loading="lazy"/></span>
+                <span class="sprite small t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/727.png" alt="" loading="lazy"/></span>
+              </span>
+              <span class="row-name"><span class="nm">Calyrex-S<em>+</em>Incineroar</span><span class="role">Core offensif · pivot</span></span>
+              <span class="row-meter"><span class="pct">29.4&nbsp;%</span><span class="bar"><span style="width:100%"></span></span></span>
+            </div>
+            <div class="row core">
+              <span class="rank">#2</span>
+              <span class="core-sprites">
+                <span class="sprite small t-fighting"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/892.png" alt="" loading="lazy"/></span>
+                <span class="sprite small t-ghost"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/987.png" alt="" loading="lazy"/></span>
+              </span>
+              <span class="row-name"><span class="nm">Shifours<em>+</em>Flutter Mane</span><span class="role">Pression duale</span></span>
+              <span class="row-meter"><span class="pct">22.8&nbsp;%</span><span class="bar"><span style="width:78%"></span></span></span>
+            </div>
+            <div class="row core">
+              <span class="rank">#3</span>
+              <span class="core-sprites">
+                <span class="sprite small t-grass"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/812.png" alt="" loading="lazy"/></span>
+                <span class="sprite small t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/727.png" alt="" loading="lazy"/></span>
+              </span>
+              <span class="row-name"><span class="nm">Gorythmic<em>+</em>Incineroar</span><span class="role">Lead VGC standard</span></span>
+              <span class="row-meter"><span class="pct">18.6&nbsp;%</span><span class="bar"><span style="width:63%"></span></span></span>
+            </div>
+            <div class="row core">
+              <span class="rank">#4</span>
+              <span class="core-sprites">
+                <span class="sprite small t-fighting"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/992.png" alt="" loading="lazy"/></span>
+                <span class="sprite small t-grass"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/591.png" alt="" loading="lazy"/></span>
+              </span>
+              <span class="row-name"><span class="nm">Iron Hands<em>+</em>Amoonguss</span><span class="role">Core défensif · spore</span></span>
+              <span class="row-meter"><span class="pct">15.2&nbsp;%</span><span class="bar"><span style="width:52%"></span></span></span>
+            </div>
+            <div class="row core">
+              <span class="rank">#5</span>
+              <span class="core-sprites">
+                <span class="sprite small t-grass"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1017.png" alt="" loading="lazy"/></span>
+                <span class="sprite small t-flying"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/641.png" alt="" loading="lazy"/></span>
+              </span>
+              <span class="row-name"><span class="nm">Ogerpon-Foyer<em>+</em>Tornadus</span><span class="role">Pression météo · vents</span></span>
+              <span class="row-meter"><span class="pct">12.9&nbsp;%</span><span class="bar"><span style="width:44%"></span></span></span>
+            </div>
+            <div class="row core">
+              <span class="rank">#6</span>
+              <span class="core-sprites">
+                <span class="sprite small t-psychic"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/898.png" alt="" loading="lazy"/></span>
+                <span class="sprite small t-grass"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/591.png" alt="" loading="lazy"/></span>
+              </span>
+              <span class="row-name"><span class="nm">Calyrex-S<em>+</em>Amoonguss</span><span class="role">Setup contrôle</span></span>
+              <span class="row-meter"><span class="pct">11.4&nbsp;%</span><span class="bar"><span style="width:39%"></span></span></span>
+            </div>
+            <div class="row core">
+              <span class="rank">#7</span>
+              <span class="core-sprites">
+                <span class="sprite small t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/727.png" alt="" loading="lazy"/></span>
+                <span class="sprite small t-grass"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/591.png" alt="" loading="lazy"/></span>
+              </span>
+              <span class="row-name"><span class="nm">Incineroar<em>+</em>Amoonguss</span><span class="role">Pivot fake-out · spore</span></span>
+              <span class="row-meter"><span class="pct">9.8&nbsp;%</span><span class="bar"><span style="width:33%"></span></span></span>
+            </div>
+          </div>
+
+          <span class="pin" style="top: 224px; right: 60px;">1</span>
+          <span class="pin" style="top: 296px; left: 48px;">2</span>
+          <span class="pin" style="top: 304px; left: 116px;">3</span>
+          <span class="pin" style="top: 304px; right: 110px;">4</span>
+        </div>
+        <div class="phone-dims">380 × 760 · même chrome, rows reformatées</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note">
+        <div class="note-num">1</div>
+        <div class="note-body">
+          <h4 class="note-title">Onglet "Cores" actif</h4>
+          <p class="note-desc">Switch d'onglet : <span class="comp-pill">Fade</span> du contenu de la liste (160ms accel out, 160ms decel in). Le header, segmented et trends restent stables. Underline accent glisse de Winrate à Cores.</p>
+          <div class="toks">
+            <span class="tok">--accent</span>
+            <span class="tok muted">--motion-fast</span>
+            <span class="comp-pill">Reacticx · Tabs</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">2</div>
+        <div class="note-body">
+          <h4 class="note-title">Duo de sprites — overlap</h4>
+          <p class="note-desc">2 sprites 32×32 superposés avec décalage négatif <span class="tok muted">-10px</span>. Le 2nd a une bordure 2px en <span class="tok muted">--bg</span> pour détourer proprement. L'ordre lecture est temporel (lead à gauche, partenaire à droite).</p>
+          <div class="toks">
+            <span class="tok muted">32×32 chacun</span>
+            <span class="tok muted">overlap -10</span>
+            <span class="tok muted">border 2px --bg</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">3</div>
+        <div class="note-body">
+          <h4 class="note-title">Noms du duo</h4>
+          <p class="note-desc">Format <span class="tok muted">"Nom A + Nom B"</span>, le séparateur "+" en <span class="tok muted">--fg3</span> et plus faible. Tronquage middle-ellipsis si dépassement (pas head/tail ellipsis — pour préserver les deux noms).</p>
+          <div class="toks">
+            <span class="tok muted">--fg1 / --fg3</span>
+            <span class="tok muted">--fs-base - 1</span>
+            <span class="tok muted">weight 500</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">4</div>
+        <div class="note-body">
+          <h4 class="note-title">Étiquette rôle du duo</h4>
+          <p class="note-desc">Description du <em>pattern</em> stratégique, pas une catégorie fermée. Calculée serveur-side à partir des moves les plus joués sur le core. Exemples : <em>"Core offensif"</em>, <em>"Pression duale"</em>, <em>"Setup contrôle"</em>, <em>"Lead VGC standard"</em>.</p>
+          <div class="toks">
+            <span class="tok muted">--fg3</span>
+            <span class="tok muted">--fs-xs</span>
+            <span class="tok muted">--tr-wide</span>
+            <span class="tok note">copy · serveur</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       STATE C — MODAL DÉTAIL · HAUT
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">C</span>
+      <h2 class="spec-title">Modal détail — vue haute</h2>
+      <span class="spec-eyebrow">bottom sheet · hero + stats + battle data</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status">
+            <span>9:41</span>
+            <span class="status-icons"><i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i></span>
+          </div>
+
+          <!-- Faded list behind -->
+          <div class="head">
+            <div class="head-top">
+              <h1 class="h1">Meta</h1>
+              <span class="freshness"><i data-lucide="clock"></i>Mis à jour il y a 2&nbsp;h</span>
+            </div>
+            <div class="seg accent">
+              <button class="on">Doubles</button>
+              <button>Singles</button>
+            </div>
+          </div>
+          <div class="list"></div>
+
+          <!-- Scrim + modal -->
+          <div class="scrim"></div>
+          <div class="sheet-modal" style="top: 70px;">
+            <div class="grab"></div>
+            <button class="modal-close"><i data-lucide="chevron-down"></i></button>
+
+            <div class="modal-hero">
+              <span class="tier-pill s">Tier S</span>
+              <span class="sprite big t-psychic" style="margin-top:6px"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/898.png" alt="" loading="lazy"/></span>
+              <h3 class="modal-name">Calyrex-Cavalier d'Effroi</h3>
+              <div class="modal-types">
+                <span class="tb psychic">Psychic</span>
+                <span class="tb ghost">Spectre</span>
+              </div>
+              <div class="modal-meta-line">#1 en Doubles&nbsp;·&nbsp;Saison M-2&nbsp;·&nbsp;semaine 3</div>
+            </div>
+
+            <div class="modal-format-switch">
+              <div class="seg">
+                <button class="on">Doubles</button>
+                <button>Singles</button>
+              </div>
+            </div>
+
+            <div class="modal-body">
+              <!-- Stats de base -->
+              <div class="section">
+                <div class="eyebrow">Stats de base</div>
+                <div class="stat-row"><span class="lbl">PV</span><span class="val">100</span><span class="bar warning"><span style="width:60%"></span></span></div>
+                <div class="stat-row"><span class="lbl">Atq</span><span class="val">85</span><span class="bar warning"><span style="width:50%"></span></span></div>
+                <div class="stat-row"><span class="lbl">Déf</span><span class="val">80</span><span class="bar warning"><span style="width:46%"></span></span></div>
+                <div class="stat-row"><span class="lbl">Atq Sp</span><span class="val">165</span><span class="bar success"><span style="width:97%"></span></span></div>
+                <div class="stat-row"><span class="lbl">Déf Sp</span><span class="val">100</span><span class="bar warning"><span style="width:60%"></span></span></div>
+                <div class="stat-row"><span class="lbl">Vit</span><span class="val">150</span><span class="bar success"><span style="width:90%"></span></span></div>
+                <div class="stat-total"><span>Total</span><strong>680</strong></div>
+              </div>
+
+              <!-- Moves -->
+              <div class="section">
+                <div class="eyebrow">Moves les plus utilisés</div>
+                <div class="move-row">
+                  <span class="num">1</span>
+                  <span class="move-info">
+                    <span class="move-name">Lame Spectrale<span class="tb ghost">Spectre</span><span class="cat phys">Phys</span></span>
+                    <span class="move-bar-wrap"><span class="bar"><span style="width:96%"></span></span><span class="pct">96&nbsp;%</span></span>
+                  </span>
+                  <span></span>
+                </div>
+                <div class="move-row">
+                  <span class="num">2</span>
+                  <span class="move-info">
+                    <span class="move-name">Protection<span class="tb normal">Normal</span><span class="cat stat">Stat</span></span>
+                    <span class="move-bar-wrap"><span class="bar"><span style="width:92%"></span></span><span class="pct">92&nbsp;%</span></span>
+                  </span>
+                  <span></span>
+                </div>
+              </div>
+
+              <div class="scroll-fade"></div>
+            </div>
+          </div>
+
+          <span class="pin" style="top: 76px; left: 50%; transform:translateX(-50%) rotate(-4deg);">1</span>
+          <span class="pin" style="top: 86px; right: 18px;">2</span>
+          <span class="pin" style="top: 116px; left: 18px;">3</span>
+          <span class="pin" style="top: 220px; left: 14px;">4</span>
+          <span class="pin" style="top: 274px; right: 14px;">5</span>
+          <span class="pin" style="top: 332px; left: 14px;">6</span>
+          <span class="pin" style="top: 524px; left: 14px;">7</span>
+        </div>
+        <div class="phone-dims">380 × 760 · sheet @ top 70</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note">
+        <div class="note-num">1</div>
+        <div class="note-body">
+          <h4 class="note-title">Bottom sheet iOS</h4>
+          <p class="note-desc">Sheet monte de 360ms avec easing <span class="tok muted">decel</span>. Drag handle 36×4 indique le geste swipe-down. Tap sur le scrim ferme aussi. Sheet ne couvre pas le status bar.</p>
+          <div class="toks">
+            <span class="tok muted">--surface-high</span>
+            <span class="tok">--r-xl</span>
+            <span class="tok muted">--shadow-lg</span>
+            <span class="tok muted">--fg-faint (grab)</span>
+            <span class="comp-pill">Reacticx · Sheet</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">2</div>
+        <div class="note-body">
+          <h4 class="note-title">Close button</h4>
+          <p class="note-desc">Bouton circulaire 28pt en haut-droite, icône <span class="tok muted">chevron-down</span>. Hit-slop élargi à 44pt. Le geste swipe-down depuis n'importe où dans le sheet ferme aussi.</p>
+          <div class="toks">
+            <span class="tok muted">--surface</span>
+            <span class="tok muted">--border</span>
+            <span class="tok muted">--r-pill</span>
+            <span class="tok muted">--fg2</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">3</div>
+        <div class="note-body">
+          <h4 class="note-title">Tier pill</h4>
+          <p class="note-desc">Badge tier en haut-gauche du hero. Couleurs sémantiques métal du DS — champagne (S), silver-blue (A), bronze (B), graphite (C). Pas de coloration accent ici : le tier a son propre code visuel.</p>
+          <div class="toks">
+            <span class="tok muted">--tier-s</span>
+            <span class="tok muted">--tier-s-bg</span>
+            <span class="tok muted">border 1px --tier-s</span>
+            <span class="tok">--r-sm</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">4</div>
+        <div class="note-body">
+          <h4 class="note-title">Hero block — sprite + identité</h4>
+          <p class="note-desc">Sprite 80×80 sur fond teinté du type primaire. Radial wash <span class="tok muted">--accent-soft → transparent</span> 30&nbsp;% derrière (seul cas autorisé par le DS pour les hero numbers). Nom <span class="tok muted">--fs-xl + 2</span>, types en TypeBadge sous le nom, ligne meta tabulaire au-dessous.</p>
+          <div class="toks">
+            <span class="tok muted">80×80</span>
+            <span class="tok">--accent-soft</span>
+            <span class="tok muted">--r-pill</span>
+            <span class="tok muted">tabular-nums</span>
+            <span class="tok muted">--fg3 meta-line</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">5</div>
+        <div class="note-body">
+          <h4 class="note-title">Format switch dans le modal</h4>
+          <p class="note-desc">Segmented compact (variante non-accent, plus discrète que celui du header). Au switch : les sections battle data se rechargent en shimmer. Les stats de base (immutables) ne bougent pas — pas de re-render.</p>
+          <div class="toks">
+            <span class="tok muted">--surface-sunken</span>
+            <span class="tok muted">--surface-high (on)</span>
+            <span class="tok">--r-pill</span>
+            <span class="comp-pill">Segmented Control</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">6</div>
+        <div class="note-body">
+          <h4 class="note-title">Stats de base — barres colorées</h4>
+          <p class="note-desc">6 stats. Couleur barre conditionnelle :</p>
+          <div class="toks" style="flex-direction:column;align-items:flex-start;gap:4px;">
+            <span><span class="tok danger">--danger</span> &nbsp;&lt; 70 — faible</span>
+            <span><span class="tok warning">--warning</span> &nbsp;70–99 — moyenne</span>
+            <span><span class="tok">--accent</span> &nbsp;100–119 — bonne</span>
+            <span><span class="tok semantic">--success</span> &nbsp;≥ 120 — excellente</span>
+          </div>
+          <div class="toks" style="margin-top:6px">
+            <span class="tok muted">--surface-high (rail)</span>
+            <span class="tok muted">label uppercase tracking --tr-wide</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">7</div>
+        <div class="note-body">
+          <h4 class="note-title">Moves — row compacte</h4>
+          <p class="note-desc">Numéro mono + nom + TypeBadge + catégorie (Phys/Spé/Stat sur palette sémantique) + barre 80pt + %. Hairline <span class="tok muted">--divider</span> entre rows. Continuation visible avant le scroll fade.</p>
+          <div class="toks">
+            <span class="tok muted">--surface</span>
+            <span class="tok muted">--divider</span>
+            <span class="tok danger">--danger-soft (phys)</span>
+            <span class="tok muted">--info-soft (spé)</span>
+            <span class="tok warning">--warning-soft (stat)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       STATE D — MODAL DÉTAIL · BAS
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">D</span>
+      <h2 class="spec-title">Modal détail — vue basse</h2>
+      <span class="spec-eyebrow">items · partenaires · plus-values Tacticx</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status">
+            <span>9:41</span>
+            <span class="status-icons"><i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i></span>
+          </div>
+
+          <div class="scrim"></div>
+          <div class="sheet-modal" style="top: 28px;">
+            <div class="grab"></div>
+            <button class="modal-close"><i data-lucide="chevron-down"></i></button>
+
+            <div class="modal-body" style="padding-top: 16px;">
+              <!-- Items -->
+              <div class="section" style="border-top: 0; padding-top: 0;">
+                <div class="eyebrow">Items les plus portés</div>
+                <div class="item-row">
+                  <span class="num">1</span>
+                  <span class="item-icon"><i data-lucide="circle"></i></span>
+                  <span class="item-info">
+                    <span class="item-name">Lunettes Choix</span>
+                    <span class="item-effect">+50&nbsp;% Atq Sp · move verrouillé</span>
+                  </span>
+                  <span class="row-meter"><span class="pct">48&nbsp;%</span><span class="bar"><span style="width:100%"></span></span></span>
+                </div>
+                <div class="item-row">
+                  <span class="num">2</span>
+                  <span class="item-icon"><i data-lucide="circle"></i></span>
+                  <span class="item-info">
+                    <span class="item-name">Mouchoir Choix</span>
+                    <span class="item-effect">+50&nbsp;% Vit · move verrouillé</span>
+                  </span>
+                  <span class="row-meter"><span class="pct">32&nbsp;%</span><span class="bar"><span style="width:66%"></span></span></span>
+                </div>
+                <div class="item-row">
+                  <span class="num">3</span>
+                  <span class="item-icon"><i data-lucide="circle"></i></span>
+                  <span class="item-info">
+                    <span class="item-name">Vie Sphère</span>
+                    <span class="item-effect">+30&nbsp;% dégâts · -10&nbsp;% PV / atk</span>
+                  </span>
+                  <span class="row-meter"><span class="pct">14&nbsp;%</span><span class="bar"><span style="width:30%"></span></span></span>
+                </div>
+              </div>
+
+              <!-- Partenaires -->
+              <div class="section">
+                <div class="eyebrow">Partenaires fréquents</div>
+                <div class="partner-row">
+                  <span class="num">1</span>
+                  <span class="sprite small t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/727.png" alt="" loading="lazy"/></span>
+                  <span class="item-info">
+                    <span class="item-name">Incineroar</span>
+                    <span class="item-effect">Support · fake-out · pivot</span>
+                  </span>
+                  <span><span class="role-badge">Support</span><span class="pct" style="font-size:13px;color:var(--fg1);font-weight:600">42&nbsp;%</span></span>
+                </div>
+                <div class="partner-row">
+                  <span class="num">2</span>
+                  <span class="sprite small t-grass"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/591.png" alt="" loading="lazy"/></span>
+                  <span class="item-info">
+                    <span class="item-name">Amoonguss</span>
+                    <span class="item-effect">Spore · rage powder</span>
+                  </span>
+                  <span><span class="role-badge">Support</span><span class="pct" style="font-size:13px;color:var(--fg1);font-weight:600">28&nbsp;%</span></span>
+                </div>
+                <div class="partner-row">
+                  <span class="num">3</span>
+                  <span class="sprite small t-flying"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/641.png" alt="" loading="lazy"/></span>
+                  <span class="item-info">
+                    <span class="item-name">Tornadus</span>
+                    <span class="item-effect">Tailwind · pression rapide</span>
+                  </span>
+                  <span><span class="role-badge">Lead</span><span class="pct" style="font-size:13px;color:var(--fg1);font-weight:600">19&nbsp;%</span></span>
+                </div>
+              </div>
+
+              <!-- Spreads EV (plus-value 1) -->
+              <div class="section">
+                <div class="eyebrow">Spreads EV<span class="plus">+ TACTICX</span></div>
+                <div class="spread-row">
+                  <div class="spread-numbers">252 PV / 4 Déf / 252 Vit</div>
+                  <div class="spread-nature"><span>Nature Timide&nbsp;·&nbsp;Tera Normal</span><strong>34&nbsp;%</strong></div>
+                </div>
+                <div class="spread-row">
+                  <div class="spread-numbers">4 PV / 252 Atq Sp / 252 Vit</div>
+                  <div class="spread-nature"><span>Nature Modeste&nbsp;·&nbsp;Tera Spectre</span><strong>22&nbsp;%</strong></div>
+                </div>
+                <div class="spread-row">
+                  <div class="spread-numbers">252 PV / 252 Déf Sp / 4 Vit</div>
+                  <div class="spread-nature"><span>Nature Calme&nbsp;·&nbsp;Tera Fée</span><strong>11&nbsp;%</strong></div>
+                </div>
+
+                <!-- Speed tiers teaser -->
+                <div class="teaser" style="margin-top:10px">
+                  <i data-lucide="zap"></i>
+                  <span><strong>Speed tiers</strong> · tape un spread pour voir qui il dépasse et qui le surclasse</span>
+                </div>
+              </div>
+
+              <!-- Counters (plus-value 3) -->
+              <div class="section">
+                <div class="eyebrow">Counters<span class="plus">+ TACTICX</span></div>
+                <div class="counter-grid">
+                  <div class="counter-col">
+                    <div class="col-eyebrow">Difficile pour</div>
+                    <div class="counter-list">
+                      <div class="counter-pill"><span class="sprite t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/727.png" alt="" loading="lazy"/></span>Incineroar</div>
+                      <div class="counter-pill"><span class="sprite t-grass"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/591.png" alt="" loading="lazy"/></span>Amoonguss</div>
+                      <div class="counter-pill"><span class="sprite t-fighting"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/992.png" alt="" loading="lazy"/></span>Iron Hands</div>
+                    </div>
+                  </div>
+                  <div class="counter-col">
+                    <div class="col-eyebrow">Géré par</div>
+                    <div class="counter-list">
+                      <div class="counter-pill"><span class="sprite t-dark"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/727.png" alt="" loading="lazy"/></span>Roublenard</div>
+                      <div class="counter-pill"><span class="sprite t-ghost"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/987.png" alt="" loading="lazy"/></span>Flutter Mane</div>
+                      <div class="counter-pill"><span class="sprite t-steel"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/376.png" alt="" loading="lazy"/></span>Metagross</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sparkline premium -->
+              <div class="section" style="padding-bottom: 40px;">
+                <div class="eyebrow">Évolution · 4 dernières semaines<span class="plus">+ PREMIUM</span></div>
+                <div class="premium-card">
+                  <div class="spark-wrap">
+                    <div>
+                      <div class="label">Présence</div>
+                      <div class="now">38.2&nbsp;%</div>
+                    </div>
+                    <svg width="120" height="32" viewBox="0 0 120 32" style="overflow: visible;">
+                      <path d="M0,22 L20,18 L40,20 L60,12 L80,14 L100,8 L120,6" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      <circle cx="120" cy="6" r="2.5" fill="var(--accent)"/>
+                    </svg>
+                  </div>
+                  <div class="lock-veil"><i data-lucide="lock"></i>Premium</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <span class="pin" style="top: 92px; left: 14px;">1</span>
+          <span class="pin" style="top: 130px; right: 14px;">2</span>
+          <span class="pin" style="top: 260px; left: 14px;">3</span>
+          <span class="pin" style="top: 384px; left: 14px;">4</span>
+          <span class="pin" style="top: 444px; right: 14px;">5</span>
+          <span class="pin" style="top: 530px; left: 14px;">6</span>
+          <span class="pin" style="top: 654px; right: 14px;">7</span>
+        </div>
+        <div class="phone-dims">380 × 760 · sheet @ top 28 (scrolled)</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note">
+        <div class="note-num">1</div>
+        <div class="note-body">
+          <h4 class="note-title">Items les plus portés</h4>
+          <p class="note-desc">3 rows. Sprite item carré <span class="tok muted">28×28 · --r-sm</span> (placeholder ici — production : PokeAPI items). Nom + effet 1 ligne <span class="tok muted">--fg-faint</span>. % de fréquence à droite avec barre relative.</p>
+          <div class="toks">
+            <span class="tok muted">--surface (item-icon)</span>
+            <span class="tok muted">--border</span>
+            <span class="tok">--r-sm</span>
+            <span class="tok muted">--fg-faint (effet)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">2</div>
+        <div class="note-body">
+          <h4 class="note-title">% items — colonne meter</h4>
+          <p class="note-desc">Même composant <span class="comp-pill">Progress</span> + chiffre que la liste principale. Cohérence visuelle volontaire entre les meters de l'app.</p>
+          <div class="toks">
+            <span class="tok">--accent</span>
+            <span class="tok muted">--fs-sm weight 600</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">3</div>
+        <div class="note-body">
+          <h4 class="note-title">Partenaires — navigation imbriquée</h4>
+          <p class="note-desc">Tap → ouvre le modal détail du partenaire (push sur le stack des sheets). Bouton back natif iOS du sheet. Le modal courant reste en mémoire — back retourne dessus à la même position de scroll.</p>
+          <div class="toks">
+            <span class="tok muted">--surface</span>
+            <span class="tok muted">role-badge --r-sm</span>
+            <span class="tok semantic">→ nested sheet</span>
+            <span class="comp-pill">Badge</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">4</div>
+        <div class="note-body">
+          <h4 class="note-title">Spreads EV — plus-value #1</h4>
+          <p class="note-desc">Le jeu natif ne les expose pas. Format monospace pour les chiffres EV. Nature et Tera type sur la ligne du dessous en <span class="tok muted">--fg3</span>. Pourcentage d'usage à droite en <span class="tok">--accent</span>.</p>
+          <div class="toks">
+            <span class="tok muted">--surface</span>
+            <span class="tok muted">--border</span>
+            <span class="tok">--r-md</span>
+            <span class="tok muted">--font-mono</span>
+            <span class="tok muted">tabular-nums</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">5</div>
+        <div class="note-body">
+          <h4 class="note-title">Speed tiers — teaser au tap</h4>
+          <p class="note-desc">Pattern interactif : la liste "plus rapide que / moins rapide que" n'apparaît qu'au tap d'un spread. Évite de surcharger l'écran par défaut. Icône <span class="tok muted">zap</span> en accent signale le mécanisme.</p>
+          <div class="toks">
+            <span class="tok muted">--surface</span>
+            <span class="tok">--accent (zap)</span>
+            <span class="tok note">interaction · expand on tap</span>
+            <span class="comp-pill">Accordion</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">6</div>
+        <div class="note-body">
+          <h4 class="note-title">Counters — grid 2 colonnes</h4>
+          <p class="note-desc">"Difficile pour" (les Pokémon que celui-ci counter) à gauche, "Géré par" (ses counters) à droite. 3 pills compactes chacun. Source agrégée Showdown + replays tournois. Tap sur pill → ouvre la fiche.</p>
+          <div class="toks">
+            <span class="tok muted">--surface</span>
+            <span class="tok muted">--border</span>
+            <span class="tok">--r-md</span>
+            <span class="tok muted">col-eyebrow --tr-wide</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-num">7</div>
+        <div class="note-body">
+          <h4 class="note-title">Sparkline historique — premium</h4>
+          <p class="note-desc">SVG 80×24 du % d'usage sur 4 semaines. Visible mais voilée (blur 3px + scrim 50&nbsp;%) tant que l'utilisateur n'est pas premium. Tap : ouvre le bottom-sheet paywall (écran séparé). Pas caché — la valeur perçue est plus forte avec un teaser qu'avec une absence.</p>
+          <div class="toks">
+            <span class="tok">--accent (path)</span>
+            <span class="tok muted">--surface</span>
+            <span class="tok muted">blur 3px + scrim 0.5</span>
+            <span class="tok note">premium gating</span>
+            <span class="comp-pill">Sparkline · SVG</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       ANNEXE — STATES
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step" style="background:#B7E6C9">∞</span>
+      <h2 class="spec-title">Annexe — états transitoires</h2>
+      <span class="spec-eyebrow">chargement · données absentes · réseau · premium</span>
+    </div>
+
+    <div class="annexe" style="grid-column: 1 / -1;">
+
+      <!-- Shimmer loading -->
+      <div>
+        <div class="ann-title">Chargement · Shimmer</div>
+        <div class="ann-card">
+          <div class="inner">
+            <div class="row shimmer-rows" style="margin-bottom: 12px;">
+              <span class="sk circle"></span>
+              <span style="flex:1; display:flex; flex-direction:column; gap:8px">
+                <span class="sk line" style="width:60%"></span>
+                <span class="sk line" style="width:40%"></span>
+              </span>
+              <span class="sk short"></span>
+            </div>
+            <div class="row shimmer-rows" style="margin-bottom: 12px;">
+              <span class="sk circle"></span>
+              <span style="flex:1; display:flex; flex-direction:column; gap:8px">
+                <span class="sk line" style="width:50%"></span>
+                <span class="sk line" style="width:35%"></span>
+              </span>
+              <span class="sk short"></span>
+            </div>
+            <div class="row shimmer-rows" style="margin-bottom: 12px;">
+              <span class="sk circle"></span>
+              <span style="flex:1; display:flex; flex-direction:column; gap:8px">
+                <span class="sk line" style="width:55%"></span>
+                <span class="sk line" style="width:30%"></span>
+              </span>
+              <span class="sk short"></span>
+            </div>
+            <div class="row shimmer-rows">
+              <span class="sk circle"></span>
+              <span style="flex:1; display:flex; flex-direction:column; gap:8px">
+                <span class="sk line" style="width:65%"></span>
+                <span class="sk line" style="width:42%"></span>
+              </span>
+              <span class="sk short"></span>
+            </div>
+            <div style="margin-top:auto; padding-top: 16px;">
+              <div style="font-family: var(--hand); font-size: 18px; color: var(--ink-2); line-height:1.2; margin-bottom: 4px;">Shimmer partout — pas de spinner</div>
+              <div class="toks">
+                <span class="tok muted">--surface-high</span>
+                <span class="tok muted">opacity 0.35 → 0.65</span>
+                <span class="comp-pill">Reacticx · Shimmer</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty state -->
+      <div>
+        <div class="ann-title">Données absentes</div>
+        <div class="ann-card">
+          <div class="inner">
+            <div class="ann-empty">
+              <i data-lucide="bar-chart-3"></i>
+              <div class="ttl">Données en cours de collecte</div>
+              <div class="sub">La meta se construit. Reviens dans quelques heures.</div>
+            </div>
+            <div style="margin-top:auto;">
+              <div style="font-family: var(--hand); font-size: 18px; color: var(--ink-2); line-height:1.2; margin-bottom: 4px;">Pas de bouton retry — refresh auto 30&nbsp;min</div>
+              <div class="toks">
+                <span class="tok muted">--fg-faint (icône)</span>
+                <span class="tok muted">--fg1 (titre)</span>
+                <span class="tok muted">--fg3 (sub)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error state -->
+      <div>
+        <div class="ann-title">Erreur réseau</div>
+        <div class="ann-card">
+          <div class="inner">
+            <div class="ann-error">
+              <i data-lucide="cloud-off"></i>
+              <div class="ttl">Pas de connexion</div>
+              <div class="sub">Les dernières données chargées restent visibles.</div>
+              <button class="ann-btn">Réessayer</button>
+            </div>
+            <div style="margin-top:auto;">
+              <div style="font-family: var(--hand); font-size: 18px; color: var(--ink-2); line-height:1.2; margin-bottom: 4px;">Bouton ghost — pas de CTA accent en erreur</div>
+              <div class="toks">
+                <span class="tok muted">--surface</span>
+                <span class="tok muted">--border</span>
+                <span class="tok muted">--fg1</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       CONSTRAINTS + COMPONENTS
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="constraints">
+    <h3>Contraintes UX — invariantes de l'écran</h3>
+    <ul>
+      <li>Header fixe (titre + segmented) — accessible en 1 tap depuis tout état</li>
+      <li>Switch Doubles/Singles persiste entre sessions (AsyncStorage)</li>
+      <li>Liste 20 items en FlashList — pas FlatList (perf scroll)</li>
+      <li>Modal scrollable indépendamment de la liste sous-jacente</li>
+      <li>Toutes les sprites en lazy-load avec shimmer placeholder</li>
+      <li>Touch target ≥ 44×44pt partout (rows 64pt, icônes hit-slop élargi)</li>
+      <li>Animation à l'apparition des % via Rolling Counter — effet premium</li>
+      <li>Refresh auto toutes les 30 min quand l'app est foreground</li>
+      <li class="x">Pas de spinner — shimmer partout</li>
+      <li class="x">Pas d'emoji dans la copy ni dans les badges</li>
+      <li class="x">Pas de gradient coloré — radial wash accent autorisé sur hero uniquement</li>
+      <li class="x">Pas de stat coloré par-défaut — accent réservé aux interactions clés</li>
+    </ul>
+  </section>
+
+  <section class="legend">
+    <div class="legend-card">
+      <div class="legend-name">Reacticx · Segmented Control</div>
+      <div class="legend-desc">2 instances : Doubles/Singles dans le header (variante accent) + dans le modal (variante neutre).</div>
+    </div>
+    <div class="legend-card">
+      <div class="legend-name">Reacticx · Tabs</div>
+      <div class="legend-desc">3 onglets : Usage / Winrate / Cores. Underline accent qui glisse. Winrate gated par disponibilité de données.</div>
+    </div>
+    <div class="legend-card">
+      <div class="legend-name">Reacticx · Progress</div>
+      <div class="legend-desc">Barres d'usage (liste), barres de stats (modal), barres de fréquence (moves/items). Variantes de couleur sémantique.</div>
+    </div>
+    <div class="legend-card">
+      <div class="legend-name">Reacticx · Shimmer</div>
+      <div class="legend-desc">Tous états de chargement — rows, hero, sections. Animation opacity 0.35 → 0.65 sur <code style="font-family:var(--font-mono);font-size:12px">--surface-high</code>.</div>
+    </div>
+    <div class="legend-card">
+      <div class="legend-name">Reacticx · Rolling Counter</div>
+      <div class="legend-desc">Animation des % à l'apparition (240ms standard). Effet premium signature, jamais sur cachage / shimmer.</div>
+    </div>
+    <div class="legend-card">
+      <div class="legend-name">Reacticx · Accordion</div>
+      <div class="legend-desc">Optionnel — sections Counters et Speed tiers si l'espace manque. Header tappable, contenu animé en hauteur 240ms decel.</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  if (window.lucide && window.lucide.createIcons) {
+    window.lucide.createIcons();
+  }
+  // Defensive: hide broken sprite images (network may be limited)
+  document.querySelectorAll('.sprite img').forEach(img => {
+    img.addEventListener('error', () => { img.style.display = 'none'; }, { once: true });
+  });
+</script>
+
+</body>
+</html>

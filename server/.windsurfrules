@@ -1,0 +1,378 @@
+# AdonisJS v7 — Règles Cascade
+
+> Node.js ≥ 24 requis. Ce projet utilise AdonisJS v7. Ne jamais utiliser les patterns v6.
+
+## 🚨 Différences critiques v6 → v7 (à respecter absolument)
+
+| Feature | ❌ v6 — NE PAS UTILISER | ✅ v7 |
+|---|---|---|
+| Import controllers dans routes | `() => import('#controllers/...')` par controller | `import { controllers } from '#generated/controllers'` |
+| Nommage des routes | `.as('posts.index')` manuel | Auto-nommé depuis `controller.method` |
+| Colonnes modèles | `@column()` sur chaque champ | Étendre `PostSchema` depuis `#database/schema` |
+| Auth mixin | `withAuthFinder(() => hash.use('scrypt'), { uids: [...] })` | `withAuthFinder(hash)` (email+password par défaut) |
+| Inertia shared data | Dans `config/inertia.ts` | Dans `InertiaMiddleware.share()` |
+| Config encryption | Dans `config/app.ts` | `config/encryption.ts` dédié avec drivers nommés |
+| URL builder | `router.makeUrl()` (déprécié) | `urlFor('route.name', { params })` |
+| TypeScript runner | `ts-node` | `ts-exec` (basé sur SWC, Node 24+) |
+| `file.move()` | Utilisait le filename client | UUID par défaut (fix CVE-2026-21440) |
+
+---
+
+## Package manager
+
+Toujours utiliser **pnpm** :
+- `pnpm create adonisjs@latest my-app`
+- `pnpm install`, `pnpm build`, `pnpm dev`
+- `pnpm install --prod` (production)
+- `pnpm install --frozen-lockfile` (CI)
+
+---
+
+## Routing & Controllers
+
+### Barrel controllers (v7)
+```typescript
+// start/routes.ts
+import { controllers } from '#generated/controllers'
+
+// Routes auto-nommées : posts.index, posts.show, posts.store...
+router.get('/posts', [controllers.Posts, 'index'])
+router.get('/posts/:id', [controllers.Posts, 'show'])
+router.post('/posts', [controllers.Posts, 'store'])
+router.put('/posts/:id', [controllers.Posts, 'update'])
+router.delete('/posts/:id', [controllers.Posts, 'destroy'])
+```
+
+Le barrel `#generated/controllers` est auto-généré dans `.adonisjs/server/controllers.ts` par le dev server. Même pattern pour les events et policies.
+
+### URL type-safe
+```typescript
+import { urlFor } from '@adonisjs/core/services/url_builder'
+const url = urlFor('posts.show', { id: post.id })
+// ❌ Erreur TypeScript si route inexistante ou params incorrects
+```
+
+---
+
+## Transformers (couche de sérialisation)
+
+**Toujours utiliser les transformers pour les réponses API. Ne jamais sérialiser les modèles directement.**
+
+```typescript
+// app/transformers/post_transformer.ts
+import { BaseTransformer } from '@adonisjs/core/transformers'
+import type Post from '#models/post'
+
+export default class PostTransformer extends BaseTransformer<Post> {
+  toObject() {
+    return {
+      ...this.pick(this.resource, ['id', 'title', 'createdAt', 'updatedAt']),
+      excerpt: this.resource.body.substring(0, 200),
+    }
+  }
+}
+```
+
+### Dans les controllers
+```typescript
+import PostTransformer from '#transformers/post_transformer'
+
+export default class PostsController {
+  async show({ params, serialize }: HttpContext) {
+    const post = await Post.findOrFail(params.id)
+    return serialize({ post: PostTransformer.transform(post) })
+  }
+  async index({ serialize }: HttpContext) {
+    const posts = await Post.all()
+    return serialize({ posts: PostTransformer.transform(posts) })
+  }
+}
+```
+
+### Relations dans les transformers
+```typescript
+export default class PostTransformer extends BaseTransformer<Post> {
+  toObject() {
+    return {
+      ...this.pick(this.resource, ['id', 'title']),
+      author: UserTransformer.transform(this.resource.author),
+      comments: CommentTransformer.transform(this.resource.comments).depth(2),
+    }
+  }
+}
+```
+
+### Transformer avec DI (inject)
+```typescript
+import { inject } from '@adonisjs/core'
+import { HttpContext } from '@adonisjs/core/http'
+
+export default class PostTransformer extends BaseTransformer<Post> {
+  toObject() {
+    return this.pick(this.resource, ['id', 'title', 'createdAt'])
+  }
+
+  @inject()
+  async forDetailedView({ auth }: HttpContext) {
+    return {
+      ...this.toObject(),
+      can: {
+        edit: auth.user?.id === this.resource.userId,
+        delete: auth.user?.id === this.resource.userId,
+      },
+    }
+  }
+}
+```
+
+---
+
+## Lucid & Schema Classes
+
+### Modèles — approche migrations-first (v7)
+```typescript
+// ❌ v6 — NE PAS FAIRE
+export default class Post extends BaseModel {
+  @column({ isPrimary: true }) declare id: number
+  @column() declare title: string
+}
+
+// ✅ v7 — étendre la schema class générée
+import { PostSchema } from '#database/schema'
+
+export default class Post extends PostSchema {
+  // Uniquement relations, hooks, computed props, logique métier
+  get excerpt() {
+    return this.body.substring(0, 200)
+  }
+}
+```
+
+Les schema classes sont auto-générées après `node ace migration:run`.
+
+### Auth mixin simplifié
+```typescript
+import hash from '@adonisjs/core/services/hash'
+import { compose } from '@adonisjs/core/helpers'
+import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
+
+export default class User extends compose(
+  UserSchema,
+  withAuthFinder(hash) // uid=email, passwordColumn=password par défaut
+) {}
+```
+
+Nouveaux helpers auth :
+- `user.validatePassword(password)` — lève une exception si échec
+- `TokensProvider.deleteAll()` — suppression en masse de tokens
+- `auth.checkUsing('guard1', 'guard2')` — multi-guards
+
+### Smart migrations
+```bash
+node ace make:migration create_posts        # → createTable('posts')
+node ace make:migration add_status_to_posts # → alterTable('posts')
+node ace make:migration modify_users        # → alterTable('users')
+```
+
+---
+
+## Inertia (React/Vue)
+
+### inertia.render type-safe
+```typescript
+export default class PostsController {
+  async show({ inertia, params }: HttpContext) {
+    const post = await Post.findOrFail(params.id)
+    const comments = await post.related('comments').query()
+
+    return inertia.render('posts/show', {
+      post: PostTransformer.transform(post),
+      comments: CommentTransformer.transform(comments),
+      // ❌ Erreur TypeScript si page inexistante ou props incorrectes
+    })
+  }
+}
+```
+
+Data-loading Inertia :
+```typescript
+return inertia.render('posts/show', {
+  post: PostTransformer.transform(post),         // prop requise → passer directement
+  comments: inertia.defer(() => loadComments()), // prop optionnelle → defer ok
+  related: inertia.lazy(() => loadRelated()),    // prop optionnelle → lazy ok
+})
+```
+
+### Shared data → Middleware (plus dans config)
+```typescript
+// app/middleware/inertia_middleware.ts
+import BaseInertiaMiddleware from '@adonisjs/inertia/inertia_middleware'
+
+export default class InertiaMiddleware extends BaseInertiaMiddleware {
+  async share(ctx: HttpContext) {
+    const { session, auth } = ctx as Partial<HttpContext>
+    return {
+      errors: ctx.inertia.always(this.getValidationErrors(ctx)),
+      flash: ctx.inertia.always({
+        error: session?.flashMessages.get('error'),
+        success: session?.flashMessages.get('success'),
+      }),
+      user: ctx.inertia.always(
+        auth?.user ? UserTransformer.transform(auth.user) : undefined
+      ),
+    }
+  }
+}
+```
+
+### Link & Form type-safe (React)
+```tsx
+import { Link, Form } from '@adonisjs/inertia/react'
+
+<Link route="posts.show" routeParams={{ id: post.id }}>Voir</Link>
+
+<Form route="posts.store">
+  <input name="title" />
+  <button type="submit">Créer</button>
+</Form>
+```
+
+---
+
+## Variables d'environnement
+
+```typescript
+export default await Env.create(new URL('../', import.meta.url), {
+  APP_KEY: Env.schema.secret(),     // loggé comme [redacted]
+  STRIPE_KEY: Env.schema.secret(),
+  DATABASE_URL: Env.schema.string(),
+  PORT: Env.schema.number.optional(),
+})
+
+env.get('APP_KEY').release() // valeur réelle
+console.log(env.get('APP_KEY')) // → [redacted]
+```
+
+Modificateur fichier (Docker Secrets / Vault) :
+```env
+GCS_KEY=file:/run/secrets/gcs_key
+```
+
+---
+
+## Rate Limiting (Multi-limiter)
+
+```typescript
+import limiter from '@adonisjs/limiter/services/main'
+
+const loginLimiter = limiter.multi([
+  { duration: '1 min', requests: 10, key: `login_${request.ip()}` },
+  { duration: '1 min', requests: 5, blockDuration: '20 mins', key: `login_${request.ip()}_${payload.email}` },
+])
+
+await loginLimiter.penalize(() => {
+  return User.verifyCredentials(payload.email, payload.password)
+})
+```
+
+---
+
+## Encryption
+
+```typescript
+// config/encryption.ts
+import { defineConfig, drivers } from '@adonisjs/core/encryption'
+
+export default defineConfig({
+  default: 'aes256gcm',
+  list: {
+    aes256gcm: drivers.aes256gcm({
+      keys: [env.get('APP_KEY').release()],
+    }),
+    aessiv: drivers.aessiv({ // pour colonnes chiffrées requêtables
+      keys: [env.get('DETERMINISTIC_KEY').release()],
+    }),
+  },
+})
+```
+
+Rotation de clés — première clé chiffre, les autres déchiffrent uniquement :
+```typescript
+keys: [env.get('APP_KEY').release(), env.get('OLD_APP_KEY').release()]
+```
+
+---
+
+## Native Response (AI SDK)
+
+```typescript
+import { streamText } from 'ai'
+
+export default class AiController {
+  async chat({ request }: HttpContext) {
+    const result = await streamText({ model: yourModel, prompt: request.input('prompt') })
+    return result.toUIMessageStreamResponse() // ✅ supporté nativement en v7
+  }
+}
+```
+
+---
+
+## Commandes courantes
+
+```bash
+node ace make:controller Posts -r
+node ace make:migration create_posts
+node ace make:model Post
+node ace make:transformer PostTransformer
+node ace migration:run
+node ace migration:run --force   # production
+node ace db:seed
+node ace repl
+pnpm build                       # build production
+pnpm dev                         # dev server
+```
+
+---
+
+## Déploiement (points clés)
+
+- Build : `pnpm build` → standalone JS dans `./build`
+- CI : `NODE_ENV=development pnpm install` (devDeps nécessaires pour tsc/vite)
+- Runtime : `NODE_ENV=production`
+- Démarrage : `cd build && pnpm install --prod && node bin/server.js`
+- Migrations : `node ace migration:run --force`
+- Nginx : ajouter `keepAliveTimeout: 55000` dans `config/app.ts`
+
+### Dockerfile
+```dockerfile
+FROM node:lts-bookworm-slim AS base
+RUN npm install -g pnpm
+
+FROM base AS deps
+WORKDIR /app
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+
+FROM deps AS build
+WORKDIR /app
+COPY . .
+RUN node ace build
+
+FROM base AS production
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=build /app/build ./
+RUN pnpm install --prod
+EXPOSE 3333
+CMD ["node", "bin/server.js"]
+```
+
+---
+
+## Sécurité — CVEs corrigés en v7
+
+- **CVE-2026-21440** — `file.move()` utilise UUID par défaut. Ne jamais passer un filename client sans opt-in explicite.
+- **CVE-2026-22814** — Les clés préfixées `$` sont ignorées dans `fill`, `merge`, `create`.
+- **CVE-2026-25754** — Parser multipart durci contre la pollution de prototype.
+- **CVE-2026-25762** — Buffer multipart borné, fallback sur détection par filename.

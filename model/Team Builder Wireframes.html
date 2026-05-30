@@ -1,0 +1,1916 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>Tacticx — Team Builder · Wireframes annotés</title>
+<link rel="stylesheet" href="tokens.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Patrick+Hand&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@0.461.0/dist/umd/lucide.min.js"></script>
+<style>
+  :root {
+    --paper:  #ECE6D6;
+    --ink:    #1A1A1A;
+    --ink-2:  #4A4A40;
+    --ink-3:  #87826F;
+    --hand:   "Caveat", "Patrick Hand", cursive;
+    --hand-2: "Patrick Hand", "Caveat", cursive;
+  }
+  html, body { margin: 0; }
+  body {
+    background: var(--paper);
+    background-image: radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+    background-size: 22px 22px;
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  * { box-sizing: border-box; }
+  .sheet { max-width: 1280px; margin: 0 auto; padding: 56px 48px 96px; }
+
+  /* Doc header */
+  .doc-head {
+    display: grid; grid-template-columns: 1fr auto;
+    align-items: end; gap: 32px;
+    border-bottom: 1.5px dashed var(--ink-2);
+    padding-bottom: 24px; margin-bottom: 40px;
+  }
+  .doc-eyebrow {
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 1.6px; text-transform: uppercase;
+    color: var(--ink-3); margin-bottom: 10px;
+  }
+  .doc-title {
+    font-family: var(--hand); font-size: 64px; font-weight: 700;
+    line-height: 0.95; letter-spacing: -1px; color: var(--ink); margin: 0;
+  }
+  .doc-title em {
+    font-style: normal; color: var(--accent);
+    background: linear-gradient(180deg, transparent 60%, rgba(91,141,239,0.25) 60%);
+    padding: 0 6px;
+  }
+  .doc-sub {
+    font-family: var(--hand-2); font-size: 22px; color: var(--ink-2);
+    margin-top: 8px; line-height: 1.3; max-width: 720px;
+  }
+  .doc-meta {
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-3);
+    line-height: 1.7; text-align: right;
+  }
+  .doc-meta strong { color: var(--ink); font-weight: 500; }
+
+  /* Flow overview */
+  .flow {
+    background: rgba(255,255,255,0.4);
+    border: 1.5px dashed var(--ink-2);
+    border-radius: 18px; padding: 28px 24px 32px;
+    margin-bottom: 64px;
+  }
+  .flow-title {
+    font-family: var(--hand); font-size: 28px; font-weight: 700;
+    color: var(--ink); margin: 0 0 6px; letter-spacing: -0.5px;
+  }
+  .flow-sub {
+    font-family: var(--hand-2); font-size: 16px;
+    color: var(--ink-3); margin-bottom: 22px;
+  }
+  .flow-rail {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 20px; align-items: start;
+  }
+  .flow-step { display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; }
+  .flow-step + .flow-step::before {
+    content: ""; position: absolute; left: -16px; top: 32%;
+    width: 14px; height: 2px;
+    background: repeating-linear-gradient(90deg, var(--ink-2) 0 4px, transparent 4px 8px);
+  }
+  .flow-mini {
+    width: 100%; aspect-ratio: 9 / 16;
+    background: var(--bg);
+    border: 1.5px solid var(--ink);
+    border-radius: 14px;
+    position: relative; overflow: hidden;
+    box-shadow: 4px 5px 0 rgba(0,0,0,0.12);
+    padding: 10% 8%;
+    display: flex; flex-direction: column; gap: 5px;
+  }
+  .flow-mini .mh { height: 8px; width: 40%; background: var(--fg1); border-radius: 2px; }
+  .flow-mini .mseg { height: 12px; background: var(--surface-sunken); border-radius: 999px; display: flex; padding: 2px; gap: 2px; margin: 2px 0; }
+  .flow-mini .mseg span { flex: 1; border-radius: 999px; }
+  .flow-mini .mseg span.on { background: var(--accent); }
+  .flow-mini .teamrow { height: 20px; background: var(--surface); border-radius: 5px; display:flex; align-items:center; gap:2px; padding: 0 4px; }
+  .flow-mini .teamrow i { width: 8px; height: 8px; border-radius: 999px; background: var(--surface-high); display:block; }
+  .flow-mini .slotgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+  .flow-mini .slot { aspect-ratio: 1; background: var(--surface); border-radius: 5px; }
+  .flow-mini .slot.empty { background: transparent; border: 1.2px dashed var(--border); }
+  .flow-mini .matrix { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1.5px; }
+  .flow-mini .matrix span { aspect-ratio: 1; border-radius: 1px; background: var(--surface); }
+  .flow-mini .matrix span.r { background: var(--danger); }
+  .flow-mini .matrix span.o { background: var(--warning); }
+  .flow-mini .matrix span.g { background: var(--success); }
+  .flow-mini.sheetmini::after { content:""; position:absolute; inset:0; background: rgba(11,13,16,0.55); }
+  .flow-mini.sheetmini .msheet {
+    position: absolute; left: 4%; right: 4%; bottom: 0; height: 80%;
+    background: var(--surface-high); border-radius: 12px 12px 0 0;
+    border: 1.5px solid var(--border); padding: 8px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .flow-mini.sheetmini .msheet .grab { width: 20px; height: 3px; background: var(--fg-faint); border-radius: 2px; margin: 0 auto 4px; }
+  .flow-mini.sheetmini .sl { height: 6px; background: var(--surface); border-radius: 2px; position: relative; }
+  .flow-mini.sheetmini .sl::after { content:""; position:absolute; left:0; top:0; bottom:0; width: 55%; background: var(--accent); border-radius:2px; opacity:0.7; }
+
+  .flow-num {
+    font-family: var(--hand); font-weight: 700; font-size: 22px;
+    color: var(--ink); background: #FFE680;
+    border: 1.5px solid var(--ink); border-radius: 999px;
+    width: 32px; height: 32px; display: grid; place-items: center;
+    transform: rotate(-3deg); box-shadow: 2px 2px 0 rgba(0,0,0,0.12);
+  }
+  .flow-label {
+    font-family: var(--hand); font-weight: 600; font-size: 17px;
+    color: var(--ink); text-align: center; line-height: 1.1;
+  }
+  .flow-label small {
+    display: block; font-family: var(--font-mono); font-size: 9px; font-weight: 400;
+    letter-spacing: 0.6px; text-transform: uppercase; color: var(--ink-3); margin-top: 2px;
+  }
+
+  /* Spec sections */
+  .spec {
+    display: grid; grid-template-columns: 380px 1fr;
+    gap: 56px; padding: 48px 0 56px;
+    border-top: 1.5px dashed var(--ink-2);
+  }
+  .spec-head {
+    grid-column: 1 / -1;
+    display: flex; align-items: baseline; gap: 18px; margin-bottom: 4px;
+    flex-wrap: wrap;
+  }
+  .spec-step {
+    font-family: var(--hand); font-weight: 700; font-size: 22px;
+    color: var(--ink); background: #FFE680;
+    border: 1.5px solid var(--ink); border-radius: 999px;
+    padding: 4px 14px; transform: rotate(-2deg);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.12);
+  }
+  .spec-title {
+    font-family: var(--hand); font-size: 38px; font-weight: 700;
+    color: var(--ink); margin: 0; letter-spacing: -0.5px;
+  }
+  .spec-eyebrow {
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-3);
+    letter-spacing: 1.6px; text-transform: uppercase; margin-left: auto;
+  }
+
+  /* Phone */
+  .phone-wrap { position: sticky; top: 32px; align-self: start; width: 380px; }
+  .phone {
+    width: 380px; height: 760px;
+    background: var(--bg); border-radius: 38px;
+    border: 1.5px solid var(--ink);
+    box-shadow: 6px 8px 0 rgba(0,0,0,0.12), inset 0 0 0 8px #08090C;
+    padding: 8px; position: relative; overflow: hidden;
+  }
+  .phone-inner {
+    width: 100%; height: 100%;
+    background: var(--bg); border-radius: 30px;
+    overflow: hidden; position: relative;
+    display: flex; flex-direction: column;
+  }
+  .phone-dims {
+    position: absolute; bottom: -32px; left: 0; right: 0;
+    text-align: center; font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+
+  .status {
+    height: 28px; padding: 0 18px;
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 12px; font-weight: 600; color: var(--fg1); flex-shrink: 0;
+  }
+  .status-icons { display: flex; align-items: center; gap: 5px; opacity: 0.9; }
+  .status-icons .lucide { width: 14px; height: 14px; stroke-width: 2; }
+
+  /* Header */
+  .head {
+    padding: 8px 18px 12px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--divider);
+    background: var(--bg);
+  }
+  .head-top {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; margin-bottom: 12px; min-height: 36px;
+  }
+  .head-title {
+    font-size: 26px; font-weight: 700;
+    letter-spacing: -0.5px; color: var(--fg1); margin: 0; line-height: 1.1;
+  }
+  .head-actions { display: flex; align-items: center; gap: 6px; }
+  .icon-btn {
+    width: 34px; height: 34px;
+    display: grid; place-items: center;
+    background: transparent; border: 0;
+    color: var(--accent); cursor: pointer; padding: 0;
+  }
+  .icon-btn.muted { color: var(--fg2); }
+  .icon-btn .lucide { width: 22px; height: 22px; stroke-width: 1.8; }
+
+  .seg {
+    display: flex;
+    background: var(--surface-sunken);
+    border-radius: var(--r-pill);
+    padding: 3px;
+  }
+  .seg button {
+    flex: 1; background: transparent; border: 0;
+    padding: 7px 0; font-family: inherit;
+    font-size: 13px; font-weight: 500;
+    color: var(--fg2);
+    border-radius: var(--r-pill);
+    cursor: pointer;
+  }
+  .seg button.on { background: var(--accent); color: var(--fg-inverse); }
+  .seg.neutral button.on { background: var(--surface-high); color: var(--fg1); box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+
+  /* Editable team name */
+  .team-name-field {
+    flex: 1; min-width: 0;
+    display: flex; align-items: center; gap: 8px;
+    color: var(--fg1);
+  }
+  .team-name-field .lucide { width: 15px; height: 15px; color: var(--fg3); flex-shrink: 0; }
+  .team-name-field .nm {
+    font-size: 17px; font-weight: 600;
+    letter-spacing: -0.2px;
+    border-bottom: 1px dashed var(--border-strong);
+    padding-bottom: 1px;
+  }
+
+  /* Teams list */
+  .list { flex: 1; overflow-y: auto; background: var(--bg); }
+  .list::-webkit-scrollbar { display: none; }
+  .team-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 18px; min-height: 80px;
+    position: relative;
+  }
+  .team-row + .team-row::before {
+    content: ""; position: absolute;
+    left: 18px; right: 18px; top: 0;
+    height: 1px; background: var(--border);
+  }
+  .team-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+  .mini-slots { display: flex; gap: 5px; }
+  .mini-slot {
+    width: 32px; height: 32px;
+    border-radius: 999px;
+    background: var(--surface-high);
+    display: grid; place-items: center;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .mini-slot img { width: 112%; height: 112%; object-fit: contain; filter: brightness(0) invert(0.62) contrast(1.1); }
+  .mini-slot.empty { background: var(--surface); }
+  .mini-slot.empty .lucide { width: 14px; height: 14px; color: var(--fg-faint); }
+  .mini-slot.t-psychic { background: var(--t-psychic-bg); }
+  .mini-slot.t-fire { background: var(--t-fire-bg); }
+  .mini-slot.t-water { background: var(--t-water-bg); }
+  .mini-slot.t-grass { background: var(--t-grass-bg); }
+  .mini-slot.t-fighting { background: var(--t-fighting-bg); }
+  .mini-slot.t-ghost { background: var(--t-ghost-bg); }
+  .mini-slot.t-steel { background: var(--t-steel-bg); }
+  .mini-slot.t-dragon { background: var(--t-dragon-bg); }
+  .mini-slot.t-flying { background: var(--t-flying-bg); }
+
+  .team-meta-row { display: flex; align-items: center; gap: 8px; }
+  .team-name {
+    font-size: 15px; font-weight: 600;
+    color: var(--fg1); letter-spacing: -0.2px;
+  }
+  .badge {
+    font-size: 9.5px; font-weight: 600;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: var(--r-sm);
+    color: var(--fg2);
+    background: var(--surface-high);
+    border: 1px solid var(--border);
+  }
+  .badge.accent { color: var(--accent); background: var(--accent-soft); border-color: rgba(91,141,239,0.4); }
+  .badge.style { color: var(--fg3); background: transparent; }
+  .team-date {
+    font-size: 11px; color: var(--fg3);
+    font-variant-numeric: tabular-nums;
+    margin-left: auto;
+  }
+  .chevron { color: var(--fg-faint); flex-shrink: 0; }
+  .chevron .lucide { width: 18px; height: 18px; }
+
+  /* Swipe affordance */
+  .swipe-hint {
+    position: absolute; top: 0; bottom: 0;
+    display: flex; align-items: center; justify-content: center;
+    width: 64px;
+    color: var(--fg-inverse);
+    font-size: 10px;
+    z-index: 0;
+  }
+  .swipe-hint.del { right: 0; background: var(--danger); }
+  .swipe-hint.dup { left: 0; background: var(--info); }
+  .swipe-hint .lucide { width: 20px; height: 20px; }
+
+  /* Slot grid (builder) */
+  .builder-body { flex: 1; overflow-y: auto; background: var(--bg); }
+  .builder-body::-webkit-scrollbar { display: none; }
+  .slot-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; padding: 14px 18px 18px;
+  }
+  .slot {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    aspect-ratio: 1 / 0.82;
+    position: relative;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 4px;
+    padding: 8px;
+  }
+  .slot.empty {
+    background: var(--surface);
+    border: 1.5px dashed var(--border);
+    color: var(--fg-faint);
+  }
+  .slot.empty .lucide { width: 28px; height: 28px; }
+  .slot .slot-sprite {
+    width: 64px; height: 64px;
+    display: grid; place-items: center;
+    overflow: hidden;
+  }
+  .slot .slot-sprite img { width: 110%; height: 110%; object-fit: contain; filter: brightness(0) invert(0.66) contrast(1.1); }
+  .slot.t-psychic .slot-sprite { filter: none; }
+  .slot .slot-name {
+    font-size: 12px; font-weight: 500; color: var(--fg2);
+  }
+  .slot .slot-types { display: flex; gap: 4px; }
+  .slot .ov {
+    position: absolute; top: 6px;
+    width: 22px; height: 22px;
+    display: grid; place-items: center;
+    background: var(--surface-sunken);
+    border-radius: 999px;
+    color: var(--fg2);
+    border: 1px solid var(--border);
+  }
+  .slot .ov.edit { right: 6px; }
+  .slot .ov.close { left: 6px; }
+  .slot .ov .lucide { width: 13px; height: 13px; stroke-width: 2; }
+
+  .tb {
+    font-size: 9px; font-weight: 600;
+    letter-spacing: 0.4px; text-transform: uppercase;
+    padding: 2px 5px;
+    border-radius: var(--r-sm);
+  }
+  .tb.xs { font-size: 8px; padding: 1px 4px; }
+  .tb.fire     { color: var(--t-fire);     background: var(--t-fire-bg); }
+  .tb.water    { color: var(--t-water);    background: var(--t-water-bg); }
+  .tb.grass    { color: var(--t-grass);    background: var(--t-grass-bg); }
+  .tb.electric { color: var(--t-electric); background: var(--t-electric-bg); }
+  .tb.psychic  { color: var(--t-psychic);  background: var(--t-psychic-bg); }
+  .tb.fighting { color: var(--t-fighting); background: var(--t-fighting-bg); }
+  .tb.fairy    { color: var(--t-fairy);    background: var(--t-fairy-bg); }
+  .tb.ghost    { color: var(--t-ghost);    background: var(--t-ghost-bg); }
+  .tb.dark     { color: var(--t-dark);     background: var(--t-dark-bg); }
+  .tb.poison   { color: var(--t-poison);   background: var(--t-poison-bg); }
+  .tb.flying   { color: var(--t-flying);   background: var(--t-flying-bg); }
+  .tb.steel    { color: var(--t-steel);    background: var(--t-steel-bg); }
+  .tb.rock     { color: var(--t-rock);     background: var(--t-rock-bg); }
+  .tb.ice      { color: var(--t-ice);      background: var(--t-ice-bg); }
+  .tb.ground   { color: var(--t-ground);   background: var(--t-ground-bg); }
+  .tb.dragon   { color: var(--t-dragon);   background: var(--t-dragon-bg); }
+  .tb.bug      { color: var(--t-bug);      background: var(--t-bug-bg); }
+  .tb.normal   { color: var(--t-normal);   background: var(--t-normal-bg); }
+
+  /* Analysis section */
+  .analysis {
+    border-top: 1px solid var(--divider);
+    padding: 0;
+  }
+  .tabs {
+    display: flex;
+    padding: 0 18px;
+    border-bottom: 1px solid var(--divider);
+    gap: 22px;
+    position: sticky; top: 0;
+    background: var(--bg);
+    z-index: 2;
+  }
+  .tab {
+    padding: 12px 0;
+    font-size: 13.5px; font-weight: 500;
+    color: var(--fg3);
+    background: transparent; border: 0;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    cursor: pointer; font-family: inherit;
+  }
+  .tab.on { color: var(--fg1); border-bottom-color: var(--accent); }
+
+  /* Coverage matrix */
+  .matrix-wrap { padding: 12px 0 0; }
+  .matrix-scroll { overflow-x: auto; padding: 0 18px 14px; scrollbar-width: none; }
+  .matrix-scroll::-webkit-scrollbar { display: none; }
+  .cov {
+    border-collapse: separate;
+    border-spacing: 3px;
+    font-variant-numeric: tabular-nums;
+  }
+  .cov th, .cov td { padding: 0; }
+  .cov thead th {
+    position: sticky; top: 0;
+  }
+  .cov .corner { width: 64px; }
+  .cov .poke-head {
+    width: 34px;
+  }
+  .cov .poke-head .ph {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+  }
+  .cov .poke-head .ph .sp {
+    width: 24px; height: 24px;
+    border-radius: 999px;
+    background: var(--surface-high);
+    overflow: hidden;
+    display: grid; place-items: center;
+  }
+  .cov .poke-head .ph .sp img { width: 112%; height: 112%; object-fit: contain; filter: brightness(0) invert(0.62) contrast(1.1); }
+  .cov .poke-head .ph .nm4 {
+    font-size: 8px; color: var(--fg3);
+    letter-spacing: 0.2px;
+  }
+  .cov .score-head {
+    width: 34px;
+    font-size: 9px; font-weight: 600;
+    color: var(--fg3);
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    vertical-align: bottom;
+    padding-bottom: 4px;
+  }
+  .cov .type-cell {
+    width: 64px;
+    text-align: left;
+  }
+  .cov .type-cell .tc {
+    display: flex; align-items: center; gap: 5px;
+  }
+  .cov .type-cell .dot {
+    width: 14px; height: 14px; border-radius: 4px; flex-shrink: 0;
+  }
+  .cov .type-cell .tn {
+    font-size: 10px; color: var(--fg2);
+    font-weight: 500;
+  }
+  .cov .cell {
+    width: 34px; height: 34px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 11px; font-weight: 700;
+    color: var(--fg1);
+    vertical-align: middle;
+  }
+  .cell.x4 { background: var(--danger-soft); color: var(--danger); border: 1px solid var(--danger); }
+  .cell.x2 { background: var(--warning-soft); color: var(--warning); }
+  .cell.x1 { background: var(--surface); color: var(--fg-faint); }
+  .cell.half { background: var(--success-soft); color: var(--success); }
+  .cell.imm { background: var(--accent-soft); color: var(--accent); font-size: 8.5px; letter-spacing: 0.3px; }
+  .cov .score {
+    width: 34px; height: 34px;
+    text-align: center; vertical-align: middle;
+  }
+  .cov .score .badge-num {
+    display: inline-grid; place-items: center;
+    width: 22px; height: 22px;
+    border-radius: 999px;
+    font-size: 11px; font-weight: 700;
+    margin: 0 auto;
+  }
+  .badge-num.hi { background: var(--danger-soft); color: var(--danger); border: 1px solid var(--danger); }
+  .badge-num.mid { background: var(--warning-soft); color: var(--warning); }
+  .badge-num.zero { background: var(--surface); color: var(--fg-faint); }
+  .cov tr.danger-row .type-cell .tn { color: var(--danger); font-weight: 700; }
+  .cov tr.danger-row td { position: relative; }
+  .danger-flag {
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 8px; font-weight: 700;
+    letter-spacing: 0.6px;
+    color: var(--danger);
+    background: var(--danger-soft);
+    border: 1px solid var(--danger);
+    border-radius: var(--r-sm);
+    padding: 1px 4px;
+    vertical-align: middle;
+  }
+
+  .matrix-legend {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    padding: 10px 18px 16px;
+    border-top: 1px solid var(--divider);
+  }
+  .leg-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--fg3); }
+  .leg-swatch { width: 16px; height: 16px; border-radius: 4px; font-size: 9px; display:grid; place-items:center; font-weight: 700; }
+
+  /* Speed tiers */
+  .speed-toggles {
+    display: flex; gap: 8px;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--divider);
+  }
+  .toggle-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 8px 12px;
+    border-radius: var(--r-pill);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--fg2);
+    font-size: 12px; font-weight: 500;
+    cursor: pointer;
+  }
+  .toggle-pill.on { background: var(--accent-soft); border-color: rgba(91,141,239,0.5); color: var(--accent); }
+  .toggle-pill .sw {
+    width: 26px; height: 16px;
+    border-radius: 999px;
+    background: var(--surface-sunken);
+    position: relative;
+    flex-shrink: 0;
+  }
+  .toggle-pill .sw::after {
+    content: ""; position: absolute;
+    top: 2px; left: 2px;
+    width: 12px; height: 12px;
+    border-radius: 999px;
+    background: var(--fg-faint);
+    transition: transform 160ms;
+  }
+  .toggle-pill.on .sw { background: var(--accent); }
+  .toggle-pill.on .sw::after { background: var(--fg-inverse); transform: translateX(10px); }
+
+  .speed-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--divider);
+  }
+  .speed-row .sp {
+    width: 40px; height: 40px;
+    border-radius: 999px;
+    background: var(--surface-high);
+    overflow: hidden;
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .speed-row .sp img { width: 110%; height: 110%; object-fit: contain; filter: brightness(0) invert(0.64) contrast(1.1); }
+  .speed-row .sp.t-ghost { background: var(--t-ghost-bg); }
+  .speed-row .sp.t-psychic { background: var(--t-psychic-bg); }
+  .speed-row .sp.t-fire { background: var(--t-fire-bg); }
+  .speed-row .sp.t-fighting { background: var(--t-fighting-bg); }
+  .speed-row .sp.t-grass { background: var(--t-grass-bg); }
+  .speed-row .info { flex: 1; min-width: 0; }
+  .speed-row .nm { font-size: 14px; font-weight: 500; color: var(--fg1); margin-bottom: 3px; }
+  .speed-row .cmp { font-size: 11px; line-height: 1.35; }
+  .speed-row .cmp .up { color: var(--success); }
+  .speed-row .cmp .dn { color: var(--danger); }
+  .speed-row .val {
+    font-family: var(--font-sans);
+    font-size: 22px; font-weight: 700;
+    color: var(--fg1);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.5px;
+    flex-shrink: 0;
+  }
+  .speed-row .val small { display:block; font-size: 8px; font-weight: 600; color: var(--fg3); letter-spacing: 0.6px; text-transform: uppercase; text-align: right; margin-top: -2px; }
+
+  /* Footer */
+  .footer {
+    flex-shrink: 0;
+    border-top: 1px solid var(--divider);
+    background: var(--bg);
+    padding: 10px 14px 18px;
+    display: flex; align-items: stretch; gap: 8px;
+  }
+  .foot-btn {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px;
+    border: 0; background: transparent;
+    color: var(--fg2);
+    font-family: inherit;
+    font-size: 9.5px; font-weight: 500;
+    cursor: pointer;
+    padding: 6px 2px;
+    border-radius: var(--r-md);
+  }
+  .foot-btn .lucide { width: 19px; height: 19px; stroke-width: 1.8; }
+  .foot-btn.primary {
+    flex: 1.4;
+    background: var(--accent);
+    color: var(--fg-inverse);
+  }
+  .foot-btn.primary .lucide { color: var(--fg-inverse); }
+
+  /* Sheet (editor) */
+  .scrim {
+    position: absolute; inset: 0;
+    background: rgba(11,13,16,0.7);
+    backdrop-filter: blur(20px);
+    z-index: 5;
+  }
+  .sheet-modal {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    background: var(--surface-high);
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+    border-top: 1px solid var(--border);
+    z-index: 6;
+    display: flex; flex-direction: column;
+    box-shadow: var(--shadow-lg);
+  }
+  .grab { width: 36px; height: 4px; border-radius: 999px; background: var(--fg-faint); margin: 8px auto 6px; flex-shrink: 0; }
+  .sheet-head {
+    display: flex; align-items: center; gap: 12px;
+    padding: 6px 18px 14px;
+    border-bottom: 1px solid var(--divider);
+    flex-shrink: 0;
+    position: relative;
+  }
+  .sheet-head .sp {
+    width: 64px; height: 64px;
+    border-radius: 999px;
+    background: var(--t-psychic-bg);
+    overflow: hidden;
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .sheet-head .sp img { width: 110%; height: 110%; object-fit: contain; filter: brightness(0) invert(0.7) contrast(1.1); }
+  .sheet-head .info { flex: 1; min-width: 0; }
+  .sheet-head .nm { font-size: 18px; font-weight: 700; color: var(--fg1); letter-spacing: -0.3px; margin-bottom: 5px; }
+  .sheet-head .types { display: flex; gap: 5px; margin-bottom: 5px; }
+  .sheet-head .nat { font-size: 11px; color: var(--fg3); }
+  .sheet-head .nat .up { color: var(--accent); font-weight: 600; }
+  .sheet-head .nat .dn { color: var(--danger); font-weight: 600; }
+  .sheet-head .close {
+    position: absolute; top: 6px; right: 14px;
+    width: 28px; height: 28px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 999px; color: var(--fg2);
+    display: grid; place-items: center; cursor: pointer; padding: 0;
+  }
+  .sheet-head .close .lucide { width: 14px; height: 14px; }
+  .sheet-body { flex: 1; overflow-y: auto; padding: 16px 18px 0; }
+  .sheet-body::-webkit-scrollbar { display: none; }
+
+  .sec { margin-bottom: 22px; }
+  .sec-eyebrow {
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--fg3); margin-bottom: 12px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .sec-eyebrow .counter {
+    text-transform: none; letter-spacing: 0;
+    font-weight: 500; font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    color: var(--fg2);
+  }
+  .sec-eyebrow .counter.warn { color: var(--warning); }
+
+  .field-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 8px;
+  }
+  .field {
+    flex: 1;
+    height: 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 12px;
+    color: var(--fg1);
+    font-size: 13px;
+  }
+  .field .lbl { color: var(--fg3); font-size: 11px; }
+  .field .lucide { width: 14px; height: 14px; color: var(--fg-faint); }
+  .field .item-sp {
+    width: 20px; height: 20px; border-radius: var(--r-sm);
+    background: var(--surface-high); margin-right: 6px;
+    display: inline-grid; place-items: center;
+  }
+  .field .item-sp .lucide { width: 12px; height: 12px; }
+  .field .val { display: flex; align-items: center; }
+
+  /* Moves */
+  .move-slot {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    margin-bottom: 6px;
+  }
+  .move-slot .mv-name { font-size: 13px; font-weight: 500; color: var(--fg1); flex: 1; }
+  .move-slot .cat {
+    font-size: 9px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
+    padding: 2px 5px; border-radius: var(--r-sm);
+  }
+  .cat.phys { color: var(--danger); background: var(--danger-soft); }
+  .cat.spe  { color: var(--info);   background: var(--info-soft); }
+  .cat.stat { color: var(--warning); background: var(--warning-soft); }
+  .move-slot.empty { color: var(--fg-faint); justify-content: center; border-style: dashed; }
+  .move-slot.empty .lucide { width: 16px; height: 16px; }
+
+  /* EV slider rows */
+  .ev-row { margin-bottom: 14px; }
+  .ev-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .ev-top .lbl {
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.8px; text-transform: uppercase;
+    color: var(--fg3);
+  }
+  .ev-top .lbl.boost { color: var(--accent); }
+  .ev-top .lbl.drop  { color: var(--danger); }
+  .ev-top .final {
+    font-family: var(--font-sans);
+    font-size: 14px; font-weight: 700;
+    color: var(--fg1);
+    font-variant-numeric: tabular-nums;
+  }
+  .ev-top .final.boost { color: var(--accent); }
+  .ev-top .final.drop  { color: var(--danger); }
+  .ev-bottom { display: flex; align-items: center; gap: 10px; }
+  .slider {
+    flex: 1; height: 20px;
+    position: relative;
+    display: flex; align-items: center;
+  }
+  .slider .track {
+    width: 100%; height: 4px;
+    background: var(--surface-sunken);
+    border-radius: 999px;
+    position: relative; overflow: hidden;
+  }
+  .slider .track .fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: var(--accent);
+    border-radius: 999px;
+  }
+  .slider .thumb {
+    position: absolute;
+    width: 18px; height: 18px;
+    border-radius: 999px;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+    box-shadow: var(--shadow-sm);
+    transform: translateX(-50%);
+  }
+  .slider.disabled .track .fill { background: var(--surface-high); }
+  .slider.disabled .thumb { background: var(--surface-high); }
+  .ev-input {
+    width: 48px; height: 30px;
+    background: var(--surface-sunken);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    color: var(--fg1);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+
+  .ev-budget {
+    margin-top: 4px;
+    padding: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+  }
+  .ev-budget .top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 11px;
+  }
+  .ev-budget .top .lbl { color: var(--fg3); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }
+  .ev-budget .top .rem { color: var(--success); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .ev-budget .top .rem.warn { color: var(--warning); }
+  .ev-budget .bar {
+    height: 6px; background: var(--surface-sunken);
+    border-radius: 999px; overflow: hidden;
+  }
+  .ev-budget .bar > span { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+
+  /* Accordion presets */
+  .accord {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .accord-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px;
+    background: transparent; border: 0; width: 100%; cursor: pointer;
+    font-family: inherit;
+  }
+  .accord-head .label { font-size: 13px; font-weight: 500; color: var(--fg1); }
+  .accord-head .lucide { width: 14px; height: 14px; color: var(--fg3); }
+  .accord.open .accord-head .lucide { transform: rotate(180deg); }
+  .accord-body { border-top: 1px solid var(--divider); padding: 12px 14px; }
+  .preset-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0;
+    border-top: 1px solid var(--divider);
+  }
+  .preset-row:first-child { border-top: 0; padding-top: 0; }
+  .preset-info { flex: 1; min-width: 0; }
+  .preset-spread { font-family: var(--font-mono); font-size: 11px; color: var(--fg1); font-variant-numeric: tabular-nums; margin-bottom: 3px; }
+  .preset-note { font-size: 10.5px; color: var(--fg3); line-height: 1.3; }
+  .apply-btn {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid rgba(91,141,239,0.4);
+    border-radius: var(--r-sm);
+    font-family: inherit;
+    font-size: 11px; font-weight: 600;
+    padding: 6px 12px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  /* Pins */
+  .pin {
+    position: absolute;
+    font-family: var(--hand); font-size: 16px; font-weight: 700;
+    color: var(--ink); background: #FFE680;
+    border: 1.5px solid var(--ink); border-radius: 999px;
+    width: 26px; height: 26px;
+    display: grid; place-items: center;
+    transform: rotate(-4deg);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.15);
+    z-index: 20;
+  }
+
+  /* Notes */
+  .notes { display: flex; flex-direction: column; gap: 18px; padding-top: 4px; }
+  .note { display: grid; grid-template-columns: 32px 1fr; gap: 14px; align-items: start; }
+  .note-num {
+    font-family: var(--hand); font-weight: 700; font-size: 18px;
+    color: var(--ink); background: #FFE680;
+    border: 1.5px solid var(--ink); border-radius: 999px;
+    width: 28px; height: 28px; display: grid; place-items: center;
+    transform: rotate(-3deg); box-shadow: 2px 2px 0 rgba(0,0,0,0.12);
+  }
+  .note-body { padding-top: 2px; }
+  .note-title {
+    font-family: var(--hand); font-weight: 600; font-size: 22px;
+    color: var(--ink); line-height: 1.1; margin: 0 0 4px;
+    letter-spacing: -0.3px;
+  }
+  .note-desc {
+    font-family: var(--hand-2); font-size: 16px; color: var(--ink-2);
+    line-height: 1.4; margin: 0 0 8px;
+  }
+  .toks { display: flex; flex-wrap: wrap; gap: 5px; }
+  .tok {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+    color: var(--accent); background: #1C2027;
+    border: 1px solid #2A2F38; border-radius: 5px;
+    padding: 2px 7px;
+  }
+  .tok.muted { color: var(--fg2); }
+  .tok.semantic { color: #5FA978; }
+  .tok.danger { color: #D46A6A; }
+  .tok.warning { color: #D9A55A; }
+  .tok.info { color: #5B9DD9; }
+  .tok.note { color: var(--ink-3); background: transparent; border-color: var(--ink-3); }
+  .comp-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.4px; color: var(--ink);
+    background: #FFE680; border: 1.5px solid var(--ink); border-radius: 4px;
+    padding: 2px 6px; transform: rotate(-1deg); margin: 0 2px;
+  }
+
+  /* Annexe */
+  .annexe {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 18px; margin-top: 36px;
+  }
+  .ann-card {
+    background: var(--bg);
+    border: 1.5px solid var(--ink);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 4px 5px 0 rgba(0,0,0,0.12);
+    color: var(--fg1);
+    display: flex; flex-direction: column;
+  }
+  .ann-title {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 1.4px; text-transform: uppercase;
+    color: var(--ink-3); margin: 12px 0 8px; text-align: center;
+  }
+  .ann-card .inner { padding: 20px 16px; min-height: 320px; display: flex; flex-direction: column; }
+  .ann-empty { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; justify-content: center; flex: 1; }
+  .ann-empty .circle {
+    width: 72px; height: 72px; border-radius: 999px;
+    background: var(--surface);
+    display: grid; place-items: center;
+  }
+  .ann-empty .circle .lucide { width: 32px; height: 32px; color: var(--fg-faint); stroke-width: 1.4; }
+  .ann-empty .ttl { font-size: 15px; font-weight: 600; color: var(--fg1); }
+  .ann-empty .sub { font-size: 12px; color: var(--fg3); max-width: 220px; line-height: 1.4; }
+  .ann-empty .btn {
+    margin-top: 4px;
+    background: var(--accent); color: var(--fg-inverse);
+    border: 0; border-radius: var(--r-md);
+    padding: 11px 22px; font-size: 13px; font-weight: 600;
+    font-family: inherit; cursor: pointer;
+  }
+
+  /* Offensive coverage mini */
+  .off-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--divider);
+    font-size: 11px;
+  }
+  .off-row .dot { width: 13px; height: 13px; border-radius: 4px; flex-shrink: 0; }
+  .off-row .tn { color: var(--fg2); flex: 1; }
+  .off-row .mark { width: 18px; height: 18px; display: grid; place-items: center; border-radius: 999px; }
+  .off-row .mark.yes { color: var(--success); }
+  .off-row .mark.no { color: var(--danger); }
+  .off-row .mark .lucide { width: 13px; height: 13px; stroke-width: 2.5; }
+  .off-row.uncov { background: var(--danger-soft); margin: 0 -6px; padding: 8px 6px; border-radius: 4px; }
+  .uncovered-box {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+  }
+  .uncovered-box .t { font-size: 11px; color: var(--fg3); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }
+  .uncovered-box .badges { display: flex; flex-wrap: wrap; gap: 5px; }
+
+  /* Constraints / legend */
+  .constraints {
+    margin-top: 56px; padding: 32px 28px;
+    background: rgba(255,255,255,0.45);
+    border: 1.5px dashed var(--ink-2);
+    border-radius: 18px;
+  }
+  .constraints h3 {
+    font-family: var(--hand); font-size: 28px; font-weight: 700;
+    margin: 0 0 18px; letter-spacing: -0.5px; color: var(--ink);
+  }
+  .constraints ul {
+    list-style: none; padding: 0; margin: 0;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px 32px;
+  }
+  .constraints li {
+    font-family: var(--hand-2); font-size: 17px;
+    color: var(--ink-2); line-height: 1.4;
+    padding-left: 24px; position: relative;
+  }
+  .constraints li::before {
+    content: "✓"; position: absolute; left: 0; top: 0;
+    color: var(--accent); font-weight: 700;
+    font-family: var(--hand); font-size: 22px; line-height: 1;
+  }
+  .constraints li.x::before { content: "✗"; color: var(--danger); }
+
+  .legend {
+    margin-top: 40px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  }
+  .legend-card {
+    padding: 16px 18px;
+    background: rgba(255,255,255,0.45);
+    border: 1.5px dashed var(--ink-2);
+    border-radius: 12px;
+  }
+  .legend-name {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--accent); letter-spacing: 0.4px; margin-bottom: 6px;
+  }
+  .legend-desc {
+    font-family: var(--hand-2); font-size: 16px;
+    color: var(--ink-2); line-height: 1.35;
+  }
+
+  .lucide { width: 22px; height: 22px; stroke-width: 1.75; }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+
+  <header class="doc-head">
+    <div>
+      <div class="doc-eyebrow">Tacticx · Spec · v01 · Team Builder</div>
+      <h1 class="doc-title">Team Builder — <em>vue Try Hard</em></h1>
+      <p class="doc-sub">Liste d'équipes · éditeur 6 slots · matrice de couverture défensive 18×6 · speed tiers · bottom-sheet d'édition par Pokémon (EV sliders, moves, nature, presets).</p>
+    </div>
+    <div class="doc-meta">
+      <strong>Fichiers</strong>&nbsp;·&nbsp;teams/index · builder · EditorSheet<br/>
+      <strong>Listes</strong>&nbsp;·&nbsp;FlashList<br/>
+      <strong>Tokens</strong>&nbsp;·&nbsp;theme.ts (DS Tacticx)<br/>
+      <strong>Composants</strong>&nbsp;·&nbsp;Reacticx kit
+    </div>
+  </header>
+
+  <section class="flow">
+    <h2 class="flow-title">Les 5 vues documentées</h2>
+    <p class="flow-sub">Liste équipes · Builder + matrice défensive · Builder + speed tiers · Editor Sheet · annexe (états vides + onglet offensif)</p>
+
+    <div class="flow-rail">
+      <div class="flow-step">
+        <div class="flow-mini">
+          <div class="mh"></div>
+          <div class="mseg"><span class="on"></span><span></span></div>
+          <div class="teamrow"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="teamrow"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="teamrow"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+        <div class="flow-num">A</div>
+        <div class="flow-label">Mes équipes<small>liste · swipe</small></div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-mini">
+          <div class="mseg"><span class="on"></span><span></span></div>
+          <div class="slotgrid">
+            <span class="slot"></span><span class="slot"></span>
+            <span class="slot"></span><span class="slot"></span>
+          </div>
+          <div class="matrix">
+            <span></span><span class="r"></span><span class="r"></span><span class="o"></span><span></span><span class="g"></span><span class="r"></span>
+            <span></span><span class="o"></span><span></span><span class="g"></span><span class="r"></span><span></span><span class="o"></span>
+            <span></span><span class="g"></span><span class="r"></span><span></span><span class="o"></span><span class="r"></span><span></span>
+          </div>
+        </div>
+        <div class="flow-num">B</div>
+        <div class="flow-label">Builder · Défensif<small>matrice 18×6</small></div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-mini">
+          <div class="mseg"><span class="on"></span><span></span></div>
+          <div class="slotgrid">
+            <span class="slot"></span><span class="slot"></span>
+          </div>
+          <div class="teamrow"><i></i><span style="flex:1"></span></div>
+          <div class="teamrow"><i></i><span style="flex:1"></span></div>
+          <div class="teamrow"><i></i><span style="flex:1"></span></div>
+          <div class="teamrow"><i></i><span style="flex:1"></span></div>
+        </div>
+        <div class="flow-num">C</div>
+        <div class="flow-label">Builder · Speed<small>tiers + toggles</small></div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-mini sheetmini">
+          <div class="mh"></div>
+          <div class="msheet">
+            <div class="grab"></div>
+            <div class="sl"></div><div class="sl"></div>
+            <div class="sl"></div><div class="sl"></div>
+            <div class="sl"></div><div class="sl"></div>
+          </div>
+        </div>
+        <div class="flow-num">D</div>
+        <div class="flow-label">Editor Sheet<small>ev sliders · moves</small></div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-mini">
+          <div class="mh" style="margin: 0 auto"></div>
+          <span style="flex:1; display:grid; place-items:center;">
+            <span style="width:40px;height:40px;border-radius:999px;background:var(--surface)"></span>
+          </span>
+          <div class="teamrow" style="justify-content:center; background:var(--accent); height:14px"></div>
+        </div>
+        <div class="flow-num">E</div>
+        <div class="flow-label">Annexe<small>vides · offensif</small></div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═════════ STATE A — LISTE ÉQUIPES ═════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">A</span>
+      <h2 class="spec-title">Mes équipes</h2>
+      <span class="spec-eyebrow">teams/index.tsx · FlashList · swipe actions</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status"><span>9:41</span><span class="status-icons"><i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i></span></div>
+
+          <div class="head">
+            <div class="head-top">
+              <h1 class="head-title">Mes équipes</h1>
+              <div class="head-actions">
+                <button class="icon-btn"><i data-lucide="plus-circle"></i></button>
+              </div>
+            </div>
+            <div class="seg">
+              <button class="on">VGC</button>
+              <button>Singles</button>
+            </div>
+          </div>
+
+          <div class="list">
+            <div class="team-row">
+              <div class="team-main">
+                <div class="mini-slots">
+                  <span class="mini-slot t-psychic"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/898.png" alt=""/></span>
+                  <span class="mini-slot t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/727.png" alt=""/></span>
+                  <span class="mini-slot t-fighting"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/892.png" alt=""/></span>
+                  <span class="mini-slot t-grass"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/591.png" alt=""/></span>
+                  <span class="mini-slot t-flying"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/641.png" alt=""/></span>
+                  <span class="mini-slot t-ghost"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/987.png" alt=""/></span>
+                </div>
+                <div class="team-meta-row">
+                  <span class="team-name">Trick Room Cavalier</span>
+                  <span class="badge accent">VGC</span>
+                  <span class="badge style">Trick Room</span>
+                  <span class="team-date">il y a 2 j</span>
+                </div>
+              </div>
+              <span class="chevron"><i data-lucide="chevron-right"></i></span>
+            </div>
+
+            <div class="team-row">
+              <div class="team-main">
+                <div class="mini-slots">
+                  <span class="mini-slot t-steel"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/376.png" alt=""/></span>
+                  <span class="mini-slot t-dragon"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/149.png" alt=""/></span>
+                  <span class="mini-slot t-water"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/812.png" alt=""/></span>
+                  <span class="mini-slot empty"><i data-lucide="help-circle"></i></span>
+                  <span class="mini-slot empty"><i data-lucide="help-circle"></i></span>
+                  <span class="mini-slot empty"><i data-lucide="help-circle"></i></span>
+                </div>
+                <div class="team-meta-row">
+                  <span class="team-name">HO Ladder S26</span>
+                  <span class="badge accent">VGC</span>
+                  <span class="badge style">HO</span>
+                  <span class="team-date">il y a 5 j</span>
+                </div>
+              </div>
+              <span class="chevron"><i data-lucide="chevron-right"></i></span>
+            </div>
+
+            <div class="team-row" style="overflow:hidden">
+              <div class="swipe-hint dup"><i data-lucide="copy"></i></div>
+              <div class="team-main" style="transform: translateX(20px)">
+                <div class="mini-slots">
+                  <span class="mini-slot t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1017.png" alt=""/></span>
+                  <span class="mini-slot t-fighting"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/992.png" alt=""/></span>
+                  <span class="mini-slot t-grass"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/812.png" alt=""/></span>
+                  <span class="mini-slot t-ghost"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/987.png" alt=""/></span>
+                  <span class="mini-slot t-water"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/892.png" alt=""/></span>
+                  <span class="mini-slot t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/727.png" alt=""/></span>
+                </div>
+                <div class="team-meta-row">
+                  <span class="team-name">Balance test</span>
+                  <span class="badge accent">VGC</span>
+                  <span class="badge style">Balance</span>
+                  <span class="team-date">il y a 1 sem</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="team-row" style="overflow:hidden">
+              <div class="team-main" style="transform: translateX(-20px)">
+                <div class="mini-slots">
+                  <span class="mini-slot t-dragon"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/149.png" alt=""/></span>
+                  <span class="mini-slot t-steel"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/376.png" alt=""/></span>
+                  <span class="mini-slot t-psychic"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/898.png" alt=""/></span>
+                  <span class="mini-slot t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/727.png" alt=""/></span>
+                  <span class="mini-slot t-grass"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/591.png" alt=""/></span>
+                  <span class="mini-slot t-flying"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/641.png" alt=""/></span>
+                </div>
+                <div class="team-meta-row">
+                  <span class="team-name">Stall régional</span>
+                  <span class="badge accent">VGC</span>
+                  <span class="badge style">Stall</span>
+                  <span class="team-date">il y a 2 sem</span>
+                </div>
+              </div>
+              <div class="swipe-hint del"><i data-lucide="trash-2"></i></div>
+            </div>
+          </div>
+
+          <span class="pin" style="top: 40px; left: 18px;">1</span>
+          <span class="pin" style="top: 40px; right: 18px;">2</span>
+          <span class="pin" style="top: 84px; left: 18px;">3</span>
+          <span class="pin" style="top: 128px; left: 18px;">4</span>
+          <span class="pin" style="top: 168px; right: 80px;">5</span>
+          <span class="pin" style="top: 300px; left: 18px;">6</span>
+          <span class="pin" style="top: 380px; right: 18px;">7</span>
+        </div>
+        <div class="phone-dims">380 × 760 · scale 1:1</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><div class="note-num">1</div><div class="note-body">
+        <h4 class="note-title">Titre + segmented filtre</h4>
+        <p class="note-desc">Titre "Mes équipes" sentence case. Le segmented VGC / Singles filtre la liste en temps réel (n'affiche que les équipes du format actif). Variante accent — c'est le switch principal de l'écran.</p>
+        <div class="toks"><span class="tok">--fs-2xl</span><span class="tok">--accent</span><span class="tok muted">--surface-sunken</span><span class="comp-pill">Segmented Control</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">2</div><div class="note-body">
+        <h4 class="note-title">Bouton créer</h4>
+        <p class="note-desc">Icône <span class="tok muted">add-circle-outline</span> en accent, haut-droit. Tap → <span class="tok muted">router.push('/teams/builder')</span> avec un nouveau Team vierge pré-rempli au format actif.</p>
+        <div class="toks"><span class="tok">--accent</span><span class="tok muted">34×34 (hit 44)</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">3</div><div class="note-body">
+        <h4 class="note-title">6 mini-sprites</h4>
+        <p class="note-desc">Row de 6 sprites 32pt teintés par type. Chargés via <span class="tok muted">expo-image</span> (cache persistant) + <span class="comp-pill">Shimmer</span> au mount. Slot vide = cercle <span class="tok muted">--surface</span> + <span class="tok muted">help-outline</span> en <span class="tok muted">--fg-faint</span>.</p>
+        <div class="toks"><span class="tok muted">--surface-high</span><span class="tok muted">--t-{type}-bg</span><span class="tok">--r-pill</span><span class="comp-pill">Shimmer</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">4</div><div class="note-body">
+        <h4 class="note-title">Nom + badges + date</h4>
+        <p class="note-desc">Nom éditable inline (tap → champ texte). Badge format <span class="tok">--accent-soft</span> (VGC/Singles) via <span class="comp-pill">Badge</span>, badge style optionnel neutre (Trick Room / HO / Balance / Stall). Date relative <span class="tok muted">--fg3</span> tabulaire à droite.</p>
+        <div class="toks"><span class="tok">--accent-soft</span><span class="tok muted">--surface-high</span><span class="tok">--r-sm</span><span class="tok muted">--fg3 (date)</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">5</div><div class="note-body">
+        <h4 class="note-title">Swipe droit → dupliquer</h4>
+        <p class="note-desc">Révèle <span class="tok info">copy-outline</span> sur fond <span class="tok info">--info</span>. Action immédiate sans confirmation (non-destructive). La copie est ajoutée en tête de liste avec suffixe "(copie)".</p>
+        <div class="toks"><span class="tok info">--info</span><span class="tok muted">--fg-inverse (icône)</span><span class="tok note">swipe-to-action</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">6</div><div class="note-body">
+        <h4 class="note-title">Équipe partiellement remplie</h4>
+        <p class="note-desc">Une équipe peut être sauvegardée incomplète (slots vides montrés en help-circle). Le builder n'impose pas 6 Pokémon — l'utilisateur travaille de façon itérative.</p>
+        <div class="toks"><span class="tok muted">--surface (slot vide)</span><span class="tok muted">--fg-faint</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">7</div><div class="note-body">
+        <h4 class="note-title">Swipe gauche → supprimer</h4>
+        <p class="note-desc">Révèle <span class="tok danger">trash-outline</span> sur fond <span class="tok danger">--danger</span>. Destructive → confirmation via <span class="comp-pill">Toast</span> avec action "Annuler" (5 s) avant suppression définitive. Pas de dialog modal bloquant.</p>
+        <div class="toks"><span class="tok danger">--danger</span><span class="tok muted">--fg-inverse</span><span class="comp-pill">Toast</span></div>
+      </div></div>
+    </div>
+  </section>
+
+
+  <!-- ═════════ STATE B — BUILDER + DÉFENSIF ═════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">B</span>
+      <h2 class="spec-title">Builder — onglet Défensif</h2>
+      <span class="spec-eyebrow">builder.tsx · matrice de couverture · feature central</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status"><span>9:41</span><span class="status-icons"><i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i></span></div>
+
+          <div class="head">
+            <div class="head-top">
+              <span class="team-name-field"><i data-lucide="pencil"></i><span class="nm">Trick Room Cavalier</span></span>
+              <button class="icon-btn muted"><i data-lucide="more-horizontal"></i></button>
+            </div>
+            <div class="seg">
+              <button class="on">VGC</button>
+              <button>Singles</button>
+            </div>
+          </div>
+
+          <div class="builder-body">
+            <div class="slot-grid" style="grid-template-rows: auto;">
+              <div class="slot t-psychic">
+                <span class="ov close"><i data-lucide="x"></i></span>
+                <span class="ov edit"><i data-lucide="edit-3"></i></span>
+                <span class="slot-sprite"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/898.png" alt="" style="filter: brightness(0) invert(0.66) contrast(1.1)"/></span>
+                <span class="slot-name">Calyrex-S</span>
+                <span class="slot-types"><span class="tb xs psychic">Psy</span><span class="tb xs ghost">Spec</span></span>
+              </div>
+              <div class="slot">
+                <span class="ov close"><i data-lucide="x"></i></span>
+                <span class="ov edit"><i data-lucide="edit-3"></i></span>
+                <span class="slot-sprite"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/727.png" alt=""/></span>
+                <span class="slot-name">Incineroar</span>
+                <span class="slot-types"><span class="tb xs fire">Feu</span><span class="tb xs dark">Tén</span></span>
+              </div>
+            </div>
+
+            <div class="analysis">
+              <div class="tabs">
+                <button class="tab on">Défensif</button>
+                <button class="tab">Offensif</button>
+                <button class="tab">Speed</button>
+              </div>
+
+              <div class="matrix-wrap">
+                <div class="matrix-scroll">
+                  <table class="cov">
+                    <thead>
+                      <tr>
+                        <th class="corner"></th>
+                        <th class="poke-head"><div class="ph"><span class="sp"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/898.png" alt=""/></span><span class="nm4">Caly</span></div></th>
+                        <th class="poke-head"><div class="ph"><span class="sp"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/727.png" alt=""/></span><span class="nm4">Inci</span></div></th>
+                        <th class="poke-head"><div class="ph"><span class="sp"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/892.png" alt=""/></span><span class="nm4">Shif</span></div></th>
+                        <th class="poke-head"><div class="ph"><span class="sp"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/591.png" alt=""/></span><span class="nm4">Amoo</span></div></th>
+                        <th class="poke-head"><div class="ph"><span class="sp"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/641.png" alt=""/></span><span class="nm4">Torn</span></div></th>
+                        <th class="poke-head"><div class="ph"><span class="sp"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/987.png" alt=""/></span><span class="nm4">Flut</span></div></th>
+                        <th class="score-head">Score</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="danger-row">
+                        <td class="type-cell"><div class="tc"><span class="dot" style="background:var(--t-ghost)"></span><span class="tn">Spectre <span class="danger-flag">DANGER</span></span></div></td>
+                        <td><div class="cell x2">2×</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x2">2×</div></td>
+                        <td><div class="cell x4">4×</div></td>
+                        <td class="score"><span class="badge-num hi">4</span></td>
+                      </tr>
+                      <tr>
+                        <td class="type-cell"><div class="tc"><span class="dot" style="background:var(--t-dark)"></span><span class="tn">Ténèbres</span></div></td>
+                        <td><div class="cell x2">2×</div></td>
+                        <td><div class="cell half">½</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x2">2×</div></td>
+                        <td class="score"><span class="badge-num mid">2</span></td>
+                      </tr>
+                      <tr>
+                        <td class="type-cell"><div class="tc"><span class="dot" style="background:var(--t-fairy)"></span><span class="tn">Fée</span></div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x2">2×</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td class="score"><span class="badge-num mid">1</span></td>
+                      </tr>
+                      <tr>
+                        <td class="type-cell"><div class="tc"><span class="dot" style="background:var(--t-fire)"></span><span class="tn">Feu</span></div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell half">½</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x2">2×</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td class="score"><span class="badge-num mid">1</span></td>
+                      </tr>
+                      <tr>
+                        <td class="type-cell"><div class="tc"><span class="dot" style="background:var(--t-water)"></span><span class="tn">Eau</span></div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x2">2×</div></td>
+                        <td><div class="cell x2">2×</div></td>
+                        <td><div class="cell half">½</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td class="score"><span class="badge-num mid">2</span></td>
+                      </tr>
+                      <tr>
+                        <td class="type-cell"><div class="tc"><span class="dot" style="background:var(--t-electric)"></span><span class="tn">Élec.</span></div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x2">2×</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td class="score"><span class="badge-num mid">1</span></td>
+                      </tr>
+                      <tr>
+                        <td class="type-cell"><div class="tc"><span class="dot" style="background:var(--t-grass)"></span><span class="tn">Plante</span></div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell half">½</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td class="score"><span class="badge-num zero">0</span></td>
+                      </tr>
+                      <tr>
+                        <td class="type-cell"><div class="tc"><span class="dot" style="background:var(--t-ground)"></span><span class="tn">Sol</span></div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td><div class="cell imm">IMM</div></td>
+                        <td><div class="cell x1">·</div></td>
+                        <td class="score"><span class="badge-num zero">0</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="matrix-legend">
+                  <span class="leg-item"><span class="leg-swatch x4" style="background:var(--danger-soft);color:var(--danger);border:1px solid var(--danger)">4×</span>Faiblesse forte</span>
+                  <span class="leg-item"><span class="leg-swatch" style="background:var(--warning-soft);color:var(--warning)">2×</span>Faible</span>
+                  <span class="leg-item"><span class="leg-swatch" style="background:var(--success-soft);color:var(--success)">½</span>Résiste</span>
+                  <span class="leg-item"><span class="leg-swatch" style="background:var(--accent-soft);color:var(--accent);font-size:7px">IMM</span>Immunité</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer">
+            <button class="foot-btn primary"><i data-lucide="save"></i>Sauvegarder</button>
+            <button class="foot-btn"><i data-lucide="share"></i>Pokepaste</button>
+            <button class="foot-btn"><i data-lucide="calculator"></i>Calc</button>
+            <button class="foot-btn"><i data-lucide="banknote"></i>Budget</button>
+          </div>
+
+          <span class="pin" style="top: 42px; left: 18px;">1</span>
+          <span class="pin" style="top: 96px; left: 18px;">2</span>
+          <span class="pin" style="top: 100px; right: 80px;">3</span>
+          <span class="pin" style="top: 240px; left: 14px;">4</span>
+          <span class="pin" style="top: 276px; left: 56px;">5</span>
+          <span class="pin" style="top: 276px; right: 14px;">6</span>
+          <span class="pin" style="bottom: 70px; left: 14px;">7</span>
+        </div>
+        <div class="phone-dims">380 × 760 · onglet Défensif actif</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><div class="note-num">1</div><div class="note-body">
+        <h4 class="note-title">Header sticky — nom éditable</h4>
+        <p class="note-desc">Champ nom avec <span class="tok muted">pencil-outline</span> à gauche, tap → éditable inline (underline dashed indique l'affordance). <span class="tok muted">options-outline</span> à droite → Dropdown : Importer Pokepaste / Exporter / Dupliquer / Supprimer.</p>
+        <div class="toks"><span class="tok muted">--fg1</span><span class="tok muted">--fg3 (pencil)</span><span class="tok muted">--border-strong (underline)</span><span class="comp-pill">Dropdown</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">2</div><div class="note-body">
+        <h4 class="note-title">Grille 2 colonnes (VGC)</h4>
+        <p class="note-desc">2 colonnes × 3 lignes en VGC ; bascule en 1 colonne × 6 en Singles selon le segmented. Slot rempli : <span class="tok muted">--surface</span> + <span class="tok">--r-lg</span>, sprite 64pt, nom + TypeBadges XS. Long-press → mode réorg (scale 1.03 + shadow, drag & drop).</p>
+        <div class="toks"><span class="tok muted">--surface</span><span class="tok muted">--border</span><span class="tok">--r-lg</span><span class="tok note">long-press → reorder</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">3</div><div class="note-body">
+        <h4 class="note-title">Overlays de slot</h4>
+        <p class="note-desc"><span class="tok muted">create-outline</span> haut-droit (tap → ouvre PokemonEditorSheet) ; <span class="tok muted">close-outline</span> haut-gauche (retirer le slot, confirmation inline). Tuiles circulaires <span class="tok muted">--surface-sunken</span> pour ressortir sur le sprite.</p>
+        <div class="toks"><span class="tok muted">--surface-sunken</span><span class="tok muted">--border</span><span class="tok muted">--fg2</span><span class="tok muted">hit-slop élargi</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">4</div><div class="note-body">
+        <h4 class="note-title">Tabs Défensif / Offensif / Speed</h4>
+        <p class="note-desc">Underline accent. Le panel d'analyse est sticky-scrollable sous la grille. <span class="comp-pill">Tabs</span>. Switch d'onglet : cross-fade du contenu (160ms). Le header du tableau reste sticky lors du scroll interne.</p>
+        <div class="toks"><span class="tok">--accent</span><span class="tok muted">--fg1 / --fg3</span><span class="comp-pill">Tabs</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">5</div><div class="note-body">
+        <h4 class="note-title">Matrice — cellules colorées</h4>
+        <p class="note-desc">Cellules 36×36 <span class="tok">--r-sm</span>, texte 11px bold centré. Code couleur du multiplicateur reçu :</p>
+        <div class="toks" style="flex-direction:column;align-items:flex-start;gap:4px;">
+          <span><span class="tok danger">4×</span> --danger-soft + border (faiblesse forte)</span>
+          <span><span class="tok warning">2×</span> --warning-soft (faible)</span>
+          <span><span class="tok muted">·</span> --surface (neutre 1×)</span>
+          <span><span class="tok semantic">½</span> --success-soft (résiste)</span>
+          <span><span class="tok info">IMM</span> --accent-soft (immunité 0×)</span>
+        </div>
+        <p class="note-desc" style="margin-top:8px">Recalcul à chaque changement de slot ; cellules modifiées font un fade ancienne→nouvelle valeur. Calculé offline (table 18×18, dual-types).</p>
+        <div class="toks"><span class="tok note">lib/calc/typeCoverage.ts</span><span class="tok muted">header sticky-x</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">6</div><div class="note-body">
+        <h4 class="note-title">Colonne Score + tri danger</h4>
+        <p class="note-desc">Score = nb de Pokémon en ×2/×4 sur ce type. <span class="comp-pill">Badge</span> rouge si ≥ 4, orange si ≥ 2, gris si 0. <strong>Tri par défaut</strong> : lignes les plus exposées en premier. Si ≥ 4 faibles au même type → ligne fond rouge + flag <span class="tok danger">DANGER</span>. Si 0 résiste → badge orange "Non couverte".</p>
+        <div class="toks"><span class="tok danger">--danger-soft (≥4)</span><span class="tok warning">--warning-soft (≥2)</span><span class="tok muted">--surface (0)</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">7</div><div class="note-body">
+        <h4 class="note-title">Footer sticky — 4 actions</h4>
+        <p class="note-desc">Respecte la safe area basse. <span class="tok">--accent</span> Sauvegarder (primaire) + 3 ghost : Pokepaste (export → share sheet + Toast "Copié"), Calc, Budget VP (modal récap avec Progress par Pokémon + badge Économique/Standard/Coûteux).</p>
+        <div class="toks"><span class="tok">--accent</span><span class="tok muted">--fg2 (ghost)</span><span class="comp-pill">Toast</span><span class="comp-pill">Progress</span></div>
+      </div></div>
+    </div>
+  </section>
+
+
+  <!-- ═════════ STATE C — BUILDER + SPEED ═════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">C</span>
+      <h2 class="spec-title">Builder — onglet Speed Tiers</h2>
+      <span class="spec-eyebrow">tri vitesse · toggles Tailwind / Trick Room · Rolling Counter</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status"><span>9:41</span><span class="status-icons"><i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i></span></div>
+
+          <div class="head">
+            <div class="head-top">
+              <span class="team-name-field"><i data-lucide="pencil"></i><span class="nm">Trick Room Cavalier</span></span>
+              <button class="icon-btn muted"><i data-lucide="more-horizontal"></i></button>
+            </div>
+            <div class="seg">
+              <button class="on">VGC</button>
+              <button>Singles</button>
+            </div>
+          </div>
+
+          <div class="builder-body">
+            <div class="analysis" style="border-top:0">
+              <div class="tabs">
+                <button class="tab">Défensif</button>
+                <button class="tab">Offensif</button>
+                <button class="tab on">Speed</button>
+              </div>
+
+              <div class="speed-toggles">
+                <button class="toggle-pill"><span class="sw"></span>Tailwind</button>
+                <button class="toggle-pill on"><span class="sw"></span>Trick Room</button>
+              </div>
+
+              <div class="speed-row">
+                <span class="sp t-ghost"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/987.png" alt=""/></span>
+                <span class="info">
+                  <span class="nm">Flutter Mane</span>
+                  <span class="cmp"><span class="up">Passe devant Chongjian-Yu (108)</span></span>
+                </span>
+                <span class="val">205<small>vitesse</small></span>
+              </div>
+              <div class="speed-row">
+                <span class="sp t-psychic"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/898.png" alt=""/></span>
+                <span class="info">
+                  <span class="nm">Calyrex-S</span>
+                  <span class="cmp"><span class="up">Passe devant Shifours (97)</span></span>
+                </span>
+                <span class="val">182<small>vitesse</small></span>
+              </div>
+              <div class="speed-row">
+                <span class="sp t-fighting"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/892.png" alt=""/></span>
+                <span class="info">
+                  <span class="nm">Shifours</span>
+                  <span class="cmp"><span class="dn">Derrière Flutter Mane (205)</span></span>
+                </span>
+                <span class="val">97<small>vitesse</small></span>
+              </div>
+              <div class="speed-row">
+                <span class="sp t-fire"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/727.png" alt=""/></span>
+                <span class="info">
+                  <span class="nm">Incineroar</span>
+                  <span class="cmp"><span class="dn">Derrière Amoonguss (60) en TR</span></span>
+                </span>
+                <span class="val">80<small>vitesse</small></span>
+              </div>
+              <div class="speed-row">
+                <span class="sp t-grass"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/591.png" alt=""/></span>
+                <span class="info">
+                  <span class="nm">Amoonguss</span>
+                  <span class="cmp"><span class="up">Idéal en Trick Room</span></span>
+                </span>
+                <span class="val">31<small>vitesse</small></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer">
+            <button class="foot-btn primary"><i data-lucide="save"></i>Sauvegarder</button>
+            <button class="foot-btn"><i data-lucide="share"></i>Pokepaste</button>
+            <button class="foot-btn"><i data-lucide="calculator"></i>Calc</button>
+            <button class="foot-btn"><i data-lucide="banknote"></i>Budget</button>
+          </div>
+
+          <span class="pin" style="top: 150px; left: 18px;">1</span>
+          <span class="pin" style="top: 150px; right: 100px;">2</span>
+          <span class="pin" style="top: 218px; right: 14px;">3</span>
+          <span class="pin" style="top: 218px; left: 14px;">4</span>
+        </div>
+        <div class="phone-dims">380 × 760 · onglet Speed actif</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><div class="note-num">1</div><div class="note-body">
+        <h4 class="note-title">Toggle Tailwind</h4>
+        <p class="note-desc">Active → ×1.5 toutes les vitesses, recalcul animé via <span class="comp-pill">Rolling Counter</span>. Le toggle est un pill avec switch interne, état off ici. État on passe en <span class="tok">--accent-soft</span>.</p>
+        <div class="toks"><span class="tok muted">--surface</span><span class="tok">--accent-soft (on)</span><span class="tok">--r-pill</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">2</div><div class="note-body">
+        <h4 class="note-title">Toggle Trick Room (actif)</h4>
+        <p class="note-desc">Active → inverse l'ordre de tri de la liste (le plus lent en premier devient avantageux). Montré ici en état on — mais la liste reste triée par vitesse décroissante pour la lisibilité, avec les notes contextuelles qui signalent l'avantage TR.</p>
+        <div class="toks"><span class="tok">--accent</span><span class="tok muted">--fg-inverse (thumb)</span><span class="tok note">inverse sort</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">3</div><div class="note-body">
+        <h4 class="note-title">Vitesse calculée — Rolling Counter</h4>
+        <p class="note-desc">Stat de vitesse effective (base + nature + EVs actuels de l'éditeur). <span class="comp-pill">Rolling Counter</span> s'anime à chaque modif d'EVs depuis le sheet. Gros chiffre tabulaire <span class="tok muted">weight 700</span>.</p>
+        <div class="toks"><span class="tok muted">--fg1</span><span class="tok muted">--fs-xl</span><span class="tok muted">tabular-nums</span><span class="comp-pill">Rolling Counter</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">4</div><div class="note-body">
+        <h4 class="note-title">Comparaison vs top threats</h4>
+        <p class="note-desc">1 ligne par Pokémon vs 3 menaces clés du méta. <span class="tok semantic">--success</span> "Passe devant X (vit)" / <span class="tok danger">--danger</span> "Derrière Y (vit)". Le seuil le plus pertinent est affiché en priorité (le threat le plus proche).</p>
+        <div class="toks"><span class="tok semantic">--success</span><span class="tok danger">--danger</span><span class="tok muted">--fs-xs</span></div>
+      </div></div>
+    </div>
+  </section>
+
+
+  <!-- ═════════ STATE D — EDITOR SHEET ═════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">D</span>
+      <h2 class="spec-title">PokemonEditorSheet</h2>
+      <span class="spec-eyebrow">bottom sheet · EV sliders · moves · nature · presets</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status"><span>9:41</span><span class="status-icons"><i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i></span></div>
+
+          <div class="scrim"></div>
+          <div class="sheet-modal" style="top: 56px;">
+            <div class="grab"></div>
+            <div class="sheet-head">
+              <span class="sp"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/898.png" alt=""/></span>
+              <div class="info">
+                <div class="nm">Calyrex-Cavalier d'Effroi</div>
+                <div class="types"><span class="tb psychic">Psy</span><span class="tb ghost">Spectre</span></div>
+                <div class="nat">Nature Timide&nbsp;·&nbsp;<span class="up">+Vit</span>&nbsp;<span class="dn">−Atq</span></div>
+              </div>
+              <button class="close"><i data-lucide="x"></i></button>
+            </div>
+
+            <div class="sheet-body">
+              <div class="sec">
+                <div class="sec-eyebrow">Infos de base</div>
+                <div class="field-row">
+                  <span class="field"><span class="lbl">Talent</span><span class="val">Crinière d'Effroi<i data-lucide="chevron-down"></i></span></span>
+                </div>
+                <div class="field-row">
+                  <span class="field"><span class="lbl">Objet</span><span class="val"><span class="item-sp"><i data-lucide="circle"></i></span>Lunettes Choix<i data-lucide="chevron-down"></i></span></span>
+                </div>
+                <div class="move-slot"><span class="mv-name">Lame Spectrale</span><span class="tb ghost">Spectre</span><span class="cat phys">Phys</span></div>
+                <div class="move-slot"><span class="mv-name">Astonish</span><span class="tb ghost">Spectre</span><span class="cat phys">Phys</span></div>
+                <div class="move-slot empty"><i data-lucide="plus"></i>Ajouter une capacité</div>
+              </div>
+
+              <div class="sec">
+                <div class="sec-eyebrow">Effort Values<span class="counter warn">340 / 508 EV</span></div>
+
+                <div class="ev-row">
+                  <div class="ev-top"><span class="lbl">PV</span><span class="final">157</span></div>
+                  <div class="ev-bottom">
+                    <span class="slider"><span class="track"><span class="fill" style="width:32%"></span></span><span class="thumb" style="left:32%"></span></span>
+                    <span class="ev-input">84</span>
+                  </div>
+                </div>
+
+                <div class="ev-row">
+                  <div class="ev-top"><span class="lbl drop">Atq</span><span class="final drop">76</span></div>
+                  <div class="ev-bottom">
+                    <span class="slider disabled"><span class="track"><span class="fill" style="width:0%"></span></span><span class="thumb" style="left:0%"></span></span>
+                    <span class="ev-input">0</span>
+                  </div>
+                </div>
+
+                <div class="ev-row">
+                  <div class="ev-top"><span class="lbl">Atq S</span><span class="final">187</span></div>
+                  <div class="ev-bottom">
+                    <span class="slider"><span class="track"><span class="fill" style="width:100%"></span></span><span class="thumb" style="left:100%"></span></span>
+                    <span class="ev-input">252</span>
+                  </div>
+                </div>
+
+                <div class="ev-row">
+                  <div class="ev-top"><span class="lbl boost">Vit</span><span class="final boost">182</span></div>
+                  <div class="ev-bottom">
+                    <span class="slider"><span class="track"><span class="fill" style="width:100%"></span></span><span class="thumb" style="left:100%"></span></span>
+                    <span class="ev-input">252</span>
+                  </div>
+                </div>
+
+                <div class="ev-budget">
+                  <div class="top"><span class="lbl">Budget EV</span><span class="rem warn">168 restants</span></div>
+                  <div class="bar"><span style="width:67%"></span></div>
+                </div>
+              </div>
+
+              <div class="sec">
+                <div class="sec-eyebrow">Avancé</div>
+                <div class="accord open">
+                  <button class="accord-head"><span class="label">Spreads populaires</span><i data-lucide="chevron-down"></i></button>
+                  <div class="accord-body">
+                    <div class="preset-row">
+                      <div class="preset-info">
+                        <div class="preset-spread">252 Atq S / 4 Déf / 252 Vit · Timide</div>
+                        <div class="preset-note">Vit 182 — passe Flutter Mane Booster</div>
+                      </div>
+                      <button class="apply-btn">Appliquer</button>
+                    </div>
+                    <div class="preset-row">
+                      <div class="preset-info">
+                        <div class="preset-spread">252 PV / 4 Atq S / 252 Vit · Timide</div>
+                        <div class="preset-note">Bulk + vitesse — survit aux priorités</div>
+                      </div>
+                      <button class="apply-btn">Appliquer</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="accord">
+                  <button class="accord-head"><span class="label">IVs (avancé)</span><i data-lucide="chevron-down"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <span class="pin" style="top: 64px; left: 14px;">1</span>
+          <span class="pin" style="top: 64px; right: 50px;">2</span>
+          <span class="pin" style="top: 150px; left: 14px;">3</span>
+          <span class="pin" style="top: 264px; right: 14px;">4</span>
+          <span class="pin" style="top: 320px; left: 14px;">5</span>
+          <span class="pin" style="top: 470px; left: 14px;">6</span>
+          <span class="pin" style="top: 560px; left: 14px;">7</span>
+        </div>
+        <div class="phone-dims">380 × 760 · sheet ouvert</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><div class="note-num">1</div><div class="note-body">
+        <h4 class="note-title">Header du sheet</h4>
+        <p class="note-desc">Sprite 80pt sur fond teinté + nom + TypeBadges. Bottom sheet slide-up (Reanimated). Drag handle + tap scrim pour fermer.</p>
+        <div class="toks"><span class="tok muted">--surface-high</span><span class="tok">--r-xl</span><span class="tok muted">--t-psychic-bg</span><span class="tok muted">--shadow-lg</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">2</div><div class="note-body">
+        <h4 class="note-title">Nature — stat boostée / diminuée</h4>
+        <p class="note-desc">Affichée sous le nom. Stat boostée en <span class="tok">+Vit</span> accent, diminuée en <span class="tok danger">−Atq</span> danger. Ce codage couleur se propage aux labels et valeurs finales des sliders concernés.</p>
+        <div class="toks"><span class="tok">--accent (+stat)</span><span class="tok danger">--danger (−stat)</span><span class="tok muted">--fg3</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">3</div><div class="note-body">
+        <h4 class="note-title">Infos de base — Dropdown / Picker</h4>
+        <p class="note-desc">Talent via <span class="comp-pill">Dropdown</span> ; Objet via <span class="comp-pill">Picker</span> (sprite item 24pt + nom + recherche inline) ; Nature via Dropdown (25 natures avec indicateurs +/−). 4 slots de moves, tap → search overlay filtrable (type/catégorie/puissance) en <span class="comp-pill">FlashList</span>.</p>
+        <div class="toks"><span class="tok muted">--surface</span><span class="tok muted">--border</span><span class="tok">--r-md</span><span class="comp-pill">Dropdown</span><span class="comp-pill">Picker</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">4</div><div class="note-body">
+        <h4 class="note-title">Compteur EV — X / 508</h4>
+        <p class="note-desc">Compteur dynamique dans l'eyebrow. Passe en <span class="tok warning">--warning</span> proche de 508, <span class="tok danger">--danger</span> si dépassé. Tabulaire. Ici 340/508 (warning car &gt; 2 stats max).</p>
+        <div class="toks"><span class="tok warning">--warning</span><span class="tok danger">--danger</span><span class="tok muted">tabular-nums</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">5</div><div class="note-body">
+        <h4 class="note-title">EV sliders — snap ×4</h4>
+        <p class="note-desc">Range 0→252, snap aux multiples de 4 (haptic légère via <span class="tok muted">expo-haptics</span>). Thumb 18pt (touch 44pt). Track rempli <span class="tok">--accent</span>. Stat boostée nature → label + valeur finale en <span class="tok">--accent</span> (Vit) ; diminuée → <span class="tok danger">--danger</span> (Atq, slider disabled à 0). Valeur finale <span class="comp-pill">Rolling Counter</span>.</p>
+        <div class="toks"><span class="tok">--accent (fill/thumb)</span><span class="tok muted">--surface-sunken (track)</span><span class="tok">--r-pill</span><span class="comp-pill">Rolling Counter</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">6</div><div class="note-body">
+        <h4 class="note-title">Barre de budget EV</h4>
+        <p class="note-desc"><span class="comp-pill">Progress</span> horizontal sous les 6 sliders. "X EV restants" — <span class="tok semantic">--success</span> si &gt; 60, <span class="tok warning">--warning</span> 12-60, <span class="tok danger">--danger</span> &lt; 12. Fill animé en temps réel pendant le glissement. Input numérique à droite de chaque slider clamp 0-252 + arrondi ×4 + Toast si dépasse le budget.</p>
+        <div class="toks"><span class="tok semantic">--success</span><span class="tok warning">--warning</span><span class="tok danger">--danger</span><span class="comp-pill">Progress</span><span class="comp-pill">Toast</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">7</div><div class="note-body">
+        <h4 class="note-title">Presets + IVs — Accordion</h4>
+        <p class="note-desc">"Spreads populaires" (top 3 méta depuis l'API, <span class="comp-pill">Shimmer</span> au fetch). "Appliquer" → sliders s'animent vers les nouvelles valeurs (spring 400ms). "IVs (avancé)" masqué par défaut, 6 inputs 0-31 (31 par défaut) + note contextuelle "IVs 0 en Attaque" si applicable.</p>
+        <div class="toks"><span class="tok muted">--surface</span><span class="tok">--accent-soft (apply)</span><span class="comp-pill">Accordion</span><span class="comp-pill">Shimmer</span></div>
+      </div></div>
+    </div>
+  </section>
+
+
+  <!-- ═════════ ANNEXE ═════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step" style="background:#B7E6C9">∞</span>
+      <h2 class="spec-title">Annexe — états + onglet offensif</h2>
+      <span class="spec-eyebrow">liste vide · slot vierge · couverture offensive</span>
+    </div>
+
+    <div class="annexe" style="grid-column: 1 / -1;">
+      <div>
+        <div class="ann-title">Liste équipes · vide</div>
+        <div class="ann-card">
+          <div class="inner">
+            <div class="ann-empty">
+              <span class="circle"><i data-lucide="users"></i></span>
+              <div class="ttl">Aucune équipe sauvegardée</div>
+              <div class="sub">Construis ta première équipe VGC pour la saison en cours.</div>
+              <button class="btn">Créer une équipe</button>
+            </div>
+            <div style="margin-top:auto;padding-top:14px;">
+              <div style="font-family:var(--hand);font-size:18px;color:var(--ink-2);line-height:1.2;margin-bottom:4px;">Sous-texte contextuel selon format</div>
+              <div class="toks"><span class="tok muted">--surface (cercle)</span><span class="tok muted">--fg-faint</span><span class="tok">--accent (cta)</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="ann-title">Builder · 6 slots vierges</div>
+        <div class="ann-card">
+          <div class="inner" style="padding:14px">
+            <div class="slot-grid" style="padding:0;grid-template-columns:1fr 1fr;">
+              <div class="slot empty" style="aspect-ratio:1/0.82"><i data-lucide="plus"></i></div>
+              <div class="slot empty" style="aspect-ratio:1/0.82"><i data-lucide="plus"></i></div>
+              <div class="slot empty" style="aspect-ratio:1/0.82"><i data-lucide="plus"></i></div>
+              <div class="slot empty" style="aspect-ratio:1/0.82"><i data-lucide="plus"></i></div>
+              <div class="slot empty" style="aspect-ratio:1/0.82"><i data-lucide="plus"></i></div>
+              <div class="slot empty" style="aspect-ratio:1/0.82"><i data-lucide="plus"></i></div>
+            </div>
+            <div style="margin-top:auto;padding-top:14px;">
+              <div style="font-family:var(--hand);font-size:18px;color:var(--ink-2);line-height:1.2;margin-bottom:4px;">Tap → overlay recherche (Search Bar + FlashList)</div>
+              <div class="toks"><span class="tok muted">--surface</span><span class="tok muted">--border dashed</span><span class="tok">--r-lg</span><span class="comp-pill">Search Bar</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="ann-title">Onglet Offensif</div>
+        <div class="ann-card">
+          <div class="inner" style="padding:16px">
+            <div class="off-row"><span class="dot" style="background:var(--t-fire)"></span><span class="tn">Feu</span><span class="mark yes"><i data-lucide="check"></i></span></div>
+            <div class="off-row"><span class="dot" style="background:var(--t-water)"></span><span class="tn">Eau</span><span class="mark yes"><i data-lucide="check"></i></span></div>
+            <div class="off-row uncov"><span class="dot" style="background:var(--t-steel)"></span><span class="tn">Acier</span><span class="mark no"><i data-lucide="x"></i></span></div>
+            <div class="off-row"><span class="dot" style="background:var(--t-dragon)"></span><span class="tn">Dragon</span><span class="mark yes"><i data-lucide="check"></i></span></div>
+            <div class="off-row uncov"><span class="dot" style="background:var(--t-fairy)"></span><span class="tn">Fée</span><span class="mark no"><i data-lucide="x"></i></span></div>
+            <div class="uncovered-box">
+              <div class="t">2 types non couverts</div>
+              <div class="badges"><span class="tb steel">Acier</span><span class="tb fairy">Fée</span></div>
+            </div>
+            <div style="margin-top:auto;padding-top:14px;">
+              <div style="font-family:var(--hand);font-size:17px;color:var(--ink-2);line-height:1.2;margin-bottom:4px;">Tap badge manquant → 3 Pokémon qui comblent</div>
+              <div class="toks"><span class="tok semantic">--success (check)</span><span class="tok danger">--danger (x + ligne)</span><span class="comp-pill">Badge</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="constraints">
+    <h3>Contraintes UX — invariantes du Team Builder</h3>
+    <ul>
+      <li>FlashList pour toutes les listes (équipes, résultats search, moves)</li>
+      <li>Segmented VGC/Singles dans chaque header — bascule la grille 2×3 ↔ 1×6</li>
+      <li>Matrice recalculée offline à chaque changement de slot</li>
+      <li>Sliders EV : snap ×4 + haptic + touch target 44×44pt sur le thumb</li>
+      <li>Stat boostée/diminuée par nature codée couleur partout (accent/danger)</li>
+      <li>Compteur EV 508 + budget restant en temps réel</li>
+      <li>Footer + header sticky, safe area haut ET bas</li>
+      <li>Long-press slot → réorganisation drag & drop</li>
+      <li class="x">Pas d'emoji, pas de SF Symbol — Ionicons -outline uniquement</li>
+      <li class="x">Pas de spinner — Shimmer partout</li>
+      <li class="x">Premium (historique winrate, sync) : visible + flou + lock, jamais caché</li>
+      <li class="x">Pas de valeur en dur — tokens theme.ts uniquement</li>
+    </ul>
+  </section>
+
+  <section class="legend">
+    <div class="legend-card"><div class="legend-name">Reacticx · Segmented Control</div><div class="legend-desc">VGC/Singles dans les headers liste + builder. Bascule la disposition de la grille de slots.</div></div>
+    <div class="legend-card"><div class="legend-name">Reacticx · Tabs</div><div class="legend-desc">Défensif / Offensif / Speed dans le panel d'analyse du builder.</div></div>
+    <div class="legend-card"><div class="legend-name">Reacticx · Progress</div><div class="legend-desc">Barre de budget EV (sheet), Progress par Pokémon dans le modal Budget VP.</div></div>
+    <div class="legend-card"><div class="legend-name">Reacticx · Rolling Counter</div><div class="legend-desc">Valeurs finales de stats (sheet), vitesses (speed tiers) — s'animent à chaque modif d'EVs.</div></div>
+    <div class="legend-card"><div class="legend-name">Reacticx · Accordion</div><div class="legend-desc">Spreads populaires + IVs avancés dans le sheet d'édition.</div></div>
+    <div class="legend-card"><div class="legend-name">Reacticx · Picker / Dropdown</div><div class="legend-desc">Objet (Picker avec sprite + recherche), Talent et Nature (Dropdown).</div></div>
+  </section>
+
+</div>
+
+<script>
+  if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+  document.querySelectorAll('img').forEach(img => {
+    img.addEventListener('error', () => { img.style.display = 'none'; }, { once: true });
+  });
+</script>
+
+</body>
+</html>
