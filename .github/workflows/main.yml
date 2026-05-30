@@ -6,10 +6,9 @@ on:
       - main
 
 jobs:
-
   deploy_server:
     runs-on: ubuntu-latest
-    environment: production    # Spécifie l'environnement à utiliser
+    environment: production
     steps:
       - name: Deploy to VPS
         uses: appleboy/ssh-action@master
@@ -21,7 +20,7 @@ jobs:
             set -e  # Arrête le script à la première erreur
 
             BASE_DIR="/home/debian"
-            REPO_DIR="$BASE_DIR/Leads-Management"
+            REPO_DIR="$BASE_DIR/tacticx"
 
             mkdir -p "$BASE_DIR"
 
@@ -30,18 +29,13 @@ jobs:
                 echo "📦 Premier déploiement - Clonage du dépôt..."
                 cd "$BASE_DIR"
 
-                if [ -d "Leads-Management" ]; then
+                if [ -d "tacticx" ]; then
                     echo "  Dossier existant trouvé, sauvegarde..."
-                    mv Leads-Management Leads-Management.backup.$(date +%Y%m%d_%H%M%S)
+                    mv tacticx tacticx.backup.$(date +%Y%m%d_%H%M%S)
                 fi
 
-                git clone --branch main --single-branch git@github.com:biga971/Leads-Management.git "Leads-Management"
+                git clone --branch main --single-branch git@github.com:biga971/tacticx.git "tacticx"
                 cd "$REPO_DIR"
-
-                echo "🔧 Permissions scripts backup..."
-                chmod +x "$REPO_DIR/backups/scripts/netzil_leads_backup_all.sh" 2>/dev/null || true
-                chmod +x "$REPO_DIR/backups/scripts/netzil_sync_prod_to_dev.sh" 2>/dev/null || true
-                chmod +x "$REPO_DIR/backups/scripts/netzil_leads_restore.sh" 2>/dev/null || true
             else
                 echo " Dépôt existant trouvé"
                 cd "$REPO_DIR"
@@ -54,11 +48,12 @@ jobs:
                 git checkout -f main
                 git reset --hard origin/main
                 echo "✅ Pull réussi"
+            fi
 
-                echo "🔧 Permissions scripts backup..."
-                chmod +x "$REPO_DIR/backups/scripts/netzil_leads_backup_all.sh" 2>/dev/null || true
-                chmod +x "$REPO_DIR/backups/scripts/netzil_sync_prod_to_dev.sh" 2>/dev/null || true
-                chmod +x "$REPO_DIR/backups/scripts/netzil_leads_restore.sh" 2>/dev/null || true
+            # .env doit exister à la racine du repo (non versionné)
+            if [ ! -f "$REPO_DIR/.env" ]; then
+                echo "❌ .env manquant dans $REPO_DIR — crée-le depuis server/.env.example"
+                exit 1
             fi
 
             # Nettoyage des ressources Docker inutilisées
@@ -70,11 +65,15 @@ jobs:
             docker compose build --no-cache --pull
             echo "🚀 Démarrage des conteneurs..."
             docker compose up -d
-            
+
+            # Migrations (jamais de seed auto — fetch PokeAPI lancé à la main)
+            echo "🔄 Migrations base de données..."
+            docker compose exec -T adonis-api node ace migration:run --force
+
             # Attente démarrage API
-            echo "🏥 Vérification de la santé (Adonis 2001)..."
+            echo "🏥 Vérification de la santé (Adonis 3001)..."
             for i in {1..15}; do
-                if curl -s http://localhost:2001 > /dev/null 2>&1; then
+                if curl -s http://localhost:3001 > /dev/null 2>&1; then
                     echo "✅ API démarrée"
                     docker compose logs --tail 50 adonis-api || true
                     exit 0
@@ -82,6 +81,6 @@ jobs:
                 echo "   Tentative $i/15..."
                 sleep 2
             done
-            echo "❌ L'API ne répond pas sur le port 2001"
+            echo "❌ L'API ne répond pas sur le port 3001"
             docker compose logs --tail 100 adonis-api
             exit 1

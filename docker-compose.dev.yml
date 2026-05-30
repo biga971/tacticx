@@ -1,0 +1,42 @@
+# Root compose — DEV (dev branch). Isolated project + volume + port from prod.
+# Used by the deploy workflow with: -f docker-compose.dev.yml -p tacticx-dev
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: tacticx_postgres_dev
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    volumes:
+      - tacticx_pgdata_dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER} -d ${DB_DATABASE}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  adonis-api:
+    build:
+      context: ./server
+      dockerfile: dockerfile
+    container_name: tacticx_adonis_api_dev
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 3333
+      DB_HOST: postgres
+    ports:
+      - '3101:3333'
+
+volumes:
+  tacticx_pgdata_dev:

@@ -1,29 +1,31 @@
+# Root compose — PRODUCTION (main branch).
+# Builds the AdonisJS server from ./server and runs Postgres alongside it.
+# The mobile app (tacticx/) is an Expo app and is NOT deployed here.
+#
+# Requires a .env file at the repo root on the VPS (see server/.env.example).
 services:
   postgres:
-    container_name: tacticx_postgres
     image: postgres:16-alpine
+    container_name: tacticx_postgres
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_DATABASE}
-      # DB_PASSWORD is empty in dev; allow passwordless local connections.
-      POSTGRES_HOST_AUTH_METHOD: trust
-    ports:
-      - '${DB_PORT}:5432'
     volumes:
       - tacticx_pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${DB_USER} -d ${DB_DATABASE}']
-      interval: 5s
+      interval: 10s
       timeout: 5s
       retries: 5
 
-  # Optional: run the API in a container too. Local dev usually uses `node ace serve`.
   adonis-api:
     build:
-      context: ./
-      dockerfile: Dockerfile
+      context: ./server
+      dockerfile: dockerfile
     container_name: tacticx_adonis_api
     restart: unless-stopped
     depends_on:
@@ -37,7 +39,7 @@ services:
       PORT: 3333
       DB_HOST: postgres
     ports:
-      - '8080:3333'
+      - '3001:3333'
 
 volumes:
   tacticx_pgdata:
