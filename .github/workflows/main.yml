@@ -51,7 +51,7 @@ jobs:
             fi
 
             # .env doit exister à la racine du repo (non versionné)
-            if [ ! -f "$REPO_DIR/.env" ]; then
+            if [ ! -f "$REPO_DIR/server/.env" ]; then
                 echo "❌ .env manquant dans $REPO_DIR — crée-le depuis server/.env.example"
                 exit 1
             fi
