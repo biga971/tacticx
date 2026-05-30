@@ -1,4 +1,4 @@
-name: Deploy to VPS
+name: Deploy to VPS (dev)
 
 on:
   push:
@@ -6,10 +6,9 @@ on:
       - dev
 
 jobs:
-
   deploy_server:
     runs-on: ubuntu-latest
-    environment: production    # Spécifie l'environnement à utiliser
+    environment: production
     steps:
       - name: Deploy to VPS
         uses: appleboy/ssh-action@master
@@ -21,8 +20,8 @@ jobs:
             set -e  # Arrête le script à la première erreur
 
             BASE_DIR="/home/debian"
-            REPO_DIR="$BASE_DIR/Leads-Management-dev"
-            COMPOSE_ARGS="-f docker-compose.dev.yml -p leads-dev"
+            REPO_DIR="$BASE_DIR/tacticx-dev"
+            COMPOSE_ARGS="-f docker-compose.dev.yml -p tacticx-dev"
 
             mkdir -p "$BASE_DIR"
 
@@ -31,18 +30,13 @@ jobs:
                 echo "📦 Premier déploiement - Clonage du dépôt..."
                 cd "$BASE_DIR"
 
-                if [ -d "Leads-Management-dev" ]; then
+                if [ -d "tacticx-dev" ]; then
                     echo "  Dossier existant trouvé, sauvegarde..."
-                    mv Leads-Management-dev Leads-Management-dev.backup.$(date +%Y%m%d_%H%M%S)
+                    mv tacticx-dev tacticx-dev.backup.$(date +%Y%m%d_%H%M%S)
                 fi
 
-                git clone --branch dev --single-branch git@github.com:biga971/Leads-Management.git "Leads-Management-dev"
+                git clone --branch dev --single-branch git@github.com:biga971/tacticx.git "tacticx-dev"
                 cd "$REPO_DIR"
-
-                echo "🔧 Permissions scripts backup..."
-                chmod +x "$REPO_DIR/backups/scripts/netzil_leads_backup_all.sh" 2>/dev/null || true
-                chmod +x "$REPO_DIR/backups/scripts/netzil_sync_prod_to_dev.sh" 2>/dev/null || true
-                chmod +x "$REPO_DIR/backups/scripts/netzil_leads_restore.sh" 2>/dev/null || true
             else
                 echo " Dépôt existant trouvé"
                 cd "$REPO_DIR"
@@ -55,34 +49,39 @@ jobs:
                 git checkout -f dev
                 git reset --hard origin/dev
                 echo "✅ Pull réussi"
+            fi
 
-                echo "🔧 Permissions scripts backup..."
-                chmod +x "$REPO_DIR/backups/scripts/netzil_leads_backup_all.sh" 2>/dev/null || true
-                chmod +x "$REPO_DIR/backups/scripts/netzil_sync_prod_to_dev.sh" 2>/dev/null || true
-                chmod +x "$REPO_DIR/backups/scripts/netzil_leads_restore.sh" 2>/dev/null || true
+            # .env doit exister à la racine du repo (non versionné)
+            if [ ! -f "$REPO_DIR/.env" ]; then
+                echo "❌ .env manquant dans $REPO_DIR — crée-le depuis server/.env.example"
+                exit 1
             fi
 
             # Nettoyage des ressources Docker inutilisées
-            echo " Nettoyage..."
+            echo "🧹 Nettoyage..."
             docker system prune -af 2>/dev/null || true
 
             # Construction et démarrage avec docker-compose
-            echo " Construction de l'image..."
+            echo "🔨 Construction de l'image..."
             docker compose $COMPOSE_ARGS build --no-cache --pull
-            echo " Démarrage des conteneurs..."
+            echo "🚀 Démarrage des conteneurs..."
             docker compose $COMPOSE_ARGS up -d
-            
-            # Attente démarrage API
-            echo " Vérification de la santé (Adonis 2101)..."
+
+            # Migrations (jamais de seed auto — fetch PokeAPI lancé à la main)
+            echo "🔄 Migrations base de données..."
+            docker compose $COMPOSE_ARGS exec -T adonis-api node ace migration:run --force
+
+            # Attente démarrage API (dev exposé sur 3101)
+            echo "🏥 Vérification de la santé (Adonis 3101)..."
             for i in {1..15}; do
-                if curl -s http://localhost:2101 > /dev/null 2>&1; then
-                    echo " API démarrée"
+                if curl -s http://localhost:3101 > /dev/null 2>&1; then
+                    echo "✅ API démarrée"
                     docker compose $COMPOSE_ARGS logs --tail 50 adonis-api || true
                     exit 0
                 fi
                 echo "   Tentative $i/15..."
                 sleep 2
             done
-            echo " L'API ne répond pas sur le port 2101"
+            echo "❌ L'API ne répond pas sur le port 3101"
             docker compose $COMPOSE_ARGS logs --tail 100 adonis-api
             exit 1

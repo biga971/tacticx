@@ -5,11 +5,11 @@
 # Requires a .env file at the repo root on the VPS (see server/.env.example).
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:18.3-alpine3.23
     container_name: tacticx_postgres
     restart: unless-stopped
     env_file:
-      - .env
+      - ./server/.env
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -21,6 +21,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    ports:
+      - '4101:5432'
 
   adonis-api:
     build:
@@ -39,7 +41,7 @@ services:
       PORT: 3333
       DB_HOST: postgres
     ports:
-      - '3001:3333'
+      - '4102:3333'
 
 volumes:
   tacticx_pgdata:
