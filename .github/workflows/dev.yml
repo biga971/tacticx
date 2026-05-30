@@ -51,9 +51,9 @@ jobs:
                 echo "✅ Pull réussi"
             fi
 
-            # .env doit exister à la racine du repo (non versionné)
-            if [ ! -f "$REPO_DIR/.env" ]; then
-                echo "❌ .env manquant dans $REPO_DIR — crée-le depuis server/.env.example"
+            # .env doit exister dans server/ (non versionné)
+            if [ ! -f "$REPO_DIR/server/.env" ]; then
+                echo "❌ server/.env manquant dans $REPO_DIR — crée-le depuis server/.env.example"
                 exit 1
             fi
 
@@ -71,10 +71,10 @@ jobs:
             echo "🔄 Migrations base de données..."
             docker compose $COMPOSE_ARGS exec -T adonis-api node ace migration:run --force
 
-            # Attente démarrage API (dev exposé sur 3101)
-            echo "🏥 Vérification de la santé (Adonis 3101)..."
+            # Attente démarrage API (dev exposé sur 4202)
+            echo "🏥 Vérification de la santé (Adonis 4202)..."
             for i in {1..15}; do
-                if curl -s http://localhost:3101 > /dev/null 2>&1; then
+                if curl -s http://localhost:4202 > /dev/null 2>&1; then
                     echo "✅ API démarrée"
                     docker compose $COMPOSE_ARGS logs --tail 50 adonis-api || true
                     exit 0
@@ -82,6 +82,6 @@ jobs:
                 echo "   Tentative $i/15..."
                 sleep 2
             done
-            echo "❌ L'API ne répond pas sur le port 3101"
+            echo "❌ L'API ne répond pas sur le port 4202"
             docker compose $COMPOSE_ARGS logs --tail 100 adonis-api
             exit 1

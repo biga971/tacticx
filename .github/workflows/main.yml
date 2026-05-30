@@ -61,26 +61,29 @@ jobs:
             docker system prune -af 2>/dev/null || true
 
             # Construction et démarrage avec docker-compose
+            # --env-file server/.env : interpole ${DB_USER}, etc. (le .env vit dans server/)
+            COMPOSE="docker compose --env-file server/.env"
+
             echo "🔨 Construction de l'image..."
-            docker compose build --no-cache --pull
+            $COMPOSE build --no-cache --pull
             echo "🚀 Démarrage des conteneurs..."
-            docker compose up -d
+            $COMPOSE up -d
 
             # Migrations (jamais de seed auto — fetch PokeAPI lancé à la main)
             echo "🔄 Migrations base de données..."
-            docker compose exec -T adonis-api node ace migration:run --force
+            $COMPOSE exec -T adonis-api node ace migration:run --force
 
-            # Attente démarrage API
-            echo "🏥 Vérification de la santé (Adonis 3001)..."
+            # Attente démarrage API (mappé sur 4102 côté hôte)
+            echo "🏥 Vérification de la santé (Adonis 4102)..."
             for i in {1..15}; do
-                if curl -s http://localhost:3001 > /dev/null 2>&1; then
+                if curl -s http://localhost:4102 > /dev/null 2>&1; then
                     echo "✅ API démarrée"
-                    docker compose logs --tail 50 adonis-api || true
+                    $COMPOSE logs --tail 50 adonis-api || true
                     exit 0
                 fi
                 echo "   Tentative $i/15..."
                 sleep 2
             done
-            echo "❌ L'API ne répond pas sur le port 3001"
-            docker compose logs --tail 100 adonis-api
+            echo "❌ L'API ne répond pas sur le port 4102"
+            $COMPOSE logs --tail 100 adonis-api
             exit 1

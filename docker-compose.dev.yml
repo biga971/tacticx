@@ -1,12 +1,13 @@
-# Root compose — DEV (dev branch). Isolated project + volume + port from prod.
-# Used by the deploy workflow with: -f docker-compose.dev.yml -p tacticx-dev
+# Root compose — DEV (dev branch). Isolated project + volume + ports from prod.
+# Used by the deploy workflow with:
+#   docker compose --env-file server/.env -f docker-compose.dev.yml -p tacticx-dev ...
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:18.3-alpine3.23
     container_name: tacticx_postgres_dev
     restart: unless-stopped
     env_file:
-      - .env
+      - ./server/.env
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -18,6 +19,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    ports:
+      - '4201:5432'
 
   adonis-api:
     build:
@@ -29,14 +32,14 @@ services:
       postgres:
         condition: service_healthy
     env_file:
-      - .env
+      - ./server/.env
     environment:
       NODE_ENV: production
       HOST: 0.0.0.0
       PORT: 3333
       DB_HOST: postgres
     ports:
-      - '3101:3333'
+      - '4202:3333'
 
 volumes:
   tacticx_pgdata_dev:
