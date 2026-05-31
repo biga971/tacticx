@@ -154,6 +154,19 @@ export const fonts = {
   mono: 'JetBrainsMono',
 } as const
 
+/** Loaded Inter family name per weight (see useAppFonts). */
+const FONT_FAMILY_BY_WEIGHT = {
+  regular: 'Inter_400Regular',
+  medium: 'Inter_500Medium',
+  semibold: 'Inter_600SemiBold',
+  bold: 'Inter_700Bold',
+} as const
+
+/** Resolves the loaded Inter family name for a font weight key. */
+export function fontFamily(weight: keyof typeof fontWeight): string {
+  return FONT_FAMILY_BY_WEIGHT[weight]
+}
+
 export const shadows = {
   sm: {
     shadowColor: '#000',
