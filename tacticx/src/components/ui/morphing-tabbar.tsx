@@ -81,7 +81,8 @@ export function MorphingTabbar({
               <Ionicons name={icon} size={22} color={focused ? colors.accent : colors.fg3} />
               <Text
                 variant="eyebrow"
-                style={{ color: focused ? colors.accent : colors.fg3, marginTop: 2 }}
+                numberOfLines={1}
+                style={{ color: focused ? colors.accent : colors.fg3 }}
               >
                 {label}
               </Text>
@@ -122,5 +123,11 @@ const styles = StyleSheet.create({
     bottom: spacing.sm,
     backgroundColor: colors.accentSoft,
     borderRadius: radii.lg,
+  },
+  tab: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 2,
   },
 })
