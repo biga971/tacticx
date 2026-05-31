@@ -29,6 +29,7 @@ interface RequestOptions extends Omit<RequestInit, 'body'> {
 export async function apiFetch<T = unknown>(path: string, options: RequestOptions = {}): Promise<T> {
   const { body, public: isPublic, headers, ...rest } = options
 
+  console.log('apiFetch', path, options)
   const finalHeaders: Record<string, string> = {
     Accept: 'application/json',
     ...(body ? { 'Content-Type': 'application/json' } : {}),
@@ -37,6 +38,7 @@ export async function apiFetch<T = unknown>(path: string, options: RequestOption
 
   if (!isPublic) {
     const token = getAuthToken()
+    console.log('token', token)
     if (token) finalHeaders.Authorization = `Bearer ${token}`
   }
 

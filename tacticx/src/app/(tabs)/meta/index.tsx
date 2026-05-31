@@ -94,7 +94,7 @@ export default function MetaScreen() {
           onEndReachedThreshold={0.5}
           ListEmptyComponent={
             <Text variant="body" color="fg3" center style={{ marginTop: spacing['2xl'] }}>
-              Données méta indisponibles. Lance le seed Pokémon côté serveur.
+              Données méta indisponibles.
             </Text>
           }
         />
