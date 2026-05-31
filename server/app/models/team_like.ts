@@ -1,22 +1,10 @@
-import { DateTime } from 'luxon'
-import { BaseModel, column, belongsTo } from '@adonisjs/lucid/orm'
+import { belongsTo } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+import { TeamLikeSchema } from '#database/schema'
 import User from '#models/user'
 import Team from '#models/team'
 
-export default class TeamLike extends BaseModel {
-  @column({ isPrimary: true })
-  declare id: number
-
-  @column()
-  declare userId: number
-
-  @column()
-  declare teamId: number
-
-  @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime
-
+export default class TeamLike extends TeamLikeSchema {
   @belongsTo(() => User)
   declare user: BelongsTo<typeof User>
 

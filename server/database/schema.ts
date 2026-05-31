@@ -57,3 +57,234 @@ export class ResetPasswordTokenSchema extends BaseModel {
   @column()
   declare userId: number
 }
+
+export class ProfileSchema extends BaseModel {
+  static $columns = ['createdAt', 'format', 'id', 'level', 'objective', 'style', 'updatedAt', 'userId'] as const
+  $columns = ProfileSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare format: string
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare level: string
+  @column()
+  declare objective: string
+  @column()
+  declare style: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: number
+}
+
+export class TeamSchema extends BaseModel {
+  static $columns = ['createdAt', 'description', 'format', 'id', 'isPublic', 'likesCount', 'name', 'regulation', 'style', 'updatedAt', 'userId'] as const
+  $columns = TeamSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare description: string | null
+  @column()
+  declare format: string
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare isPublic: boolean
+  @column()
+  declare likesCount: number
+  @column()
+  declare name: string
+  @column()
+  declare regulation: string | null
+  @column()
+  declare style: string | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: number
+}
+
+export class TeamSlotSchema extends BaseModel {
+  static $columns = ['ability', 'createdAt', 'id', 'item', 'move1', 'move2', 'move3', 'move4', 'nature', 'nickname', 'pokemonId', 'slotIndex', 'spAtk', 'spDef', 'spHp', 'spSpa', 'spSpd', 'spSpe', 'teamId', 'updatedAt'] as const
+  $columns = TeamSlotSchema.$columns
+  @column()
+  declare ability: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare item: string | null
+  @column()
+  declare move1: string | null
+  @column()
+  declare move2: string | null
+  @column()
+  declare move3: string | null
+  @column()
+  declare move4: string | null
+  @column()
+  declare nature: string
+  @column()
+  declare nickname: string | null
+  @column()
+  declare pokemonId: number
+  @column()
+  declare slotIndex: number
+  @column()
+  declare spAtk: number
+  @column()
+  declare spDef: number
+  @column()
+  declare spHp: number
+  @column()
+  declare spSpa: number
+  @column()
+  declare spSpd: number
+  @column()
+  declare spSpe: number
+  @column()
+  declare teamId: number
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
+export class CommentSchema extends BaseModel {
+  static $columns = ['content', 'createdAt', 'id', 'teamId', 'updatedAt', 'userId'] as const
+  $columns = CommentSchema.$columns
+  @column()
+  declare content: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare teamId: number
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: number
+}
+
+export class SubscriptionSchema extends BaseModel {
+  static $columns = ['createdAt', 'expiresAt', 'id', 'plan', 'revenuecatUserId', 'status', 'updatedAt', 'userId'] as const
+  $columns = SubscriptionSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column.dateTime()
+  declare expiresAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare plan: string
+  @column()
+  declare revenuecatUserId: string | null
+  @column()
+  declare status: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: number
+}
+
+export class PokemonDataSchema extends BaseModel {
+  static $columns = ['abilities', 'baseAtk', 'baseDef', 'baseHp', 'baseSpa', 'baseSpd', 'baseSpe', 'id', 'inRegMa', 'isMega', 'megaOf', 'moves', 'nameFr', 'nameEn', 'regulationNotes', 'spriteUrl', 'type1', 'type2', 'updatedAt'] as const
+  $columns = PokemonDataSchema.$columns
+  @column({
+    prepare: (value: string[]) => JSON.stringify(value ?? []),
+    consume: (value: unknown) => (typeof value === 'string' ? JSON.parse(value) : (value ?? [])),
+  })
+  declare abilities: string[]
+  @column()
+  declare baseAtk: number
+  @column()
+  declare baseDef: number
+  @column()
+  declare baseHp: number
+  @column()
+  declare baseSpa: number
+  @column()
+  declare baseSpd: number
+  @column()
+  declare baseSpe: number
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare inRegMa: boolean
+  @column()
+  declare isMega: boolean
+  @column()
+  declare megaOf: number | null
+  @column({
+    prepare: (value: number[]) => JSON.stringify(value ?? []),
+    consume: (value: unknown) => (typeof value === 'string' ? JSON.parse(value) : (value ?? [])),
+  })
+  declare moves: number[]
+  @column()
+  declare nameFr: string
+  @column()
+  declare nameEn: string
+  @column()
+  declare regulationNotes: string | null
+  @column()
+  declare spriteUrl: string
+  @column()
+  declare type1: string
+  @column()
+  declare type2: string | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
+export class ItemDataSchema extends BaseModel {
+  static $columns = ['id', 'nameFr', 'nameEn', 'slug', 'spriteUrl'] as const
+  $columns = ItemDataSchema.$columns
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare nameFr: string
+  @column()
+  declare nameEn: string
+  @column()
+  declare slug: string
+  @column()
+  declare spriteUrl: string
+}
+
+export class MoveDataSchema extends BaseModel {
+  static $columns = ['accuracy', 'category', 'descriptionFr', 'id', 'nameFr', 'nameEn', 'power', 'pp', 'type'] as const
+  $columns = MoveDataSchema.$columns
+  @column()
+  declare accuracy: number | null
+  @column()
+  declare category: string
+  @column()
+  declare descriptionFr: string | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare nameFr: string
+  @column()
+  declare nameEn: string
+  @column()
+  declare power: number | null
+  @column()
+  declare pp: number
+  @column()
+  declare type: string
+}
+
+export class TeamLikeSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'teamId', 'userId'] as const
+  $columns = TeamLikeSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare teamId: number
+  @column()
+  declare userId: number
+}

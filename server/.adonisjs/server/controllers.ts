@@ -6,4 +6,13 @@ export const controllers = {
   Auth: () => import('#controllers/auth_controller'),
   AuthGoogle: () => import('#controllers/auth_google_controller'),
   AuthFacebook: () => import('#controllers/auth_facebook_controller'),
+  Profile: () => import('#controllers/profile_controller'),
+  Pokemon: () => import('#controllers/pokemon_controller'),
+  Item: () => import('#controllers/item_controller'),
+  Team: () => import('#controllers/team_controller'),
+  Community: () => import('#controllers/community_controller'),
+  Comment: () => import('#controllers/comment_controller'),
+  Subscription: () => import('#controllers/subscription_controller'),
+  Webhook: () => import('#controllers/webhook_controller'),
+  Admin: () => import('#controllers/admin_controller'),
 }

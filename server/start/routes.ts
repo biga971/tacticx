@@ -77,54 +77,44 @@ router
 | Tacticx domain routes
 |--------------------------------------------------------------------------
 */
-const ProfileController = () => import('#controllers/profile_controller')
-const PokemonController = () => import('#controllers/pokemon_controller')
-const ItemController = () => import('#controllers/item_controller')
-const TeamController = () => import('#controllers/team_controller')
-const CommunityController = () => import('#controllers/community_controller')
-const CommentController = () => import('#controllers/comment_controller')
-const SubscriptionController = () => import('#controllers/subscription_controller')
-const WebhookController = () => import('#controllers/webhook_controller')
-const AdminController = () => import('#controllers/admin_controller')
-
 router
   .group(() => {
     // Authenticated (api token) routes
     router
       .group(() => {
-        router.get('profile', [ProfileController, 'show'])
-        router.put('profile', [ProfileController, 'update'])
+        router.get('profile', [controllers.Profile, 'show'])
+        router.put('profile', [controllers.Profile, 'update'])
 
-        router.get('pokemon', [PokemonController, 'index'])
-        router.get('pokemon/:id', [PokemonController, 'show'])
+        router.get('pokemon', [controllers.Pokemon, 'index'])
+        router.get('pokemon/:id', [controllers.Pokemon, 'show'])
 
-        router.get('items', [ItemController, 'index'])
+        router.get('items', [controllers.Item, 'index'])
 
-        router.get('teams', [TeamController, 'index'])
-        router.post('teams', [TeamController, 'store'])
-        router.get('teams/:id', [TeamController, 'show'])
-        router.put('teams/:id', [TeamController, 'update'])
-        router.delete('teams/:id', [TeamController, 'destroy'])
+        router.get('teams', [controllers.Team, 'index'])
+        router.post('teams', [controllers.Team, 'store'])
+        router.get('teams/:id', [controllers.Team, 'show'])
+        router.put('teams/:id', [controllers.Team, 'update'])
+        router.delete('teams/:id', [controllers.Team, 'destroy'])
         router
-          .post('teams/:id/publish', [TeamController, 'publish'])
+          .post('teams/:id/publish', [controllers.Team, 'publish'])
           .use(middleware.premium())
 
-        router.get('community', [CommunityController, 'index'])
-        router.get('community/:id', [CommunityController, 'show'])
-        router.post('community/:id/like', [CommunityController, 'like'])
-        router.get('community/:id/comments', [CommentController, 'index'])
+        router.get('community', [controllers.Community, 'index'])
+        router.get('community/:id', [controllers.Community, 'show'])
+        router.post('community/:id/like', [controllers.Community, 'like'])
+        router.get('community/:id/comments', [controllers.Comment, 'index'])
         router
-          .post('community/:id/comments', [CommentController, 'store'])
+          .post('community/:id/comments', [controllers.Comment, 'store'])
           .use(middleware.premium())
 
-        router.get('subscription/status', [SubscriptionController, 'status'])
+        router.get('subscription/status', [controllers.Subscription, 'status'])
       })
       .use(middleware.auth({ guards: ['api'] }))
 
     // Webhook (no auth middleware — verified by shared secret in controller)
-    router.post('webhooks/revenuecat', [WebhookController, 'revenuecat'])
+    router.post('webhooks/revenuecat', [controllers.Webhook, 'revenuecat'])
 
     // Admin (token in header, verified in controller)
-    router.post('admin/sync-pokemon', [AdminController, 'syncPokemon'])
+    router.post('admin/sync-pokemon', [controllers.Admin, 'syncPokemon'])
   })
   .prefix('api/v1')
