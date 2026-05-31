@@ -12,8 +12,10 @@ const secureStorage: StateStorage = {
 interface AuthState {
   token: string | null
   userId: string | null
+  /** True when the session is an anonymous guest (no real account yet). */
+  isGuest: boolean
   hydrated: boolean
-  setAuth: (token: string, userId: string) => void
+  setAuth: (token: string, userId: string, isGuest?: boolean) => void
   clearAuth: () => void
   setHydrated: () => void
 }
@@ -23,9 +25,10 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       token: null,
       userId: null,
+      isGuest: false,
       hydrated: false,
-      setAuth: (token, userId) => set({ token, userId }),
-      clearAuth: () => set({ token: null, userId: null }),
+      setAuth: (token, userId, isGuest = false) => set({ token, userId, isGuest }),
+      clearAuth: () => set({ token: null, userId: null, isGuest: false }),
       setHydrated: () => set({ hydrated: true }),
     }),
     {

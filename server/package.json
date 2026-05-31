@@ -69,6 +69,7 @@
     "@adonisjs/core": "^7.0.0",
     "@adonisjs/cors": "^3.0.0",
     "@adonisjs/inertia": "^4.1.0",
+    "@adonisjs/limiter": "^3.0.1",
     "@adonisjs/lucid": "^22.0.0",
     "@adonisjs/mail": "^10.2.0",
     "@adonisjs/session": "^8.0.0",

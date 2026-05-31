@@ -9,16 +9,26 @@ import { queryClient } from '@/lib/api/queryClient'
 import { ToastProvider } from '@/components/ui/toast'
 import { initRevenueCat } from '@/lib/revenuecat'
 import { useAppFonts } from '@/lib/useAppFonts'
+import { useAuthStore } from '@/lib/store/authStore'
+import { ensureGuestSession } from '@/lib/store/ensureSession'
 import { colors } from '@/lib/theme'
 
 SplashScreen.preventAutoHideAsync().catch(() => {})
 
 export default function RootLayout() {
   const fontsLoaded = useAppFonts()
+  const hydrated = useAuthStore((s) => s.hydrated)
+  const token = useAuthStore((s) => s.token)
 
   useEffect(() => {
     initRevenueCat()
   }, [])
+
+  // Once secure-store has rehydrated, ensure a session exists (mint a guest
+  // token on first launch so the app works without an account).
+  useEffect(() => {
+    if (hydrated && !token) ensureGuestSession().catch(() => {})
+  }, [hydrated, token])
 
   useEffect(() => {
     if (fontsLoaded) SplashScreen.hideAsync().catch(() => {})

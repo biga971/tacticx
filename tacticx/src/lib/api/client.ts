@@ -1,6 +1,6 @@
 import { getAuthToken, useAuthStore } from '@/lib/store/authStore'
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3333/api/v1'
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'https://tacticx.fr/api/v1'
 
 export class ApiError extends Error {
   status: number

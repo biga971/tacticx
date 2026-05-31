@@ -8,6 +8,7 @@ export default class User extends compose(UserSchema, withAuthFinder(hash)) {
   declare provider: string | null
   declare providerId: string | null
   declare isActivated: boolean
+  declare isGuest: boolean
 
   get initials() {
     const [first, last] = this.fullName ? this.fullName.split(' ') : this.email.split('@')
