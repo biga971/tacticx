@@ -27,11 +27,11 @@ class AuthService {
    * are never used to log in (guests authenticate by token only).
    */
   async createGuest() {
+    // Only set registered columns. `is_activated` defaults to false in the DB.
     const user = await User.create({
       email: `guest_${randomUUID()}@guest.tacticx.local`,
       password: randomUUID() + randomUUID(),
       isGuest: true,
-      isActivated: false,
     })
     // No expiresIn: the guest token is the only identity until upgrade.
     const token = await User.accessTokens.create(user, ['*'])
