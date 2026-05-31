@@ -38,14 +38,14 @@ router
   .group(() => {
     router
       .group(() => {
-        router.post('register', [controllers.Auth, 'register'])
-        router.post('login', [controllers.Auth, 'login'])
+        router.post('register', [controllers.auth.Auth, 'register'])
+        router.post('login', [controllers.auth.Auth, 'login'])
 
-        router.get('google/redirect', [controllers.AuthGoogle, 'redirect'])
-        router.get('google/signin/callback', [controllers.AuthGoogle, 'handleCallback'])
+        router.get('google/redirect', [controllers.auth.AuthGoogle, 'redirect'])
+        router.get('google/signin/callback', [controllers.auth.AuthGoogle, 'handleCallback'])
 
-        router.get('facebook/redirect', [controllers.AuthFacebook, 'redirect'])
-        router.get('facebook/signin/callback', [controllers.AuthFacebook, 'handleCallback'])
+        router.get('facebook/redirect', [controllers.auth.AuthFacebook, 'redirect'])
+        router.get('facebook/signin/callback', [controllers.auth.AuthFacebook, 'handleCallback'])
       })
       .prefix('auth')
 
@@ -64,9 +64,9 @@ router
 
     router
       .group(() => {
-        router.post('activate', [controllers.Activation, 'activate'])
-        router.post('forgot-password', [controllers.PasswordReset, 'forgot'])
-        router.post('reset-password', [controllers.PasswordReset, 'reset'])
+        router.post('activate', [controllers.activation.Activations, 'activate'])
+        router.post('forgot-password', [controllers.passwordReset.PasswordResets, 'forgot'])
+        router.post('reset-password', [controllers.passwordReset.PasswordResets, 'reset'])
       })
       .prefix('user')
   })
