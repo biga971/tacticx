@@ -2,13 +2,15 @@ FROM node:lts-bookworm-slim AS base
 
 # ----------------------------
 # Stage 1: pnpm via corepack
+# Pin to the version verified locally (10.2.0). `pnpm@latest` drifts and
+# changed the build-script gating behavior, breaking CI installs.
 # ----------------------------
-RUN corepack enable && corepack prepare pnpm@latest --activate
-# Allow whitelisted native build scripts in non-interactive CI builds.
-ENV CI=true
+RUN corepack enable && corepack prepare pnpm@10.2.0 --activate
 
 # ----------------------------
 # Stage 2: Install all dependencies (reproducible via lockfile)
+# Native build scripts (better-sqlite3, esbuild, @swc/core) are whitelisted
+# via pnpm.onlyBuiltDependencies in package.json.
 # ----------------------------
 FROM base AS deps
 WORKDIR /app
