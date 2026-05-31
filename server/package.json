@@ -1,5 +1,5 @@
 {
-  "name": "Boilerplate-v7",
+  "name": "tacticx-server",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -17,11 +17,15 @@
     "typecheck": "tsc --noEmit && tsc --noEmit --project inertia/tsconfig.json"
   },
   "imports": {
+    "#app/*": "./app/*.js",
     "#controllers/*": "./app/controllers/*.js",
+    "#enums/*": "./app/enums/*.js",
     "#exceptions/*": "./app/exceptions/*.js",
+    "#guards/*": "./app/guards/*.js",
     "#models/*": "./app/models/*.js",
     "#mails/*": "./app/mails/*.js",
     "#services/*": "./app/services/*.js",
+    "#utils/*": "./app/utils/*.js",
     "#listeners/*": "./app/listeners/*.js",
     "#events/*": "./app/events/*.js",
     "#generated/*": "./.adonisjs/server/*.js",
