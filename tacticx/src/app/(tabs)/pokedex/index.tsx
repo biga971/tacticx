@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { Pressable, StyleSheet, View } from 'react-native'
 import { FlashList } from '@shopify/flash-list'
 import { useRouter } from 'expo-router'
+import { Ionicons } from '@expo/vector-icons'
 import { Screen, ScreenHeader } from '@/components/ui/screen'
 import { SearchBar } from '@/components/ui/search-bar'
 import { Shimmer } from '@/components/ui/shimmer'
@@ -10,15 +11,19 @@ import { PokemonRow } from '@/components/shared/PokemonRow'
 import { usePokemonInfinite } from '@/lib/api/hooks/usePokemon'
 import { useDebounced } from '@/lib/hooks/useDebounced'
 import type { ApiPokemon } from '@/lib/api/types'
-import { spacing } from '@/lib/theme'
+import { colors, radii, spacing } from '@/lib/theme'
+
+type Scope = 'champions' | 'national'
 
 export default function PokedexScreen() {
   const router = useRouter()
   const [search, setSearch] = useState('')
+  const [scope, setScope] = useState<Scope>('champions')
   const debounced = useDebounced(search, 300)
 
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = usePokemonInfinite({
     search: debounced || undefined,
+    inRegMa: scope === 'champions' ? true : undefined,
   })
 
   const items = useMemo<ApiPokemon[]>(
@@ -29,7 +34,30 @@ export default function PokedexScreen() {
   return (
     <Screen padded>
       <ScreenHeader title="Pokédex" subtitle="Régulation M-A · Champions" />
-      <SearchBar value={search} onChangeText={setSearch} placeholder="Nom FR ou EN…" />
+      <View style={styles.searchRow}>
+        <View style={{ flex: 1 }}>
+          <SearchBar value={search} onChangeText={setSearch} placeholder="Nom FR ou EN…" />
+        </View>
+        <Pressable
+          onPress={() => setScope((s) => (s === 'champions' ? 'national' : 'champions'))}
+          style={[styles.scope, scope === 'champions' && styles.scopeOn]}
+          accessibilityRole="switch"
+          accessibilityState={{ checked: scope === 'champions' }}
+        >
+          <Ionicons
+            name={scope === 'champions' ? 'trophy' : 'globe-outline'}
+            size={16}
+            color={scope === 'champions' ? colors.accent : colors.fg3}
+          />
+          <Text
+            variant="caption"
+            weight="semibold"
+            color={scope === 'champions' ? 'accent' : 'fg3'}
+          >
+            {scope === 'champions' ? 'Champions' : 'National'}
+          </Text>
+        </Pressable>
+      </View>
 
       {isLoading ? (
         <View style={styles.loading}>
@@ -63,6 +91,19 @@ export default function PokedexScreen() {
 }
 
 const styles = StyleSheet.create({
+  searchRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  scope: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: spacing.sm,
+    height: 44,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
+  },
+  scopeOn: { borderColor: colors.accent, backgroundColor: colors.accentSoft },
   loading: { gap: spacing.sm, marginTop: spacing.md },
   list: { paddingTop: spacing.md, paddingBottom: spacing['3xl'] },
 })
