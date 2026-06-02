@@ -39,6 +39,14 @@ const REGION_PREFIX: Record<string, string> = {
   paldean: 'paldea',
 }
 
+/**
+ * Irregular PokeAPI slugs the prefix/suffix rules can't derive.
+ * Keyed by normalised source name. Paldean Tauros defaults to the Combat breed.
+ */
+const SLUG_OVERRIDES: Record<string, string> = {
+  'paldean-tauros': 'tauros-paldea-combat-breed',
+}
+
 function normalizeEntry(raw: RawRosterEntry): NormalizedEntry {
   const isMega = /mega/i.test(raw.form)
   const xy = raw.name.match(/\b([XY])\s*$/i)
@@ -65,6 +73,10 @@ function normalizeEntry(raw: RawRosterEntry): NormalizedEntry {
     form = normalizePokemonName(raw.form)
     apiSlug = normalizePokemonName(raw.name)
   }
+
+  // Apply irregular-slug overrides (keeps the derived form value).
+  const override = SLUG_OVERRIDES[normalizePokemonName(raw.name)]
+  if (override) apiSlug = override
 
   return {
     pokemonId: raw.dexNumber,
