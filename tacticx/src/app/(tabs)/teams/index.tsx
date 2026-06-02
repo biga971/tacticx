@@ -86,7 +86,7 @@ function MyTeams() {
         renderItem={({ item }) => (
           <TeamCard
             team={item}
-            onPress={() => router.push(`/(tabs)/teams/${item.id}/audit`)}
+            onPress={() => router.push(`/(tabs)/teams/builder?id=${item.id}`)}
             onDelete={() => setConfirm(item)}
           />
         )}

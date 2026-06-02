@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native'
-import { useRouter } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { Screen } from '@/components/ui/screen'
@@ -12,7 +12,7 @@ import { TeamAnalysis, type AnalysisSlot } from '@/components/teams/TeamAnalysis
 import { PokemonPickerSheet } from '@/components/teams/PokemonPickerSheet'
 import { PokemonEditorSheet } from '@/components/teams/PokemonEditorSheet'
 import { useToast } from '@/components/ui/toast'
-import { useCreateTeam, type TeamSlotInput } from '@/lib/api/hooks/useTeams'
+import { useCreateTeam, useUpdateTeam, useTeam, type TeamSlotInput } from '@/lib/api/hooks/useTeams'
 import { useFormatStore, type Format } from '@/lib/store/formatStore'
 import type { ApiPokemon } from '@/lib/api/types'
 import { colors, radii, spacing, type PokemonType } from '@/lib/theme'
@@ -49,12 +49,50 @@ export default function BuilderScreen() {
   const insets = useSafeAreaInsets()
   const toast = useToast()
   const { format, setFormat } = useFormatStore()
+
+  // Edit mode when an `id` param is present.
+  const { id } = useLocalSearchParams<{ id?: string }>()
+  const teamId = id ? Number(id) : null
+  const { data: team } = useTeam(teamId)
   const createTeam = useCreateTeam()
+  const updateTeam = useUpdateTeam(teamId ?? 0)
 
   const [name, setName] = useState('Nouvelle équipe')
   const [slots, setSlots] = useState<DraftSlot[]>([])
   const [pickerOpen, setPickerOpen] = useState(false)
   const [editIndex, setEditIndex] = useState<number | null>(null)
+  const [prefilled, setPrefilled] = useState(false)
+
+  // Hydrate the draft from the loaded team once (edit mode).
+  useEffect(() => {
+    if (!team || prefilled) return
+    setName(team.name)
+    setFormat(team.format)
+    setSlots(
+      team.slots
+        .filter((s) => s.pokemon)
+        .map((s) => ({
+          pokemon: s.pokemon!,
+          slotIndex: s.slotIndex,
+          pokemonId: s.pokemonId,
+          nickname: s.nickname,
+          nature: s.nature,
+          ability: s.ability,
+          item: s.item,
+          move1: s.move1,
+          move2: s.move2,
+          move3: s.move3,
+          move4: s.move4,
+          spHp: s.spHp,
+          spAtk: s.spAtk,
+          spDef: s.spDef,
+          spSpa: s.spSpa,
+          spSpd: s.spSpd,
+          spSpe: s.spSpe,
+        }))
+    )
+    setPrefilled(true)
+  }, [team, prefilled, setFormat])
 
   const analysisSlots = useMemo<AnalysisSlot[]>(
     () =>
@@ -88,20 +126,20 @@ export default function BuilderScreen() {
       toast.show('Ajoute au moins un Pokémon', 'error')
       return
     }
-    createTeam.mutate(
-      {
-        name,
-        format,
-        slots: slots.map(({ pokemon: _p, ...rest }) => rest),
+    const payload = {
+      name,
+      format,
+      slots: slots.map(({ pokemon: _p, ...rest }) => rest),
+    }
+    const handlers = {
+      onSuccess: () => {
+        toast.show('Équipe sauvegardée', 'success')
+        router.back()
       },
-      {
-        onSuccess: () => {
-          toast.show('Équipe sauvegardée', 'success')
-          router.back()
-        },
-        onError: () => toast.show('Échec de la sauvegarde', 'error'),
-      }
-    )
+      onError: () => toast.show('Échec de la sauvegarde', 'error'),
+    }
+    if (teamId) updateTeam.mutate(payload, handlers)
+    else createTeam.mutate(payload, handlers)
   }
 
   const gridCols = format === 'vgc' ? 2 : 1
@@ -171,7 +209,13 @@ export default function BuilderScreen() {
       </ScrollView>
 
       <View style={[styles.footer, { bottom: insets.bottom + spacing.base }]}>
-        <Button label="Sauvegarder" icon="save-outline" fullWidth loading={createTeam.isPending} onPress={save} />
+        <Button
+          label="Sauvegarder"
+          icon="save-outline"
+          fullWidth
+          loading={createTeam.isPending || updateTeam.isPending}
+          onPress={save}
+        />
       </View>
 
       <PokemonPickerSheet visible={pickerOpen} onClose={() => setPickerOpen(false)} onSelect={addPokemon} />
