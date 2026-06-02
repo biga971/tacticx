@@ -8,14 +8,13 @@ import { Text } from '@/components/ui/text'
 import { Button } from '@/components/ui/button'
 import { SegmentedControl } from '@/components/ui/segmented-control'
 import { PokemonSprite } from '@/components/shared/PokemonSprite'
-import { TypeCoverageTable } from '@/components/teams/TypeCoverageTable'
+import { TeamAnalysis, type AnalysisSlot } from '@/components/teams/TeamAnalysis'
 import { PokemonPickerSheet } from '@/components/teams/PokemonPickerSheet'
 import { PokemonEditorSheet } from '@/components/teams/PokemonEditorSheet'
 import { useToast } from '@/components/ui/toast'
 import { useCreateTeam, type TeamSlotInput } from '@/lib/api/hooks/useTeams'
 import { useFormatStore, type Format } from '@/lib/store/formatStore'
 import type { ApiPokemon } from '@/lib/api/types'
-import type { PokemonSlot } from '@/lib/calc/types'
 import { colors, radii, spacing, type PokemonType } from '@/lib/theme'
 
 interface DraftSlot extends TeamSlotInput {
@@ -57,10 +56,12 @@ export default function BuilderScreen() {
   const [pickerOpen, setPickerOpen] = useState(false)
   const [editIndex, setEditIndex] = useState<number | null>(null)
 
-  const coverageSlots = useMemo<(PokemonSlot | null)[]>(
+  const analysisSlots = useMemo<AnalysisSlot[]>(
     () =>
       slots.map((s) => ({
         pokemonId: s.pokemonId,
+        name: s.pokemon.nameFr,
+        spriteUrl: s.pokemon.spriteUrl,
         types: [s.pokemon.type1, s.pokemon.type2].filter(Boolean) as PokemonType[],
         base: {
           hp: s.pokemon.baseHp,
@@ -163,9 +164,9 @@ export default function BuilderScreen() {
 
         <View style={styles.section}>
           <Text variant="eyebrow" color="fg3">
-            Couverture défensive
+            Analyse d'équipe
           </Text>
-          <TypeCoverageTable slots={coverageSlots} />
+          <TeamAnalysis slots={analysisSlots} />
         </View>
       </ScrollView>
 

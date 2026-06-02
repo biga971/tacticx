@@ -39,9 +39,20 @@ export function TypeCoverageTable({ slots }: TypeCoverageTableProps) {
 
   return (
     <View style={styles.table}>
+      <View style={[styles.row, styles.headRow]}>
+        <View style={styles.typeCell} />
+        <View style={styles.cells} />
+        <View style={styles.scoreCell}>
+          <Text variant="caption" color="fg3" style={{ fontSize: 9 }} weight="semibold">
+            SCORE
+          </Text>
+        </View>
+      </View>
       {TYPE_ORDER.map((type) => {
         const row = weaknesses[type] ?? []
         const danger = isDangerType(weaknesses, type)
+        const score = row.filter((m) => m > 1).length
+        const sc = scoreStyle(score)
         return (
           <View key={type} style={[styles.row, danger && styles.rowDanger]}>
             <View style={styles.typeCell}>
@@ -60,11 +71,25 @@ export function TypeCoverageTable({ slots }: TypeCoverageTableProps) {
                 )
               })}
             </View>
+            <View style={styles.scoreCell}>
+              <View style={[styles.scoreBadge, { backgroundColor: sc.bg }]}>
+                <Text variant="caption" style={{ color: sc.fg, fontSize: 11 }} weight="semibold" mono>
+                  {score}
+                </Text>
+              </View>
+            </View>
           </View>
         )
       })}
     </View>
   )
+}
+
+/** Score badge color: red ≥ 4 weak slots, orange ≥ 2, muted otherwise. */
+function scoreStyle(score: number) {
+  if (score >= 4) return { bg: colors.dangerSoft, fg: colors.danger }
+  if (score >= 2) return { bg: colors.warningSoft, fg: colors.warning }
+  return { bg: 'transparent', fg: colors.fgFaint }
 }
 
 const styles = StyleSheet.create({
@@ -84,9 +109,19 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.divider,
     gap: spacing.sm,
   },
+  headRow: { paddingVertical: 4, backgroundColor: colors.surfaceHigh },
   rowDanger: { backgroundColor: colors.dangerSoft },
   typeCell: { width: 76, flexDirection: 'row', alignItems: 'center', gap: 4 },
   cells: { flex: 1, flexDirection: 'row', gap: 4 },
+  scoreCell: { width: 34, alignItems: 'center', justifyContent: 'center' },
+  scoreBadge: {
+    minWidth: 22,
+    height: 22,
+    paddingHorizontal: 4,
+    borderRadius: radii.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   cell: {
     flex: 1,
     height: 26,

@@ -10,8 +10,10 @@ import { SegmentedControl } from '@/components/ui/segmented-control'
 import { Text } from '@/components/ui/text'
 import { Shimmer } from '@/components/ui/shimmer'
 import { Button } from '@/components/ui/button'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
+import { useToast } from '@/components/ui/toast'
 import { PokemonSprite } from '@/components/shared/PokemonSprite'
-import { useTeams } from '@/lib/api/hooks/useTeams'
+import { useTeams, useDeleteTeam } from '@/lib/api/hooks/useTeams'
 import { useCommunityFeed } from '@/lib/api/hooks/useCommunity'
 import type { ApiTeam } from '@/lib/api/types'
 import { colors, radii, spacing } from '@/lib/theme'
@@ -49,7 +51,10 @@ export default function TeamsScreen() {
 
 function MyTeams() {
   const router = useRouter()
+  const toast = useToast()
   const { data, isLoading } = useTeams()
+  const deleteTeam = useDeleteTeam()
+  const [confirm, setConfirm] = useState<ApiTeam | null>(null)
 
   if (isLoading) return <ListSkeleton />
   if (!data || data.length === 0) {
@@ -62,16 +67,43 @@ function MyTeams() {
     )
   }
 
+  const onConfirmDelete = () => {
+    if (!confirm) return
+    deleteTeam.mutate(confirm.id, {
+      onSuccess: () => {
+        toast.show('Équipe supprimée', 'success')
+        setConfirm(null)
+      },
+      onError: () => toast.show('Échec de la suppression', 'error'),
+    })
+  }
+
   return (
-    <FlashList
-      data={data}
-      keyExtractor={(t) => String(t.id)}
-      renderItem={({ item }) => (
-        <TeamCard team={item} onPress={() => router.push(`/(tabs)/teams/${item.id}/audit`)} />
-      )}
-      ItemSeparatorComponent={() => <View style={{ height: spacing.sm }} />}
-      contentContainerStyle={{ paddingBottom: 96 }}
-    />
+    <>
+      <FlashList
+        data={data}
+        keyExtractor={(t) => String(t.id)}
+        renderItem={({ item }) => (
+          <TeamCard
+            team={item}
+            onPress={() => router.push(`/(tabs)/teams/${item.id}/audit`)}
+            onDelete={() => setConfirm(item)}
+          />
+        )}
+        ItemSeparatorComponent={() => <View style={{ height: spacing.sm }} />}
+        contentContainerStyle={{ paddingBottom: 96 }}
+      />
+      <ConfirmDialog
+        visible={confirm !== null}
+        title="Supprimer l'équipe ?"
+        message={confirm ? `« ${confirm.name} » sera définitivement supprimée. Action irréversible.` : undefined}
+        confirmLabel="Supprimer"
+        destructive
+        loading={deleteTeam.isPending}
+        onConfirm={onConfirmDelete}
+        onCancel={() => setConfirm(null)}
+      />
+    </>
   )
 }
 
@@ -100,7 +132,17 @@ function CommunityFeed() {
   )
 }
 
-function TeamCard({ team, onPress, community }: { team: ApiTeam; onPress: () => void; community?: boolean }) {
+function TeamCard({
+  team,
+  onPress,
+  community,
+  onDelete,
+}: {
+  team: ApiTeam
+  onPress: () => void
+  community?: boolean
+  onDelete?: () => void
+}) {
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [styles.card, pressed && { opacity: 0.85 }]}>
       <View style={styles.cardHeader}>
@@ -110,6 +152,11 @@ function TeamCard({ team, onPress, community }: { team: ApiTeam; onPress: () => 
         <Text variant="eyebrow" color="accent">
           {team.format.toUpperCase()}
         </Text>
+        {onDelete && (
+          <Pressable onPress={onDelete} hitSlop={10} style={styles.trash}>
+            <Ionicons name="trash-outline" size={18} color={colors.danger} />
+          </Pressable>
+        )}
       </View>
       <View style={styles.sprites}>
         {team.slots?.slice(0, 6).map((s) => (
@@ -165,6 +212,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   cardHeader: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  trash: { padding: 2 },
   sprites: { flexDirection: 'row', gap: spacing.xs },
   cardFooter: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
   empty: { alignItems: 'center', justifyContent: 'center', gap: spacing.sm, paddingTop: spacing['3xl'] },
