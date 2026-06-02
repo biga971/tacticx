@@ -144,6 +144,7 @@ router
     router.post('meta/pikalytics', [controllers.Sync, 'pikalytics'])
     router.post('meta/smogon', [controllers.Sync, 'smogon'])
     router.post('roster', [controllers.Sync, 'roster'])
+    router.get('status', [controllers.Sync, 'status'])
   })
   .prefix('internal/sync')
   .use(middleware.internalToken())

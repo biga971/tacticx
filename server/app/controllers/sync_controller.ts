@@ -1,6 +1,8 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import logger from '@adonisjs/core/services/logger'
 import SyncLog, { type SyncJobType } from '#models/sync_log'
+import MetaCache from '#models/meta_cache'
+import PokemonRoster from '#models/pokemon_roster'
 import PikalyticsService from '#services/meta/pikalytics_service'
 import SmogonService from '#services/meta/smogon_service'
 import RosterService from '#services/meta/roster_service'
@@ -52,5 +54,31 @@ export default class SyncController {
   async roster({ response }: HttpContext) {
     void runJob('roster', () => RosterService.sync())
     return response.accepted({ job: 'queued' })
+  }
+
+  /**
+   * GET /internal/sync/status — inspect recent runs + row counts.
+   * Tells you whether a job completed (status, records_upserted, duration, error).
+   */
+  async status({ request, response }: HttpContext) {
+    const limit = Math.min(Number(request.input('limit', 10)) || 10, 50)
+    const logs = await SyncLog.query().orderBy('createdAt', 'desc').limit(limit)
+    const metaCount = await MetaCache.query().count('* as total')
+    const rosterCount = await PokemonRoster.query().count('* as total')
+
+    return response.ok({
+      counts: {
+        metaCache: Number(metaCount[0].$extras.total),
+        roster: Number(rosterCount[0].$extras.total),
+      },
+      logs: logs.map((l) => ({
+        jobType: l.jobType,
+        status: l.status,
+        recordsUpserted: l.recordsUpserted,
+        durationMs: l.durationMs,
+        errorMessage: l.errorMessage,
+        createdAt: l.createdAt,
+      })),
+    })
   }
 }
