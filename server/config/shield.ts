@@ -34,10 +34,14 @@ const shieldConfig = defineConfig({
 
     /**
      * Route patterns to exclude from CSRF checks.
-     * The mobile API authenticates with bearer access tokens (not session
-     * cookies), so CSRF protection does not apply — exclude every /api route.
+     * Token-authenticated, cookie-less endpoints don't need CSRF:
+     *  - /api/*       → mobile bearer-token API
+     *  - /internal/*  → n8n sync webhooks (ADMIN_SYNC_TOKEN)
      */
-    exceptRoutes: (ctx) => ctx.request.url().startsWith('/api'),
+    exceptRoutes: (ctx) => {
+      const url = ctx.request.url()
+      return url.startsWith('/api') || url.startsWith('/internal')
+    },
 
     /**
      * Expose an encrypted XSRF-TOKEN cookie for frontend HTTP clients.
