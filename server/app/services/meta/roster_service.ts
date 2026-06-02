@@ -29,6 +29,8 @@ interface NormalizedEntry {
   isAvailable: boolean
   /** PokeAPI slug used to fetch base stats + sprite. */
   apiSlug: string
+  /** Canonical match key (suffix-style, = normalised meta_cache.pokemon_name). */
+  slug: string
 }
 
 /** Region adjective prefix ("Alolan Raichu") → PokeAPI suffix ("raichu-alola"). */
@@ -74,11 +76,16 @@ function normalizeEntry(raw: RawRosterEntry): NormalizedEntry {
     apiSlug = normalizePokemonName(raw.name)
   }
 
-  // Apply irregular-slug overrides (keeps the derived form value).
+  // slug is the meta-match key (suffix-style). Base uses the plain name slug;
+  // forms use the derived apiSlug *before* any PokeAPI-only override.
+  const slug = form === null ? normalizePokemonName(raw.name) : apiSlug
+
+  // Apply irregular-slug overrides to the fetch slug only (keeps slug/form).
   const override = SLUG_OVERRIDES[normalizePokemonName(raw.name)]
   if (override) apiSlug = override
 
   return {
+    slug,
     pokemonId: raw.dexNumber,
     nameEn: raw.name,
     form,
@@ -173,6 +180,7 @@ class RosterService {
         await PokemonRoster.updateOrCreate(
           { pokemonId: entry.pokemonId, form: entry.form, regulation: 'M-A' },
           {
+            slug: entry.slug,
             nameEn: entry.nameEn,
             nameFr,
             baseFormId: entry.isMega ? entry.pokemonId : null,

@@ -31,16 +31,36 @@ function parsePercent(raw: string | undefined): number | null {
   return Number.isFinite(n) ? Number((n / 100).toFixed(4)) : null
 }
 
-/** Parse the top-N table rows: | Rank | Pokemon | Usage% | Win Rate | ... | */
+function splitCells(line: string): string[] {
+  const cells = line.split('|').map((c) => c.trim())
+  return cells.filter(
+    (_, i) => !(i === 0 && cells[0] === '') && !(i === cells.length - 1 && cells[cells.length - 1] === '')
+  )
+}
+
+/**
+ * Parse the "Best 50 Pokemon by Usage" table.
+ * IMPORTANT: anchor on the header row that contains "Pokemon" + "Usage" so we
+ * skip the "Team Cores" tables (header "| Rank | Core | Teams | Usage |") that
+ * appear first on the tournament endpoints.
+ */
 function parseListTable(md: string): { name: string; rank: number; usageRate: number | null; winRate: number | null }[] {
+  const lines = md.split('\n')
+  const headerIdx = lines.findIndex(
+    (l) => l.includes('|') && /\bpokemon\b/i.test(l) && /usage/i.test(l)
+  )
+  if (headerIdx < 0) return []
+
   const rows: { name: string; rank: number; usageRate: number | null; winRate: number | null }[] = []
-  for (const line of md.split('\n')) {
-    if (!line.includes('|')) continue
-    const cells = line.split('|').map((c) => c.trim())
-    // Drop empty leading/trailing cells from "| a | b |".
-    const cols = cells.filter((_, i) => !(i === 0 && cells[0] === '') && !(i === cells.length - 1 && cells[cells.length - 1] === ''))
+  for (let i = headerIdx + 1; i < lines.length; i++) {
+    const line = lines[i]
+    if (!line.includes('|')) {
+      if (rows.length) break // table ended
+      continue
+    }
+    const cols = splitCells(line)
     const rank = Number(cols[0])
-    if (!Number.isInteger(rank) || rank < 1) continue // skip header + separators
+    if (!Number.isInteger(rank) || rank < 1) continue // separator / stray row
     // Pikalytics wraps the name in markdown bold: "**Incineroar**".
     const name = cols[1]?.replace(/\*\*/g, '').trim()
     if (!name || /[-=]{3,}/.test(name)) continue

@@ -343,16 +343,18 @@ export class MetaCacheSchema extends BaseModel {
 
 export class PokemonRosterSchema extends BaseModel {
   static $columns = [
-    'id', 'pokemonId', 'nameEn', 'nameFr', 'form', 'baseFormId', 'type1', 'type2',
-    'baseHp', 'baseAtk', 'baseDef', 'baseSpa', 'baseSpd', 'baseSpe', 'isMega',
-    'isAvailable', 'spriteUrl', 'regulation', 'rawData', 'syncedAt', 'createdAt',
-    'updatedAt',
+    'id', 'pokemonId', 'slug', 'nameEn', 'nameFr', 'form', 'baseFormId', 'type1',
+    'type2', 'baseHp', 'baseAtk', 'baseDef', 'baseSpa', 'baseSpd', 'baseSpe',
+    'isMega', 'isAvailable', 'spriteUrl', 'regulation', 'rawData', 'syncedAt',
+    'createdAt', 'updatedAt',
   ] as const
   $columns = PokemonRosterSchema.$columns
   @column({ isPrimary: true })
   declare id: string
   @column()
   declare pokemonId: number
+  @column()
+  declare slug: string | null
   @column()
   declare nameEn: string
   @column()

@@ -1,9 +1,35 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import MetaCache from '#models/meta_cache'
-import PokemonData from '#models/pokemon_data'
-import { normalizePokemonName } from '#utils/pokemon_name'
+import PokemonRoster from '#models/pokemon_roster'
 import type { MetaFormat, MetaSource } from '#services/meta/meta_types'
 
+/** Shape a roster row like the Pokédex ApiPokemon so the app can reuse PokemonRow. */
+function toApiPokemon(r: PokemonRoster) {
+  return {
+    id: r.pokemonId,
+    nameFr: r.nameFr ?? r.nameEn,
+    nameEn: r.nameEn,
+    type1: r.type1,
+    type2: r.type2,
+    baseHp: r.baseHp,
+    baseAtk: r.baseAtk,
+    baseDef: r.baseDef,
+    baseSpa: r.baseSpa,
+    baseSpd: r.baseSpd,
+    baseSpe: r.baseSpe,
+    abilities: [],
+    moves: [],
+    spriteUrl: r.spriteUrl,
+    isMega: r.isMega,
+    megaOf: r.baseFormId,
+    inRegMa: true,
+    regulationNotes: null,
+    form: r.form,
+  }
+}
+
+// 'tournament' (gen9...regma) is real Reg M-A tournament data with win rates →
+// preferred. preview/ladder are fallbacks (no win-rate column).
 const SOURCE_PRIORITY: MetaSource[] = ['tournament', 'ranked_ladder', 'ranked_preview']
 
 export default class MetaController {
@@ -38,10 +64,10 @@ export default class MetaController {
     else query.orderByRaw('rank ASC NULLS LAST')
     const rows = await query.limit(limit)
 
-    // Build a slug → Pokémon lookup once for enrichment.
-    const pokemon = await PokemonData.all()
-    const bySlug = new Map<string, PokemonData>()
-    for (const p of pokemon) bySlug.set(normalizePokemonName(p.nameEn), p)
+    // Join on the roster's canonical slug (covers base + Megas + regionals).
+    const roster = await PokemonRoster.query().where('regulation', 'M-A')
+    const bySlug = new Map<string, PokemonRoster>()
+    for (const r of roster) if (r.slug) bySlug.set(r.slug, r)
 
     const data = rows.map((row) => {
       const match = bySlug.get(row.pokemonName)
@@ -55,7 +81,7 @@ export default class MetaController {
         abilities: row.abilities,
         teammates: row.teammates,
         spreads: row.spreads,
-        pokemon: match ? match.serialize() : null,
+        pokemon: match ? toApiPokemon(match) : null,
       }
     })
 

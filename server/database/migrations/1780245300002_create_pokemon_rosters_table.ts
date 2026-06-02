@@ -7,6 +7,8 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.uuid('id').notNullable().primary()
       table.integer('pokemon_id').notNullable() // national dex id
+      // Canonical match key (= normalised meta_cache.pokemon_name) for joins.
+      table.string('slug', 100).nullable()
       table.string('name_en', 100).notNullable()
       table.string('name_fr', 100).nullable()
       table.string('form').nullable() // null | 'mega' | 'mega-x' | 'hisui' ...
@@ -30,6 +32,7 @@ export default class extends BaseSchema {
       table.timestamp('updated_at', { useTz: true }).notNullable()
 
       table.unique(['pokemon_id', 'form', 'regulation'])
+      table.index(['slug'])
       table.index(['type_1'])
       table.index(['type_2'])
       table.index(['is_available'])
