@@ -31,8 +31,9 @@ export function usePokemonList(filters: PokemonFilters = {}) {
 }
 
 /** Infinite paginated list for long scrollable Pokédex. */
-export function usePokemonInfinite(filters: Omit<PokemonFilters, 'page'> = {}) {
+export function usePokemonInfinite(filters: Omit<PokemonFilters, 'page'> = {}, enabled = true) {
   return useInfiniteQuery({
+    enabled,
     queryKey: pokemonKeys.list(filters),
     initialPageParam: 1,
     queryFn: ({ pageParam }) =>

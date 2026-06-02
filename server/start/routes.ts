@@ -98,6 +98,9 @@ router
 
         router.get('items', [controllers.Item, 'index'])
 
+        router.get('meta', [controllers.Meta, 'index'])
+        router.get('roster', [controllers.Roster, 'index'])
+
         router.get('teams', [controllers.Team, 'index'])
         router.post('teams', [controllers.Team, 'store'])
         router.get('teams/:id', [controllers.Team, 'show'])

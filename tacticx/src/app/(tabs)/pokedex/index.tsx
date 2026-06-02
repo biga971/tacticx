@@ -9,8 +9,9 @@ import { Shimmer } from '@/components/ui/shimmer'
 import { Text } from '@/components/ui/text'
 import { PokemonRow } from '@/components/shared/PokemonRow'
 import { usePokemonInfinite } from '@/lib/api/hooks/usePokemon'
+import { useRosterInfinite } from '@/lib/api/hooks/useRoster'
 import { useDebounced } from '@/lib/hooks/useDebounced'
-import type { ApiPokemon } from '@/lib/api/types'
+import type { ApiPokemon, ApiRosterPokemon } from '@/lib/api/types'
 import { colors, radii, spacing } from '@/lib/theme'
 
 type Scope = 'champions' | 'national'
@@ -21,14 +22,16 @@ export default function PokedexScreen() {
   const [scope, setScope] = useState<Scope>('champions')
   const debounced = useDebounced(search, 300)
 
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = usePokemonInfinite({
-    search: debounced || undefined,
-    inRegMa: scope === 'champions' ? true : undefined,
-  })
+  // National dex → pokemon_data; Champions → pokemon_roster (incl. Megas).
+  const national = usePokemonInfinite({ search: debounced || undefined }, scope === 'national')
+  const champions = useRosterInfinite({ search: debounced || undefined }, scope === 'champions')
+  const active = scope === 'champions' ? champions : national
+  const { fetchNextPage, hasNextPage, isFetchingNextPage } = active
+  const isLoading = active.isLoading
 
-  const items = useMemo<ApiPokemon[]>(
-    () => data?.pages.flatMap((p) => p.data) ?? [],
-    [data]
+  const items = useMemo<(ApiPokemon | ApiRosterPokemon)[]>(
+    () => active.data?.pages.flatMap((p) => p.data) ?? [],
+    [active.data]
   )
 
   return (
@@ -68,7 +71,7 @@ export default function PokedexScreen() {
       ) : (
         <FlashList
           data={items}
-          keyExtractor={(it) => String(it.id)}
+          keyExtractor={(it) => ('key' in it ? it.key : String(it.id))}
           renderItem={({ item }) => (
             <PokemonRow pokemon={item} onPress={() => router.push(`/(tabs)/pokedex/${item.id}`)} />
           )}

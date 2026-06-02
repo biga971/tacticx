@@ -137,6 +137,42 @@ export interface PokemonFilters {
   limit?: number
 }
 
+/** Champions roster entry (shaped like ApiPokemon + form metadata). */
+export interface ApiRosterPokemon extends ApiPokemon {
+  key: string
+  form: string | null
+}
+
+export interface ApiUsageEntry {
+  name: string
+  usageRate: number
+}
+
+export interface ApiSpreadEntry {
+  spreadString: string
+  nature: string | null
+  usageRate: number
+}
+
+export interface ApiMetaEntry {
+  pokemonName: string
+  rank: number | null
+  usageRate: number | null
+  winRate: number | null
+  moves: ApiUsageEntry[]
+  items: ApiUsageEntry[]
+  abilities: ApiUsageEntry[]
+  teammates: ApiUsageEntry[]
+  spreads: ApiSpreadEntry[]
+  pokemon: ApiPokemon | null
+}
+
+export interface ApiMetaResponse {
+  source: string | null
+  sort: 'usage' | 'winrate'
+  data: ApiMetaEntry[]
+}
+
 export interface CommunityFilters {
   format?: string
   style?: string

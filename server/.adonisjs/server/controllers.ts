@@ -16,7 +16,9 @@ export const controllers = {
   Comment: () => import('#controllers/comment_controller'),
   Community: () => import('#controllers/community_controller'),
   Item: () => import('#controllers/item_controller'),
+  Meta: () => import('#controllers/meta_controller'),
   NewAccount: () => import('#controllers/new_account_controller'),
+  Roster: () => import('#controllers/roster_controller'),
   passwordReset: {
     PasswordResets: () => import('#controllers/password_reset/password_resets_controller'),
   },

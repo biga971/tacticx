@@ -9,20 +9,27 @@ import { Shimmer } from '@/components/ui/shimmer'
 import { Text } from '@/components/ui/text'
 import { PremiumLock } from '@/components/shared/PremiumLock'
 import { PokemonRow } from '@/components/shared/PokemonRow'
-import { usePokemonInfinite } from '@/lib/api/hooks/usePokemon'
+import { useMeta } from '@/lib/api/hooks/useMeta'
 import { useFormatStore, type Format } from '@/lib/store/formatStore'
-import type { ApiPokemon } from '@/lib/api/types'
+import type { ApiMetaEntry } from '@/lib/api/types'
 import { colors, radii, spacing } from '@/lib/theme'
 
 type MetaTab = 'usage' | 'winrate' | 'cores'
+
+/** Right-aligned stat per row, depending on the active tab. */
+function rowStat(entry: ApiMetaEntry, tab: MetaTab): string {
+  if (tab === 'winrate') return entry.winRate != null ? `${(entry.winRate * 100).toFixed(1)}%` : '—'
+  return entry.usageRate != null ? `${(entry.usageRate * 100).toFixed(1)}%` : '—'
+}
 
 export default function MetaScreen() {
   const router = useRouter()
   const { format, setFormat } = useFormatStore()
   const [tab, setTab] = useState<MetaTab>('usage')
 
-  const { data, isLoading, fetchNextPage, hasNextPage } = usePokemonInfinite({ inRegMa: true })
-  const items = useMemo<ApiPokemon[]>(() => data?.pages.flatMap((p) => p.data) ?? [], [data])
+  const sort = tab === 'winrate' ? 'winrate' : 'usage'
+  const { data, isLoading } = useMeta(format, sort)
+  const items = useMemo<ApiMetaEntry[]>(() => (data?.data ?? []).filter((e) => e.pokemon), [data])
 
   return (
     <Screen padded>
@@ -76,25 +83,28 @@ export default function MetaScreen() {
       ) : (
         <FlashList
           data={items}
-          keyExtractor={(it) => String(it.id)}
-          renderItem={({ item, index }) => (
+          keyExtractor={(it) => it.pokemonName}
+          renderItem={({ item }) => (
             <PokemonRow
-              pokemon={item}
-              onPress={() => router.push(`/(tabs)/pokedex/${item.id}`)}
+              pokemon={item.pokemon!}
+              onPress={() => router.push(`/(tabs)/pokedex/${item.pokemon!.id}`)}
               right={
-                <Text variant="stat" color="fg3" style={{ width: 32 }}>
-                  {index + 1}
-                </Text>
+                <View style={styles.statCol}>
+                  <Text variant="stat">{rowStat(item, tab)}</Text>
+                  {item.rank != null ? (
+                    <Text variant="caption" color="fg3">
+                      #{item.rank}
+                    </Text>
+                  ) : null}
+                </View>
               }
             />
           )}
           ItemSeparatorComponent={() => <View style={{ height: spacing.sm }} />}
           contentContainerStyle={styles.list}
-          onEndReached={() => hasNextPage && fetchNextPage()}
-          onEndReachedThreshold={0.5}
           ListEmptyComponent={
             <Text variant="body" color="fg3" center style={{ marginTop: spacing['2xl'] }}>
-              Données méta indisponibles.
+              Données méta indisponibles. Lance la synchro côté serveur.
             </Text>
           }
         />
@@ -116,4 +126,5 @@ const styles = StyleSheet.create({
   bar: { flex: 1, backgroundColor: colors.accent, borderRadius: 2 },
   loading: { gap: spacing.sm },
   list: { paddingBottom: spacing['3xl'] },
+  statCol: { alignItems: 'flex-end', minWidth: 52 },
 })
