@@ -14,7 +14,6 @@ import type {
   SyncStatus,
   UsageEntry,
   SpreadEntry,
-  BaseStats,
 } from '#services/meta/meta_types'
 
 export class UserSchema extends BaseModel {
@@ -344,9 +343,10 @@ export class MetaCacheSchema extends BaseModel {
 
 export class PokemonRosterSchema extends BaseModel {
   static $columns = [
-    'id', 'pokemonId', 'nameEn', 'nameFr', 'form', 'baseFormId', 'types',
-    'baseStats', 'isMega', 'isAvailable', 'spriteUrl', 'regulation', 'rawData',
-    'syncedAt', 'createdAt', 'updatedAt',
+    'id', 'pokemonId', 'nameEn', 'nameFr', 'form', 'baseFormId', 'type1', 'type2',
+    'baseHp', 'baseAtk', 'baseDef', 'baseSpa', 'baseSpd', 'baseSpe', 'isMega',
+    'isAvailable', 'spriteUrl', 'regulation', 'rawData', 'syncedAt', 'createdAt',
+    'updatedAt',
   ] as const
   $columns = PokemonRosterSchema.$columns
   @column({ isPrimary: true })
@@ -361,10 +361,22 @@ export class PokemonRosterSchema extends BaseModel {
   declare form: string | null
   @column()
   declare baseFormId: number | null
-  @jsonColumn<string[]>([])
-  declare types: string[]
-  @jsonColumn<Partial<BaseStats>>({})
-  declare baseStats: Partial<BaseStats>
+  @column()
+  declare type1: string | null
+  @column()
+  declare type2: string | null
+  @column()
+  declare baseHp: number | null
+  @column()
+  declare baseAtk: number | null
+  @column()
+  declare baseDef: number | null
+  @column()
+  declare baseSpa: number | null
+  @column()
+  declare baseSpd: number | null
+  @column()
+  declare baseSpe: number | null
   @column()
   declare isMega: boolean
   @column()

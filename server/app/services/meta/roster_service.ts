@@ -130,14 +130,21 @@ class RosterService {
         const spriteId = enriched?.spriteId ?? entry.pokemonId
         const nameFr = await frName(speciesId)
 
+        const stats = enriched?.baseStats ?? {}
         await PokemonRoster.updateOrCreate(
           { pokemonId: entry.pokemonId, form: entry.form, regulation: 'M-A' },
           {
             nameEn: entry.nameEn,
             nameFr,
             baseFormId: entry.isMega ? entry.pokemonId : null,
-            types: entry.types,
-            baseStats: enriched?.baseStats ?? {},
+            type1: entry.types[0] ?? null,
+            type2: entry.types[1] ?? null,
+            baseHp: stats.hp ?? null,
+            baseAtk: stats.atk ?? null,
+            baseDef: stats.def ?? null,
+            baseSpa: stats.spa ?? null,
+            baseSpd: stats.spd ?? null,
+            baseSpe: stats.spe ?? null,
             isMega: entry.isMega,
             isAvailable: entry.isAvailable,
             spriteUrl: `${SPRITES_HOME}/${spriteId}.png`,
