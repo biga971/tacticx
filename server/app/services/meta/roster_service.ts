@@ -150,6 +150,9 @@ class RosterService {
     }
     logger.info(`[roster] ${raw.length} roster entries`)
 
+    // One timestamp for the whole run: rows not re-stamped are stale (form
+    // values changed, entry removed from source) and get pruned at the end.
+    const runStart = DateTime.now()
     let upserted = 0
     for (const rawEntry of raw) {
       try {
@@ -185,7 +188,7 @@ class RosterService {
             isAvailable: entry.isAvailable,
             spriteUrl: `${SPRITES_HOME}/${spriteId}.png`,
             rawData: rawEntry as unknown as Record<string, unknown>,
-            syncedAt: DateTime.now(),
+            syncedAt: runStart,
           }
         )
         upserted++
@@ -193,6 +196,20 @@ class RosterService {
         logger.error({ err, pokemon: rawEntry?.name }, '[roster] skip Pokémon')
       }
     }
+
+    // Full-replace: drop rows not refreshed this run (stale forms / removed
+    // entries). Guarded so a partial PokeAPI outage can't wipe the table.
+    if (upserted >= raw.length * 0.8) {
+      const stale = await PokemonRoster.query()
+        .where('regulation', 'M-A')
+        .where('synced_at', '<', runStart.toSQL()!)
+        .delete()
+      const pruned = Array.isArray(stale) ? stale[0] : stale
+      logger.info(`[roster] pruned ${pruned} stale rows`)
+    } else {
+      logger.warn(`[roster] skipped prune — only ${upserted}/${raw.length} upserted`)
+    }
+
     return upserted
   }
 }
