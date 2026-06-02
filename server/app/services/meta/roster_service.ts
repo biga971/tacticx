@@ -120,6 +120,14 @@ async function frName(speciesId: number): Promise<string | null> {
   return fr?.name ?? null
 }
 
+/** Form-specific FR name (e.g. "Méga-Dracaufeu X", "Raichu d'Alola"). */
+async function formFrName(slug: string): Promise<string | null> {
+  const form = await fetchJson<any>(`${POKEAPI}/pokemon-form/${slug}`)
+  await sleep(POKEAPI_DELAY)
+  const fr = form?.names?.find((n: any) => n.language?.name === 'fr')
+  return fr?.name ?? null
+}
+
 class RosterService {
   /** Build the Champions roster (incl. Megas) by crossing roster.json + PokeAPI. */
   async sync(): Promise<number> {
@@ -143,7 +151,8 @@ class RosterService {
 
         const speciesId = enriched?.speciesId ?? entry.pokemonId
         const spriteId = enriched?.spriteId ?? entry.pokemonId
-        const nameFr = await frName(speciesId)
+        // Form-specific FR name for megas/regionals; species FR for base forms.
+        const nameFr = (entry.form ? await formFrName(entry.apiSlug) : null) ?? (await frName(speciesId))
 
         const stats = enriched?.baseStats ?? {}
         await PokemonRoster.updateOrCreate(
