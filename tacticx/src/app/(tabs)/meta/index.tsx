@@ -81,33 +81,35 @@ export default function MetaScreen() {
           ))}
         </View>
       ) : (
-        <FlashList
-          data={items}
-          keyExtractor={(it) => it.pokemonName}
-          renderItem={({ item }) => (
-            <PokemonRow
-              pokemon={item.pokemon!}
-              onPress={() => router.push(`/(tabs)/pokedex/${item.pokemon!.id}`)}
-              right={
-                <View style={styles.statCol}>
-                  <Text variant="stat">{rowStat(item, tab)}</Text>
-                  {item.rank != null ? (
-                    <Text variant="caption" color="fg3">
-                      #{item.rank}
-                    </Text>
-                  ) : null}
-                </View>
-              }
-            />
-          )}
-          ItemSeparatorComponent={() => <View style={{ height: spacing.sm }} />}
-          contentContainerStyle={styles.list}
-          ListEmptyComponent={
-            <Text variant="body" color="fg3" center style={{ marginTop: spacing['2xl'] }}>
-              Données méta indisponibles. Lance la synchro côté serveur.
-            </Text>
-          }
-        />
+        <View style={{ flex: 1 }}>
+          <FlashList
+            data={items}
+            keyExtractor={(it) => it.pokemonName}
+            renderItem={({ item }) => (
+              <PokemonRow
+                pokemon={item.pokemon!}
+                onPress={() => router.push(`/(tabs)/pokedex/${item.pokemon!.id}`)}
+                right={
+                  <View style={styles.statCol}>
+                    <Text variant="stat">{rowStat(item, tab)}</Text>
+                    {item.rank != null ? (
+                      <Text variant="caption" color="fg3">
+                        #{item.rank}
+                      </Text>
+                    ) : null}
+                  </View>
+                }
+              />
+            )}
+            ItemSeparatorComponent={() => <View style={{ height: spacing.sm }} />}
+            contentContainerStyle={styles.list}
+            ListEmptyComponent={
+              <Text variant="body" color="fg3" center style={{ marginTop: spacing['2xl'] }}>
+                Données méta indisponibles. Lance la synchro côté serveur.
+              </Text>
+            }
+          />
+        </View>
       )}
     </Screen>
   )

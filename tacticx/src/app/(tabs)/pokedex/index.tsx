@@ -69,25 +69,27 @@ export default function PokedexScreen() {
           ))}
         </View>
       ) : (
-        <FlashList
-          data={items}
-          keyExtractor={(it) => ('key' in it ? it.key : String(it.id))}
-          renderItem={({ item }) => (
-            <PokemonRow pokemon={item} onPress={() => router.push(`/(tabs)/pokedex/${item.id}`)} />
-          )}
-          contentContainerStyle={styles.list}
-          ItemSeparatorComponent={() => <View style={{ height: spacing.sm }} />}
-          onEndReached={() => hasNextPage && fetchNextPage()}
-          onEndReachedThreshold={0.5}
-          ListEmptyComponent={
-            <Text variant="body" color="fg3" center style={{ marginTop: spacing['2xl'] }}>
-              Aucun Pokémon trouvé.
-            </Text>
-          }
-          ListFooterComponent={
-            isFetchingNextPage ? <Shimmer height={72} radius={14} style={{ marginTop: spacing.sm }} /> : null
-          }
-        />
+        <View style={{ flex: 1 }}>
+          <FlashList
+            data={items}
+            keyExtractor={(it) => ('key' in it ? it.key : String(it.id))}
+            renderItem={({ item }) => (
+              <PokemonRow pokemon={item} onPress={() => router.push(`/(tabs)/pokedex/${item.id}`)} />
+            )}
+            contentContainerStyle={styles.list}
+            ItemSeparatorComponent={() => <View style={{ height: spacing.sm }} />}
+            onEndReached={() => hasNextPage && fetchNextPage()}
+            onEndReachedThreshold={0.5}
+            ListEmptyComponent={
+              <Text variant="body" color="fg3" center style={{ marginTop: spacing['2xl'] }}>
+                Aucun Pokémon trouvé.
+              </Text>
+            }
+            ListFooterComponent={
+              isFetchingNextPage ? <Shimmer height={72} radius={14} style={{ marginTop: spacing.sm }} /> : null
+            }
+          />
+        </View>
       )}
     </Screen>
   )
