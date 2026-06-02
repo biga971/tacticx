@@ -24,6 +24,7 @@ export const controllers = {
   Profile: () => import('#controllers/profile_controller'),
   Session: () => import('#controllers/session_controller'),
   Subscription: () => import('#controllers/subscription_controller'),
+  Sync: () => import('#controllers/sync_controller'),
   Team: () => import('#controllers/team_controller'),
   Webhook: () => import('#controllers/webhook_controller'),
 }

@@ -6,6 +6,16 @@
 
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
+import { jsonColumn } from '#utils/orm'
+import type {
+  MetaFormat,
+  MetaSource,
+  SyncJobType,
+  SyncStatus,
+  UsageEntry,
+  SpreadEntry,
+  BaseStats,
+} from '#services/meta/meta_types'
 
 export class UserSchema extends BaseModel {
   static $columns = ['createdAt', 'email', 'fullName', 'id', 'password', 'updatedAt'] as const
@@ -287,4 +297,112 @@ export class TeamLikeSchema extends BaseModel {
   declare teamId: number
   @column()
   declare userId: number
+}
+
+export class MetaCacheSchema extends BaseModel {
+  static $columns = [
+    'id', 'pokemonName', 'format', 'source', 'regulation', 'rank', 'usageRate',
+    'winRate', 'moves', 'items', 'abilities', 'teammates', 'spreads', 'rawData',
+    'fetchedAt', 'createdAt', 'updatedAt',
+  ] as const
+  $columns = MetaCacheSchema.$columns
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare pokemonName: string
+  @column()
+  declare format: MetaFormat
+  @column()
+  declare source: MetaSource
+  @column()
+  declare regulation: string
+  @column()
+  declare rank: number | null
+  @column()
+  declare usageRate: number | null
+  @column()
+  declare winRate: number | null
+  @jsonColumn<UsageEntry[]>([])
+  declare moves: UsageEntry[]
+  @jsonColumn<UsageEntry[]>([])
+  declare items: UsageEntry[]
+  @jsonColumn<UsageEntry[]>([])
+  declare abilities: UsageEntry[]
+  @jsonColumn<UsageEntry[]>([])
+  declare teammates: UsageEntry[]
+  @jsonColumn<SpreadEntry[]>([])
+  declare spreads: SpreadEntry[]
+  @column()
+  declare rawData: string | null
+  @column.dateTime()
+  declare fetchedAt: DateTime
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
+}
+
+export class PokemonRosterSchema extends BaseModel {
+  static $columns = [
+    'id', 'pokemonId', 'nameEn', 'nameFr', 'form', 'baseFormId', 'types',
+    'baseStats', 'isMega', 'isAvailable', 'spriteUrl', 'regulation', 'rawData',
+    'syncedAt', 'createdAt', 'updatedAt',
+  ] as const
+  $columns = PokemonRosterSchema.$columns
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare pokemonId: number
+  @column()
+  declare nameEn: string
+  @column()
+  declare nameFr: string | null
+  @column()
+  declare form: string | null
+  @column()
+  declare baseFormId: number | null
+  @jsonColumn<string[]>([])
+  declare types: string[]
+  @jsonColumn<Partial<BaseStats>>({})
+  declare baseStats: Partial<BaseStats>
+  @column()
+  declare isMega: boolean
+  @column()
+  declare isAvailable: boolean
+  @column()
+  declare spriteUrl: string | null
+  @column()
+  declare regulation: string
+  @jsonColumn<Record<string, unknown>>({})
+  declare rawData: Record<string, unknown>
+  @column.dateTime()
+  declare syncedAt: DateTime
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
+}
+
+export class SyncLogSchema extends BaseModel {
+  static $columns = [
+    'id', 'jobType', 'status', 'recordsUpserted', 'errorMessage', 'durationMs',
+    'triggeredBy', 'createdAt',
+  ] as const
+  $columns = SyncLogSchema.$columns
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare jobType: SyncJobType
+  @column()
+  declare status: SyncStatus
+  @column()
+  declare recordsUpserted: number
+  @column()
+  declare errorMessage: string | null
+  @column()
+  declare durationMs: number | null
+  @column()
+  declare triggeredBy: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
 }

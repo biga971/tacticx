@@ -51,4 +51,5 @@ export const middleware = router.named({
   auth: () => import('#middleware/auth_middleware'),
   registered: () => import('#middleware/registered_middleware'),
   premium: () => import('#middleware/check_premium_middleware'),
+  internalToken: () => import('#middleware/internal_token_middleware'),
 })

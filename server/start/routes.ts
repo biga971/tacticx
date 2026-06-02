@@ -131,3 +131,19 @@ router
     router.post('admin/sync-pokemon', [controllers.Admin, 'syncPokemon'])
   })
   .prefix('api/v1')
+
+/*
+|--------------------------------------------------------------------------
+| Internal sync routes (triggered by n8n webhooks)
+|--------------------------------------------------------------------------
+| Protected by InternalTokenMiddleware (ADMIN_SYNC_TOKEN). Each route returns
+| 202 immediately and runs the sync job in the background.
+*/
+router
+  .group(() => {
+    router.post('meta/pikalytics', [controllers.Sync, 'pikalytics'])
+    router.post('meta/smogon', [controllers.Sync, 'smogon'])
+    router.post('roster', [controllers.Sync, 'roster'])
+  })
+  .prefix('internal/sync')
+  .use(middleware.internalToken())
