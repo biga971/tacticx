@@ -31,24 +31,39 @@ interface NormalizedEntry {
   apiSlug: string
 }
 
+/** Region adjective prefix ("Alolan Raichu") → PokeAPI suffix ("raichu-alola"). */
+const REGION_PREFIX: Record<string, string> = {
+  alolan: 'alola',
+  galarian: 'galar',
+  hisuian: 'hisui',
+  paldean: 'paldea',
+}
+
 function normalizeEntry(raw: RawRosterEntry): NormalizedEntry {
   const isMega = /mega/i.test(raw.form)
   const xy = raw.name.match(/\b([XY])\s*$/i)
+  const firstWord = raw.name.split(/\s+/)[0]?.toLowerCase() ?? ''
+  const region = REGION_PREFIX[firstWord]
 
   let form: string | null
-  if (/^base$/i.test(raw.form)) form = null
-  else if (isMega) form = 'mega' + (xy ? `-${xy[1].toLowerCase()}` : '')
-  else form = normalizePokemonName(raw.form)
-
-  // Build the PokeAPI slug. Base → dex id; Mega → "<base>-mega[-x|-y]".
   let apiSlug: string
-  if (isMega) {
+
+  if (/^base$/i.test(raw.form)) {
+    form = null
+    apiSlug = String(raw.dexNumber)
+  } else if (isMega) {
+    // Mega → "<base>-mega[-x|-y]".
+    form = 'mega' + (xy ? `-${xy[1].toLowerCase()}` : '')
     const base = raw.name.replace(/^mega\s+/i, '').replace(/\s+[XY]$/i, '')
     apiSlug = `${normalizePokemonName(base)}-mega${xy ? `-${xy[1].toLowerCase()}` : ''}`
-  } else if (form) {
-    apiSlug = normalizePokemonName(raw.name)
+  } else if (region) {
+    // Regional → "<base>-<region>" (PokeAPI puts the region last).
+    form = region
+    const base = raw.name.split(/\s+/).slice(1).join('-')
+    apiSlug = `${normalizePokemonName(base)}-${region}`
   } else {
-    apiSlug = String(raw.dexNumber)
+    form = normalizePokemonName(raw.form)
+    apiSlug = normalizePokemonName(raw.name)
   }
 
   return {
