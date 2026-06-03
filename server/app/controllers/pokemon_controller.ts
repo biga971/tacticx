@@ -65,6 +65,19 @@ export default class PokemonController {
       ? await MoveData.query().whereIn('id', pokemon.moves).orderBy('name_en', 'asc')
       : []
 
+    // Roster rows have a UUID primary key; reshape to the ApiPokemon contract
+    // (id = national dex number, uuid = row id) — same as the roster list.
+    if (pokemon instanceof PokemonRoster) {
+      const r = pokemon.serialize()
+      return response.ok({
+        ...r,
+        id: pokemon.pokemonId,
+        uuid: pokemon.id,
+        key: `${pokemon.pokemonId}-${pokemon.form ?? 'base'}`,
+        moveDetails: [],
+      })
+    }
+
     return response.ok({
       ...pokemon.serialize(),
       moveDetails: moves.map((m) => m.serialize()),

@@ -143,7 +143,7 @@ export default function PokemonDetailScreen() {
           </Accordion>
         </View>
 
-        {p.abilities.length > 0 && (
+        {p.abilities && p.abilities.length > 0 && (
           <View style={styles.section}>
             <Text variant="eyebrow" color="fg3">
               Talents
