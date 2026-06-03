@@ -46,24 +46,22 @@ export default class PokemonController {
    */
   async show({ params, response }: HttpContext) {
     const idParam = params.id
-    let pokemon
+    let pokemon: PokemonData | PokemonRoster | null = null
 
     // Check if param is UUID (36 chars with dashes) → look in roster
     if (typeof idParam === 'string' && idParam.length === 36 && idParam.includes('-')) {
-      const rosterEntry = await PokemonRoster.find(idParam)
-      if (!rosterEntry) {
-        return response.notFound({ message: 'Pokemon not found' })
-      }
-      pokemon = rosterEntry
+      pokemon = await PokemonRoster.find(idParam)
     } else {
       // Numeric ID → look in pokemon_data
       pokemon = await PokemonData.find(Number(idParam))
-      if (!pokemon) {
-        return response.notFound({ message: 'Pokemon not found' })
-      }
     }
 
-    const moves = pokemon.moves?.length
+    if (!pokemon) {
+      return response.notFound({ message: 'Pokemon not found' })
+    }
+
+    // Moves only exist on PokemonData, not PokemonRoster
+    const moves = pokemon instanceof PokemonData && pokemon.moves?.length
       ? await MoveData.query().whereIn('id', pokemon.moves).orderBy('name_en', 'asc')
       : []
 

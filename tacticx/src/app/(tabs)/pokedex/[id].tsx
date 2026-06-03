@@ -36,6 +36,14 @@ type StatVals = {
 
 const MAX_BASE = 255
 
+/** Bar color by base-stat value (wireframe note #5). */
+function statColor(v: number): string {
+  if (v >= 120) return colors.success
+  if (v >= 100) return colors.accent
+  if (v >= 70) return colors.warning
+  return colors.danger
+}
+
 export default function PokemonDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
@@ -77,6 +85,7 @@ export default function PokemonDetailScreen() {
   }
 
   const typeColor = typeColors[p.type1.toLowerCase() as PokemonType]?.fg ?? colors.accent
+  const bst = STAT_ROWS.reduce((sum, row) => sum + (p[row.key] as number), 0)
 
   return (
     <Screen edges={['top']}>
@@ -100,9 +109,14 @@ export default function PokemonDetailScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text variant="eyebrow" color="fg3">
-            Statistiques de base
-          </Text>
+          <View style={styles.statHead}>
+            <Text variant="eyebrow" color="fg3">
+              Statistiques de base
+            </Text>
+            <Text variant="caption" color="fg3" mono>
+              BST {bst}
+            </Text>
+          </View>
           {STAT_ROWS.map((row) => {
             const val = p[row.key] as number
             return (
@@ -112,7 +126,7 @@ export default function PokemonDetailScreen() {
                 </Text>
                 <RollingCounter value={val} variant="caption" weight="semibold" style={styles.statVal} />
                 <View style={{ flex: 1 }}>
-                  <Progress value={val / MAX_BASE} color={typeColor} height={8} />
+                  <Progress value={val / MAX_BASE} color={statColor(val)} height={8} />
                 </View>
               </View>
             )
@@ -217,6 +231,7 @@ const styles = StyleSheet.create({
   hero: { alignItems: 'center', gap: spacing.xs },
   types: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.sm },
   section: { gap: spacing.sm },
+  statHead: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
   statRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   statLabel: { width: 56 },
   statVal: { width: 36, textAlign: 'right' },
