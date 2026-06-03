@@ -174,6 +174,11 @@ export interface ApiMetaResponse {
   data: ApiMetaEntry[]
 }
 
+export interface ApiMetaDetailResponse {
+  source: string
+  data: ApiMetaEntry
+}
+
 export interface CommunityFilters {
   format?: string
   style?: string

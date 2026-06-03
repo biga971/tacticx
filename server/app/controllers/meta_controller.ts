@@ -87,4 +87,58 @@ export default class MetaController {
 
     return response.ok({ source, sort, data })
   }
+
+  /**
+   * GET /meta/:name — single meta_cache entry by pokemonName (Showdown slug).
+   * Query: ?format=vgc|3v3, ?source. Resolves source by priority when absent.
+   */
+  async show({ params, request, response }: HttpContext) {
+    const name = String(params.name)
+    const format = (request.input('format', 'vgc') as MetaFormat) === '3v3' ? '3v3' : 'vgc'
+    let source = request.input('source') as MetaSource | undefined
+
+    // Resolve a source that has this pokemon when none requested.
+    if (!source) {
+      for (const candidate of SOURCE_PRIORITY) {
+        const exists = await MetaCache.query()
+          .where('format', format)
+          .where('source', candidate)
+          .where('pokemon_name', name)
+          .first()
+        if (exists) {
+          source = candidate
+          break
+        }
+      }
+    }
+    if (!source) return response.notFound({ message: 'Meta entry not found' })
+
+    const row = await MetaCache.query()
+      .where('format', format)
+      .where('source', source)
+      .where('pokemon_name', name)
+      .first()
+    if (!row) return response.notFound({ message: 'Meta entry not found' })
+
+    const match = await PokemonRoster.query()
+      .where('regulation', 'M-A')
+      .where('slug', name)
+      .first()
+
+    return response.ok({
+      source,
+      data: {
+        pokemonName: row.pokemonName,
+        rank: row.rank,
+        usageRate: row.usageRate,
+        winRate: row.winRate,
+        moves: row.moves,
+        items: row.items,
+        abilities: row.abilities,
+        teammates: row.teammates,
+        spreads: row.spreads,
+        pokemon: match ? toApiPokemon(match) : null,
+      },
+    })
+  }
 }

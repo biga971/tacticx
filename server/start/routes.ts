@@ -99,6 +99,7 @@ router
         router.get('items', [controllers.Item, 'index'])
 
         router.get('meta', [controllers.Meta, 'index'])
+        router.get('meta/:name', [controllers.Meta, 'show'])
         router.get('roster', [controllers.Roster, 'index'])
 
         router.get('teams', [controllers.Team, 'index'])

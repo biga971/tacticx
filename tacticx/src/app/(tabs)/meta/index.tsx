@@ -7,7 +7,7 @@ import { SegmentedControl } from '@/components/ui/segmented-control'
 import { Tabs } from '@/components/ui/tabs'
 import { Shimmer } from '@/components/ui/shimmer'
 import { Text } from '@/components/ui/text'
-import { PremiumLock } from '@/components/shared/PremiumLock'
+// import { PremiumLock } from '@/components/shared/PremiumLock' // Unused — premium card removed
 import { PokemonRow } from '@/components/shared/PokemonRow'
 import { useMeta } from '@/lib/api/hooks/useMeta'
 import { useFormatStore, type Format } from '@/lib/store/formatStore'
@@ -49,19 +49,6 @@ export default function MetaScreen() {
         }
       />
 
-      <PremiumLock featureName="l'historique méta" featureIcon="analytics-outline">
-        <View style={styles.sparkCard}>
-          <Text variant="eyebrow" color="fg3">
-            Tendance 30 jours
-          </Text>
-          <View style={styles.sparkline}>
-            {[12, 18, 9, 22, 16, 28, 20, 32, 25, 38].map((h, i) => (
-              <View key={i} style={[styles.bar, { height: h }]} />
-            ))}
-          </View>
-        </View>
-      </PremiumLock>
-
       <View style={{ marginVertical: spacing.md }}>
         <Tabs<MetaTab>
           value={tab}
@@ -69,7 +56,7 @@ export default function MetaScreen() {
           items={[
             { label: 'Usage', value: 'usage' },
             { label: 'Winrate', value: 'winrate' },
-            { label: 'Cores', value: 'cores' },
+            // { label: 'Cores', value: 'cores' }, // TODO: Disabled — WIP
           ]}
         />
       </View>
@@ -88,7 +75,7 @@ export default function MetaScreen() {
             renderItem={({ item }) => (
               <PokemonRow
                 pokemon={item.pokemon!}
-                onPress={() => router.push(`/(tabs)/pokedex/${item.pokemon!.id}`)}
+                onPress={() => router.push(`/(tabs)/meta/${encodeURIComponent(item.pokemonName)}`)}
                 right={
                   <View style={styles.statCol}>
                     <Text variant="stat">{rowStat(item, tab)}</Text>
