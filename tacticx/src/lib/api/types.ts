@@ -140,6 +140,7 @@ export interface PokemonFilters {
 /** Champions roster entry (shaped like ApiPokemon + form metadata). */
 export interface ApiRosterPokemon extends ApiPokemon {
   key: string
+  uuid: string
   form: string | null
 }
 

@@ -73,9 +73,15 @@ export default function PokedexScreen() {
           <FlashList
             data={items}
             keyExtractor={(it) => ('key' in it ? it.key : String(it.id))}
-            renderItem={({ item }) => (
-              <PokemonRow pokemon={item} onPress={() => router.push(`/(tabs)/pokedex/${item.id}`)} />
-            )}
+            renderItem={({ item }) => {
+              const detailId = 'uuid' in item ? item.uuid : item.id
+              return (
+                <PokemonRow
+                  pokemon={item}
+                  onPress={() => router.push(`/(tabs)/pokedex/${detailId}`)}
+                />
+              )
+            }}
             contentContainerStyle={styles.list}
             ItemSeparatorComponent={() => <View style={{ height: spacing.sm }} />}
             onEndReached={() => hasNextPage && fetchNextPage()}

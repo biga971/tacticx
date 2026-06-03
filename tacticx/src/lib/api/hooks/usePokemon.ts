@@ -10,7 +10,7 @@ import type {
 export const pokemonKeys = {
   all: ['pokemon'] as const,
   list: (f: PokemonFilters) => ['pokemon', 'list', f] as const,
-  detail: (id: number) => ['pokemon', 'detail', id] as const,
+  detail: (id: number | string) => ['pokemon', 'detail', id] as const,
 }
 
 /** Single-page list. Use usePokemonInfinite for the Pokédex FlashList. */
@@ -51,10 +51,10 @@ export function usePokemonInfinite(filters: Omit<PokemonFilters, 'page'> = {}, e
   })
 }
 
-export function usePokemon(id: number | null) {
+export function usePokemon(id: number | string | null) {
   return useQuery({
     queryKey: pokemonKeys.detail(id ?? -1),
     queryFn: () => apiFetch<ApiPokemonDetail>(`/pokemon/${id}`),
-    enabled: id != null && id > 0,
+    enabled: id != null && (typeof id === 'string' || id > 0),
   })
 }

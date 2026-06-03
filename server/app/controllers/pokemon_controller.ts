@@ -1,5 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import PokemonData from '#models/pokemon_data'
+import PokemonRoster from '#models/pokemon_roster'
 import MoveData from '#models/move_data'
 
 export default class PokemonController {
@@ -41,11 +42,25 @@ export default class PokemonController {
 
   /**
    * GET /pokemon/:id — detail with resolved move objects.
+   * :id can be either a pokedex ID (number) or a roster UUID.
    */
   async show({ params, response }: HttpContext) {
-    const pokemon = await PokemonData.find(params.id)
-    if (!pokemon) {
-      return response.notFound({ message: 'Pokemon not found' })
+    const idParam = params.id
+    let pokemon
+
+    // Check if param is UUID (36 chars with dashes) → look in roster
+    if (typeof idParam === 'string' && idParam.length === 36 && idParam.includes('-')) {
+      const rosterEntry = await PokemonRoster.find(idParam)
+      if (!rosterEntry) {
+        return response.notFound({ message: 'Pokemon not found' })
+      }
+      pokemon = rosterEntry
+    } else {
+      // Numeric ID → look in pokemon_data
+      pokemon = await PokemonData.find(Number(idParam))
+      if (!pokemon) {
+        return response.notFound({ message: 'Pokemon not found' })
+      }
     }
 
     const moves = pokemon.moves?.length

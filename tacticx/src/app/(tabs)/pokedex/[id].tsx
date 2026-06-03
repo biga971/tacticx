@@ -40,7 +40,9 @@ export default function PokemonDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
   const insets = useSafeAreaInsets()
-  const { data: p, isLoading } = usePokemon(Number(id))
+  // Pass as number if numeric, otherwise as UUID string
+  const pokemonId = id && /^\d+$/.test(id) ? Number(id) : id
+  const { data: p, isLoading } = usePokemon(pokemonId)
 
   const matchups = useMemo(() => {
     if (!p) return { weak: [], resist: [], immune: [] as Matchup[] }

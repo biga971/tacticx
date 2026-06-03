@@ -36,6 +36,7 @@ export default class RosterController {
         // Composite key so base + mega forms of the same dex id stay distinct.
         key: `${r.pokemonId}-${r.form ?? 'base'}`,
         id: r.pokemonId,
+        uuid: r.id,
         nameFr: r.nameFr ?? r.nameEn,
         nameEn: r.nameEn,
         type1: r.type1,
