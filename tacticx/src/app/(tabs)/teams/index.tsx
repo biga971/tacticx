@@ -17,6 +17,7 @@ import { useTeams, useDeleteTeam } from '@/lib/api/hooks/useTeams'
 import { useCommunityFeed } from '@/lib/api/hooks/useCommunity'
 import type { ApiTeam } from '@/lib/api/types'
 import { colors, radii, spacing } from '@/lib/theme'
+import { TAB_BAR_HEIGHT } from '@/components/ui/morphing-tabbar'
 
 type View2 = 'mine' | 'community'
 
@@ -41,7 +42,7 @@ export default function TeamsScreen() {
       </View>
 
       {view === 'mine' && (
-        <View style={[styles.fab, { bottom: insets.bottom + spacing.base }]}>
+        <View style={[styles.fab, { bottom: 0 }]}>
           <Button label="Nouvelle équipe" icon="add" fullWidth onPress={() => router.push('/(tabs)/teams/builder')} />
         </View>
       )}
@@ -51,6 +52,7 @@ export default function TeamsScreen() {
 
 function MyTeams() {
   const router = useRouter()
+  const insets = useSafeAreaInsets()
   const toast = useToast()
   const { data, isLoading } = useTeams()
   const deleteTeam = useDeleteTeam()
@@ -91,7 +93,7 @@ function MyTeams() {
           />
         )}
         ItemSeparatorComponent={() => <View style={{ height: spacing.sm }} />}
-        contentContainerStyle={{ paddingBottom: 96 }}
+        contentContainerStyle={{ paddingBottom: insets.bottom + TAB_BAR_HEIGHT + 64 }}
       />
       <ConfirmDialog
         visible={confirm !== null}

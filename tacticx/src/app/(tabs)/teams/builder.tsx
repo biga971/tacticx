@@ -208,7 +208,7 @@ export default function BuilderScreen() {
         </View>
       </ScrollView>
 
-      <View style={[styles.footer, { bottom: insets.bottom + spacing.base }]}>
+      <View style={[styles.footer, { bottom: 0 }]}>
         <Button
           label="Sauvegarder"
           icon="save-outline"

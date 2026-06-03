@@ -161,7 +161,7 @@ export default function PokemonDetailScreen() {
         )}
       </ScrollView>
 
-      <View style={[styles.fab, { bottom: insets.bottom + spacing.base }]}>
+      <View style={[styles.fab, { bottom: 0 }]}>
         <Button
           label="Ajouter à une équipe"
           icon="add"

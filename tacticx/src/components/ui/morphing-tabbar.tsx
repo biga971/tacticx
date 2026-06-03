@@ -15,6 +15,12 @@ import { colors, radii, spacing, shadows } from '@/lib/theme'
 /** icon name per route, set via options.tabBarIcon-less mapping. */
 export type TabIconMap = Record<string, keyof typeof Ionicons.glyphMap>
 
+/**
+ * Height of the tab bar above the safe-area inset (paddingTop + bar + text).
+ * Use as `bottom: insets.bottom + TAB_BAR_HEIGHT + spacing.sm` for floating elements.
+ */
+export const TAB_BAR_HEIGHT = 68
+
 const SPRING = { damping: 16, stiffness: 180, mass: 0.6 }
 
 /**
