@@ -56,7 +56,9 @@ export function MorphingTabbar({
           const { options } = descriptors[route.key]
           const label = (options.title ?? route.name) as string
           const focused = state.index === i
-          const icon = icons[route.name] ?? 'ellipse-outline'
+          // Leaf routes without a nested _layout are named "<folder>/index";
+          // match the icon map on the base folder segment.
+          const icon = icons[route.name.split('/')[0]] ?? 'ellipse-outline'
 
           const onPress = () => {
             const event = navigation.emit({

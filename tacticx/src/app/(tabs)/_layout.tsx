@@ -2,17 +2,17 @@ import { Tabs } from 'expo-router'
 import { MorphingTabbar, type TabIconMap } from '@/components/ui/morphing-tabbar'
 
 const ICONS: TabIconMap = {
-  meta: 'stats-chart-outline',
+  meta: 'trending-up-outline',
   pokedex: 'search-outline',
   teams: 'people-outline',
   calc: 'calculator-outline',
-  profile: 'person-outline',
+  profile: 'person-circle-outline',
 }
 
 export default function TabsLayout() {
   return (
     <Tabs
-      screenOptions={{ headerShown: false }}
+      screenOptions={{ headerShown: false, unmountInactiveScreens: false }}
       tabBar={(props) => <MorphingTabbar {...props} icons={ICONS} />}
     >
       <Tabs.Screen name="meta" options={{ title: 'Meta' }} />
