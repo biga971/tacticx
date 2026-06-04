@@ -9,7 +9,7 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon",
-      "bundleIdentifier": "com.biga.tacticx",
+      "bundleIdentifier": "com.netzil.tacticx",
       "usesAppleSignIn": true
     },
     "android": {
