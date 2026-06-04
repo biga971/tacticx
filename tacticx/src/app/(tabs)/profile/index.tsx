@@ -1,6 +1,8 @@
 import { useState } from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native'
+import { useRouter } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
+import { BlurView } from 'expo-blur'
 import { Screen, ScreenHeader } from '@/components/ui/screen'
 import { Text } from '@/components/ui/text'
 import { Button } from '@/components/ui/button'
@@ -8,11 +10,15 @@ import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { SegmentedControl } from '@/components/ui/segmented-control'
 import { RollingCounter } from '@/components/ui/rolling-counter'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { PaywallSheet } from '@/components/paywall/PaywallSheet'
 import { useFormatStore, type Format } from '@/lib/store/formatStore'
 import { useProfileStore } from '@/lib/store/profileStore'
+import { useAuthStore } from '@/lib/store/authStore'
+import { ensureGuestSession } from '@/lib/store/ensureSession'
 import { restorePurchases } from '@/lib/revenuecat'
 import { useToast } from '@/components/ui/toast'
+import { queryClient } from '@/lib/api/queryClient'
 import { colors, radii, spacing } from '@/lib/theme'
 
 const LABELS: Record<string, string> = {
@@ -31,10 +37,173 @@ const LABELS: Record<string, string> = {
 }
 
 export default function ProfileScreen() {
+  // A guest has no real account yet (anonymous token or none at all).
+  const isGuest = useAuthStore((s) => s.isGuest)
+  const token = useAuthStore((s) => s.token)
+  const guest = isGuest || !token
+
+  return (
+    <Screen padded>
+      <ScreenHeader title="Profil" />
+      {guest ? <GuestProfile /> : <AccountProfile />}
+    </Screen>
+  )
+}
+
+/* ───────────────────────── Guest (State A) ───────────────────────── */
+
+const BENEFITS = [
+  { icon: 'cloud-upload-outline' as const, label: 'Publier tes équipes', desc: 'Partage tes compos dans la communauté' },
+  { icon: 'heart-outline' as const, label: 'Liker et commenter', desc: 'Interagis avec les équipes des autres joueurs' },
+  { icon: 'cloud-outline' as const, label: 'Synchroniser tes données', desc: 'Équipes et objectifs sur tous tes appareils' },
+  { icon: 'trending-up-outline' as const, label: 'Suivre ton rang', desc: 'Stats de saison et évolution dans le temps' },
+]
+
+function GuestProfile() {
+  const router = useRouter()
+  const { format } = useFormatStore()
+
+  return (
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: spacing['3xl'] }}>
+      <View style={styles.hero}>
+        <View style={styles.heroWash} />
+        <View style={styles.guestAv}>
+          <Ionicons name="person-outline" size={28} color={colors.fg3} />
+        </View>
+        <Text variant="eyebrow" color="accent" center>
+          Compte
+        </Text>
+        <Text variant="h2" center style={{ marginTop: spacing.xs }}>
+          Rejoins la communauté
+        </Text>
+        <Text variant="body" color="fg2" center style={styles.heroSub}>
+          Publie tes équipes, compare-les et échange avec les autres joueurs. C'est gratuit.
+        </Text>
+        <Button label="Créer un compte" fullWidth size="lg" onPress={() => router.push('/(auth)/sign-up')} />
+        <Pressable onPress={() => router.push('/(auth)/sign-in')} style={styles.heroSwap}>
+          <Text variant="caption" color="fg2" center>
+            Tu as déjà un compte ?{' '}
+            <Text variant="caption" color="accent" weight="semibold">
+              Se connecter
+            </Text>
+          </Text>
+        </Pressable>
+      </View>
+
+      <Text variant="eyebrow" color="fg3" style={styles.sectionLabel}>
+        Avec un compte
+      </Text>
+      <View style={styles.card}>
+        {BENEFITS.map((b, i) => (
+          <View key={b.label} style={[styles.benRow, i < BENEFITS.length - 1 && styles.benBorder]}>
+            <View style={styles.benIco}>
+              <Ionicons name={b.icon} size={16} color={colors.accent} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text variant="bodyMd" weight="medium">
+                {b.label}
+              </Text>
+              <Text variant="caption" color="fg3">
+                {b.desc}
+              </Text>
+            </View>
+          </View>
+        ))}
+      </View>
+
+      <Text variant="eyebrow" color="fg3" style={styles.sectionLabel}>
+        Ton profil
+      </Text>
+      <View style={styles.lockedCard}>
+        <View style={styles.lockedHead}>
+          <Text variant="title">Gold III</Text>
+        </View>
+        <Progress value={0.62} height={8} />
+        <View style={styles.lockedStats}>
+          <LockedStat v="142" l="Victoires" />
+          <LockedStat v="87" l="Défaites" />
+          <LockedStat v="62 %" l="Winrate" />
+        </View>
+        <BlurView intensity={24} tint="dark" style={styles.lockVeil}>
+          <Ionicons name="lock-closed" size={18} color={colors.fg2} />
+          <Text variant="caption" color="fg1" weight="semibold">
+            Connecte-toi pour voir tes stats
+          </Text>
+          <Text variant="caption" color="fg3">
+            Rang · winrate · Pokémon joués
+          </Text>
+        </BlurView>
+      </View>
+
+      <Text variant="eyebrow" color="fg3" style={styles.sectionLabel}>
+        Réglages
+      </Text>
+      <View style={styles.card}>
+        <SettingRow icon="git-branch-outline" label="Format par défaut" value={LABELS[format] ?? format} />
+        <SettingRow icon="language-outline" label="Langue" value="Français" />
+        <SettingRow icon="moon-outline" label="Apparence" value="Sombre" last />
+      </View>
+
+      <View style={styles.card}>
+        <SettingRow icon="help-buoy-outline" label="Aide & support" />
+        <SettingRow icon="shield-outline" label="Confidentialité" />
+        <SettingRow icon="document-text-outline" label="Conditions d'utilisation" last />
+      </View>
+
+      <Legal />
+    </ScrollView>
+  )
+}
+
+function LockedStat({ v, l }: { v: string; l: string }) {
+  return (
+    <View style={styles.lockedStat}>
+      <Text variant="title">{v}</Text>
+      <Text variant="caption" color="fg3">
+        {l}
+      </Text>
+    </View>
+  )
+}
+
+function SettingRow({
+  icon,
+  label,
+  value,
+  last,
+}: {
+  icon: keyof typeof Ionicons.glyphMap
+  label: string
+  value?: string
+  last?: boolean
+}) {
+  return (
+    <View style={[styles.prow, !last && styles.benBorder]}>
+      <View style={styles.prowIco}>
+        <Ionicons name={icon} size={15} color={colors.fg2} />
+      </View>
+      <Text variant="body" color="fg2" style={{ flex: 1 }}>
+        {label}
+      </Text>
+      {value ? (
+        <Text variant="caption" color="fg3" weight="medium">
+          {value}
+        </Text>
+      ) : null}
+      <Ionicons name="chevron-forward" size={16} color={colors.fgFaint} />
+    </View>
+  )
+}
+
+/* ──────────────────────── Account (logged in) ──────────────────────── */
+
+function AccountProfile() {
   const { format, setFormat } = useFormatStore()
   const profile = useProfileStore()
+  const clearAuth = useAuthStore((s) => s.clearAuth)
   const toast = useToast()
   const [paywall, setPaywall] = useState(false)
+  const [confirmLogout, setConfirmLogout] = useState(false)
 
   const rows = [
     { icon: 'ribbon-outline' as const, label: 'Niveau', value: profile.level },
@@ -53,9 +222,17 @@ export default function ProfileScreen() {
     }
   }
 
+  const logout = async () => {
+    setConfirmLogout(false)
+    clearAuth()
+    queryClient.clear()
+    // Re-mint an anonymous guest so the app keeps working offline of an account.
+    await ensureGuestSession().catch(() => {})
+    toast.show('Déconnecté', 'info')
+  }
+
   return (
-    <Screen padded>
-      <ScreenHeader title="Profil" />
+    <>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: spacing.lg, paddingBottom: spacing['3xl'] }}>
         <View style={styles.identity}>
           <View style={styles.avatar}>
@@ -105,17 +282,6 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        <View style={styles.sparkCard}>
-          <Text variant="eyebrow" color="fg3">
-            Progression
-          </Text>
-          <View style={styles.sparkline}>
-            {[10, 14, 12, 20, 18, 26, 22].map((h, i) => (
-              <View key={i} style={[styles.bar, { height: h }]} />
-            ))}
-          </View>
-        </View>
-
         <View style={{ gap: spacing.sm }}>
           <Text variant="eyebrow" color="fg3">
             Préférences
@@ -148,18 +314,21 @@ export default function ProfileScreen() {
           <Button label="Restaurer les achats" variant="ghost" fullWidth onPress={restore} />
         </View>
 
-        <View style={styles.legal}>
-          <Text variant="caption" color="fgFaint" center>
-            Pokémon © Nintendo/Creatures Inc./GAME FREAK inc.
-          </Text>
-          <Text variant="caption" color="fgFaint" center>
-            Tacticx n'est pas affilié à Nintendo ou The Pokémon Company.
-          </Text>
-        </View>
+        <Button label="Se déconnecter" variant="ghost" icon="log-out-outline" fullWidth onPress={() => setConfirmLogout(true)} />
+
+        <Legal />
       </ScrollView>
 
       <PaywallSheet visible={paywall} onClose={() => setPaywall(false)} />
-    </Screen>
+      <ConfirmDialog
+        visible={confirmLogout}
+        title="Se déconnecter ?"
+        message="Tu repasseras en mode invité. Tes données restent liées à ton compte."
+        confirmLabel="Se déconnecter"
+        onConfirm={logout}
+        onCancel={() => setConfirmLogout(false)}
+      />
+    </>
   )
 }
 
@@ -174,7 +343,107 @@ function Stat({ label, value, suffix, tone }: { label: string; value: number; su
   )
 }
 
+function Legal() {
+  return (
+    <View style={styles.legal}>
+      <Text variant="caption" color="fgFaint" center>
+        Pokémon © Nintendo/Creatures Inc./GAME FREAK inc.
+      </Text>
+      <Text variant="caption" color="fgFaint" center>
+        Tacticx n'est pas affilié à Nintendo ou The Pokémon Company.
+      </Text>
+    </View>
+  )
+}
+
 const styles = StyleSheet.create({
+  /* guest */
+  hero: {
+    overflow: 'hidden',
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radii.xl,
+    padding: spacing.lg,
+    alignItems: 'center',
+    marginBottom: spacing.base,
+  },
+  heroWash: {
+    position: 'absolute',
+    top: -120,
+    width: 320,
+    height: 320,
+    borderRadius: 160,
+    backgroundColor: colors.accentSoft,
+    opacity: 0.5,
+  },
+  guestAv: {
+    width: 64,
+    height: 64,
+    borderRadius: radii.pill,
+    backgroundColor: colors.surfaceHigh,
+    borderWidth: 1,
+    borderColor: colors.borderStrong,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.base,
+  },
+  heroSub: { maxWidth: 280, marginVertical: spacing.md },
+  heroSwap: { paddingTop: spacing.md },
+  sectionLabel: { marginTop: spacing.lg, marginBottom: spacing.sm },
+  card: {
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radii.lg,
+    paddingHorizontal: spacing.base,
+  },
+  benRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.md },
+  benBorder: { borderBottomWidth: 1, borderBottomColor: colors.divider },
+  benIco: {
+    width: 32,
+    height: 32,
+    borderRadius: radii.md,
+    backgroundColor: colors.accentSoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  lockedCard: {
+    overflow: 'hidden',
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radii.lg,
+    padding: spacing.base,
+    gap: spacing.md,
+  },
+  lockedHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  lockedStats: { flexDirection: 'row', gap: spacing.sm },
+  lockedStat: {
+    flex: 1,
+    alignItems: 'center',
+    gap: 2,
+    paddingVertical: spacing.sm,
+    backgroundColor: colors.surfaceSunken,
+    borderRadius: radii.md,
+  },
+  lockVeil: {
+    position: 'absolute',
+    inset: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xs,
+  },
+  prow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.md },
+  prowIco: {
+    width: 28,
+    height: 28,
+    borderRadius: radii.sm,
+    backgroundColor: colors.surfaceHigh,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  /* account */
   identity: { flexDirection: 'row', alignItems: 'center', gap: spacing.base },
   avatar: {
     width: 60,
@@ -202,16 +471,6 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   rankHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  sparkCard: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radii.lg,
-    padding: spacing.base,
-    gap: spacing.sm,
-  },
-  sparkline: { flexDirection: 'row', alignItems: 'flex-end', gap: 6, height: 32 },
-  bar: { flex: 1, backgroundColor: colors.accent, borderRadius: 2 },
   prefRow: {
     flexDirection: 'row',
     alignItems: 'center',

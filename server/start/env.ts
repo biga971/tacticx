@@ -29,6 +29,10 @@ export default await Env.create(new URL('../', import.meta.url), {
   // Auth
   JWT_EXPIRY: Env.schema.string.optional(),
 
+  // Native SSO (id-token verification audiences)
+  APPLE_CLIENT_ID: Env.schema.string.optional(), // iOS bundle id, e.g. com.tacticx.app
+  GOOGLE_CLIENT_IDS: Env.schema.string.optional(), // comma-separated accepted Google client ids
+
   // Database
   DB_HOST: Env.schema.string({ format: 'host' }),
   DB_PORT: Env.schema.number(),

@@ -1,6 +1,8 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { registerValidator, loginValidator } from '#validators/auth'
 import AuthService from '#services/auth/auth_service'
+import NativeSsoService from '#services/auth/native_sso_service'
+import { AuthProviders } from '#enums/auth-providers.enum'
 
 export default class AuthController {
   async register({ request, response }: HttpContext) {
@@ -45,5 +47,35 @@ export default class AuthController {
     const payload = await request.validateUsing(registerValidator)
     const upgraded = await AuthService.upgradeGuest(user, payload)
     return response.ok(upgraded.serialize())
+  }
+
+  /** Native Apple Sign-In. Body: { token: identityToken, fullName? }. Public. */
+  async apple({ request, response }: HttpContext) {
+    return this.social(AuthProviders.apple, request, response)
+  }
+
+  /** Native Google Sign-In. Body: { token: idToken }. Public. */
+  async google({ request, response }: HttpContext) {
+    return this.social(AuthProviders.google, request, response)
+  }
+
+  private async social(
+    provider: AuthProviders.apple | AuthProviders.google,
+    request: HttpContext['request'],
+    response: HttpContext['response']
+  ) {
+    const token = request.input('token')
+    const fullName = request.input('fullName')
+    if (typeof token !== 'string' || !token) {
+      return response.badRequest({ message: 'Missing token' })
+    }
+    const result = await NativeSsoService.signIn(provider, token, fullName)
+    if (typeof result === 'string') {
+      return response.unauthorized({ message: result })
+    }
+    return response.ok({
+      token: { type: 'bearer', token: result.token },
+      ...result.user.serialize(),
+    })
   }
 }

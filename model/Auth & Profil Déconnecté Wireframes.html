@@ -1,0 +1,825 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>Tacticx — Auth & Profil déconnecté · Wireframes annotés</title>
+<link rel="stylesheet" href="tokens.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Patrick+Hand&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@0.461.0/dist/umd/lucide.min.js"></script>
+<style>
+  :root {
+    --paper:  #ECE6D6;
+    --ink:    #1A1A1A;
+    --ink-2:  #4A4A40;
+    --ink-3:  #87826F;
+    --hand:   "Caveat", "Patrick Hand", cursive;
+    --hand-2: "Patrick Hand", "Caveat", cursive;
+  }
+  html, body { margin: 0; }
+  body {
+    background: var(--paper);
+    background-image: radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+    background-size: 22px 22px;
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  * { box-sizing: border-box; }
+  .sheet { max-width: 1280px; margin: 0 auto; padding: 56px 48px 96px; }
+
+  /* ───── Document header ───── */
+  .doc-head {
+    display: grid; grid-template-columns: 1fr auto;
+    align-items: end; gap: 32px;
+    border-bottom: 1.5px dashed var(--ink-2);
+    padding-bottom: 24px; margin-bottom: 40px;
+  }
+  .doc-eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px; }
+  .doc-title { font-family: var(--hand); font-size: 64px; font-weight: 700; line-height: 0.95; letter-spacing: -1px; color: var(--ink); margin: 0; }
+  .doc-title em { font-style: normal; color: var(--accent); background: linear-gradient(180deg, transparent 60%, rgba(91,141,239,0.25) 60%); padding: 0 6px; }
+  .doc-sub { font-family: var(--hand-2); font-size: 22px; color: var(--ink-2); margin-top: 8px; line-height: 1.3; max-width: 760px; }
+  .doc-meta { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); line-height: 1.7; text-align: right; }
+  .doc-meta strong { color: var(--ink); font-weight: 500; }
+
+  /* ───── Flow overview ───── */
+  .flow { background: rgba(255,255,255,0.4); border: 1.5px dashed var(--ink-2); border-radius: 18px; padding: 28px 24px 32px; margin-bottom: 64px; }
+  .flow-title { font-family: var(--hand); font-size: 28px; font-weight: 700; color: var(--ink); margin: 0 0 6px; letter-spacing: -0.5px; }
+  .flow-sub { font-family: var(--hand-2); font-size: 16px; color: var(--ink-3); margin-bottom: 22px; }
+  .flow-rail { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; align-items: start; }
+  .flow-step { display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; }
+  .flow-step + .flow-step::before { content: ""; position: absolute; left: -20px; top: 32%; width: 16px; height: 2px; background: repeating-linear-gradient(90deg, var(--ink-2) 0 4px, transparent 4px 8px); }
+  .flow-mini { width: 100%; aspect-ratio: 9 / 16; background: var(--bg); border: 1.5px solid var(--ink); border-radius: 14px; position: relative; overflow: hidden; box-shadow: 4px 5px 0 rgba(0,0,0,0.12); padding: 9% 8%; display: flex; flex-direction: column; gap: 7px; }
+  .flow-mini .mtitle { width: 60%; height: 9px; background: var(--fg1); border-radius: 2px; }
+  .flow-mini .mtitle.sm { width: 40%; height: 6px; background: var(--fg3); }
+  .flow-mini .mav { width: 34px; height: 34px; border-radius: 999px; background: var(--surface-high); border: 1.5px solid var(--border); margin: 4px auto 2px; }
+  .flow-mini .mbtn { height: 13px; border-radius: 4px; background: var(--accent); }
+  .flow-mini .mbtn.ghost { background: transparent; border: 1px solid var(--border-strong); }
+  .flow-mini .mbtn.light { background: var(--fg1); }
+  .flow-mini .mbtn.dark { background: var(--surface-high); border: 1px solid var(--border); }
+  .flow-mini .mfield { height: 13px; border-radius: 4px; background: var(--surface-sunken); border: 1px solid var(--border); }
+  .flow-mini .mdiv { display: flex; align-items: center; gap: 5px; margin: 1px 0; }
+  .flow-mini .mdiv::before, .flow-mini .mdiv::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+  .flow-mini .mdiv i { width: 7px; height: 4px; background: var(--fg-faint); border-radius: 1px; display: block; }
+  .flow-mini .mlock { position: relative; height: 38px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .flow-mini .mlock::after { content: ""; position: absolute; inset: 0; background: rgba(11,13,16,0.5); }
+  .flow-mini .mrow { display: flex; align-items: center; gap: 5px; height: 16px; }
+  .flow-mini .mrow i { width: 10px; height: 10px; border-radius: 3px; background: var(--surface-high); display: block; }
+  .flow-mini .mrow span { flex: 1; height: 5px; background: var(--surface-high); border-radius: 2px; }
+  .flow-num { font-family: var(--hand); font-weight: 700; font-size: 22px; color: var(--ink); background: #FFE680; border: 1.5px solid var(--ink); border-radius: 999px; width: 32px; height: 32px; display: grid; place-items: center; transform: rotate(-3deg); box-shadow: 2px 2px 0 rgba(0,0,0,0.12); }
+  .flow-label { font-family: var(--hand); font-weight: 600; font-size: 18px; color: var(--ink); text-align: center; line-height: 1.1; }
+  .flow-label small { display: block; font-family: var(--font-mono); font-size: 9px; font-weight: 400; letter-spacing: 0.6px; text-transform: uppercase; color: var(--ink-3); margin-top: 2px; }
+
+  /* ───── Spec section ───── */
+  .spec { display: grid; grid-template-columns: 380px 1fr; gap: 56px; padding: 48px 0 56px; border-top: 1.5px dashed var(--ink-2); }
+  .spec-head { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 18px; margin-bottom: 4px; flex-wrap: wrap; }
+  .spec-step { font-family: var(--hand); font-weight: 700; font-size: 22px; color: var(--ink); background: #FFE680; border: 1.5px solid var(--ink); border-radius: 999px; padding: 4px 14px; transform: rotate(-2deg); box-shadow: 2px 2px 0 rgba(0,0,0,0.12); }
+  .spec-title { font-family: var(--hand); font-size: 38px; font-weight: 700; color: var(--ink); margin: 0; letter-spacing: -0.5px; }
+  .spec-eyebrow { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); letter-spacing: 1.6px; text-transform: uppercase; margin-left: auto; }
+
+  .phone-wrap { position: sticky; top: 32px; align-self: start; width: 380px; }
+  .phone { width: 380px; height: 760px; background: var(--bg); border-radius: 38px; border: 1.5px solid var(--ink); box-shadow: 6px 8px 0 rgba(0,0,0,0.12), inset 0 0 0 8px #08090C; padding: 8px; position: relative; overflow: hidden; }
+  .phone-inner { width: 100%; height: 100%; background: var(--bg); border-radius: 30px; overflow: hidden; position: relative; display: flex; flex-direction: column; }
+  .phone-dims { position: absolute; bottom: -32px; left: 0; right: 0; text-align: center; font-family: var(--font-mono); font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--ink-3); }
+
+  .status { height: 28px; padding: 0 18px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--fg1); flex-shrink: 0; }
+  .status-icons { display: flex; align-items: center; gap: 5px; opacity: 0.9; }
+  .status-icons .lucide { width: 14px; height: 14px; stroke-width: 2; }
+
+  .body { flex: 1; overflow-y: auto; background: var(--bg); padding: 14px 18px 18px; }
+  .body::-webkit-scrollbar { display: none; }
+
+  .section-title { font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--fg3); margin: 22px 0 12px; display: flex; align-items: center; justify-content: space-between; }
+  .section-title:first-child { margin-top: 4px; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 16px; margin-bottom: 16px; }
+
+  /* ───── Guest hero (State A) ───── */
+  .guest-hero {
+    position: relative; overflow: hidden;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--r-xl); padding: 24px 20px 20px; margin-bottom: 20px;
+    text-align: center;
+  }
+  .guest-hero::before { content: ""; position: absolute; inset: 0; background: radial-gradient(at top, var(--accent-soft) 0%, transparent 60%); opacity: 0.55; pointer-events: none; }
+  .guest-hero > * { position: relative; }
+  .guest-av { width: 64px; height: 64px; border-radius: 999px; background: var(--surface-high); border: 1px solid var(--border-strong); display: grid; place-items: center; margin: 0 auto 16px; color: var(--fg3); }
+  .guest-av .lucide { width: 30px; height: 30px; stroke-width: 1.6; }
+  .guest-eyebrow { font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+  .guest-title { font-size: 22px; font-weight: 600; color: var(--fg1); letter-spacing: -0.4px; line-height: 1.2; margin-bottom: 8px; }
+  .guest-sub { font-size: 13px; color: var(--fg2); line-height: 1.45; max-width: 280px; margin: 0 auto 18px; }
+  .btn-primary { width: 100%; height: 48px; background: var(--accent); color: var(--fg-inverse); border: 0; border-radius: var(--r-md); font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .btn-secondary-text { display: block; width: 100%; text-align: center; background: transparent; border: 0; color: var(--fg2); font-family: inherit; font-size: 13px; padding: 14px 0 2px; cursor: pointer; }
+  .btn-secondary-text b { color: var(--accent); font-weight: 600; }
+
+  /* ───── Benefits list ───── */
+  .ben-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--divider); }
+  .ben-row:last-child { border-bottom: 0; }
+  .ben-ico { width: 32px; height: 32px; border-radius: var(--r-md); background: var(--accent-soft); display: grid; place-items: center; color: var(--accent); flex-shrink: 0; }
+  .ben-ico .lucide { width: 16px; height: 16px; stroke-width: 1.9; }
+  .ben-main { flex: 1; min-width: 0; }
+  .ben-label { font-size: 13.5px; font-weight: 500; color: var(--fg1); margin-bottom: 2px; }
+  .ben-desc { font-size: 11.5px; color: var(--fg3); line-height: 1.35; }
+
+  /* ───── Locked teaser ───── */
+  .teaser { position: relative; }
+  .teaser-veil { position: absolute; inset: 0; background: rgba(11,13,16,0.5); backdrop-filter: blur(4px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; z-index: 2; border-radius: var(--r-lg); }
+  .teaser-veil .lucide { width: 18px; height: 18px; color: var(--fg2); }
+  .teaser-veil .t { font-size: 12px; color: var(--fg1); font-weight: 600; }
+  .teaser-veil .s { font-size: 11px; color: var(--fg3); }
+  .t-rank-name { font-size: 22px; font-weight: 600; color: var(--fg1); text-align: center; margin-bottom: 10px; letter-spacing: -0.4px; }
+  .t-pbar { height: 8px; background: var(--surface-sunken); border-radius: 999px; overflow: hidden; margin-bottom: 14px; }
+  .t-pbar > span { display: block; height: 100%; width: 62%; background: var(--accent); border-radius: 999px; }
+  .t-wl { display: flex; gap: 8px; }
+  .t-wl div { flex: 1; text-align: center; padding: 8px 4px; background: var(--surface-sunken); border-radius: var(--r-md); }
+  .t-wl .v { font-size: 18px; font-weight: 700; color: var(--fg1); font-variant-numeric: tabular-nums; }
+  .t-wl .l { font-size: 9px; color: var(--fg3); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+  /* ───── Settings rows ───── */
+  .prow { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--divider); cursor: pointer; }
+  .prow:last-child { border-bottom: 0; }
+  .prow .ico { width: 28px; height: 28px; border-radius: var(--r-sm); background: var(--surface-high); display: grid; place-items: center; color: var(--fg2); flex-shrink: 0; }
+  .prow .ico .lucide { width: 15px; height: 15px; stroke-width: 1.8; }
+  .prow .label { flex: 1; font-size: 13.5px; color: var(--fg2); }
+  .prow .value { font-size: 13px; font-weight: 500; color: var(--fg3); }
+  .prow .chevron { color: var(--fg-faint); display: flex; }
+  .prow .chevron .lucide { width: 16px; height: 16px; }
+
+  /* ───── Footer legal ───── */
+  .footer-legal { text-align: center; padding: 24px 18px 8px; }
+  .footer-legal p { font-size: 10px; color: var(--fg-faint); line-height: 1.5; margin: 0 0 6px; }
+  .footer-legal .links { font-size: 11px; color: var(--fg3); }
+  .footer-legal .links a { color: var(--accent); text-decoration: none; }
+  .footer-legal .links span { color: var(--fg-faint); margin: 0 6px; }
+
+  /* ═══════ AUTH SCREENS (State B / C) ═══════ */
+  .auth-top { display: flex; align-items: center; justify-content: space-between; padding: 6px 18px 0; flex-shrink: 0; }
+  .auth-close { width: 32px; height: 32px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); display: grid; place-items: center; color: var(--fg2); cursor: pointer; }
+  .auth-close .lucide { width: 16px; height: 16px; }
+  .wordmark { font-size: 15px; font-weight: 700; letter-spacing: -0.4px; color: var(--fg1); }
+  .wordmark b { color: var(--accent); }
+
+  .auth-body { flex: 1; overflow-y: auto; padding: 20px 22px 22px; display: flex; flex-direction: column; }
+  .auth-body::-webkit-scrollbar { display: none; }
+  .auth-head { margin-bottom: 22px; }
+  .auth-eyebrow { font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--fg3); margin-bottom: 10px; }
+  .auth-title { font-size: 26px; font-weight: 600; color: var(--fg1); letter-spacing: -0.5px; line-height: 1.15; margin-bottom: 8px; }
+  .auth-desc { font-size: 13px; color: var(--fg2); line-height: 1.45; }
+
+  .auth-btn { width: 100%; height: 50px; border-radius: var(--r-md); font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; border: 1px solid transparent; }
+  .auth-btn svg.brand { width: 19px; height: 19px; flex-shrink: 0; }
+  .auth-btn.apple { background: #FFFFFF; color: #000000; }
+  .auth-btn.google { background: var(--surface-high); color: var(--fg1); border-color: var(--border); }
+  .auth-btn.email { background: transparent; color: var(--fg1); border: 1px solid var(--border-strong); }
+  .auth-btn.email .lucide { width: 17px; height: 17px; }
+
+  .auth-div { display: flex; align-items: center; gap: 12px; margin: 16px 0; }
+  .auth-div::before, .auth-div::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+  .auth-div span { font-size: 11px; color: var(--fg3); font-weight: 500; }
+
+  .field { margin-bottom: 12px; }
+  .field-label { font-size: 11px; font-weight: 600; color: var(--fg2); margin-bottom: 6px; letter-spacing: 0.2px; }
+  .field-input { position: relative; display: flex; align-items: center; background: var(--surface-sunken); border: 1px solid var(--border); border-radius: var(--r-md); height: 46px; padding: 0 12px; }
+  .field-input.focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+  .field-input.error { border-color: var(--danger); }
+  .field-input .ph { flex: 1; font-size: 14px; color: var(--fg3); }
+  .field-input .val { flex: 1; font-size: 14px; color: var(--fg1); }
+  .field-input .caret { width: 1.5px; height: 18px; background: var(--accent); margin-left: 1px; }
+  .field-input .eye { color: var(--fg3); display: flex; cursor: pointer; }
+  .field-input .eye .lucide { width: 17px; height: 17px; }
+  .field-help { font-size: 11px; color: var(--fg3); margin-top: 6px; }
+  .field-help.err { color: var(--danger); display: flex; align-items: center; gap: 5px; }
+  .field-help.err .lucide { width: 12px; height: 12px; }
+  .field-forgot { text-align: right; margin: -2px 0 14px; }
+  .field-forgot a { font-size: 12px; color: var(--accent); text-decoration: none; font-weight: 500; }
+
+  .check-row { display: flex; align-items: flex-start; gap: 10px; margin: 6px 0 16px; cursor: pointer; }
+  .check-box { width: 20px; height: 20px; border-radius: var(--r-sm); border: 1.5px solid var(--border-strong); flex-shrink: 0; display: grid; place-items: center; margin-top: 1px; }
+  .check-box.on { background: var(--accent); border-color: var(--accent); color: var(--fg-inverse); }
+  .check-box .lucide { width: 13px; height: 13px; stroke-width: 3; }
+  .check-text { font-size: 11.5px; color: var(--fg2); line-height: 1.45; }
+  .check-text a { color: var(--accent); text-decoration: none; }
+
+  .auth-foot { margin-top: auto; padding-top: 18px; text-align: center; }
+  .auth-foot .swap { font-size: 13px; color: var(--fg2); }
+  .auth-foot .swap a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  .legal-micro { font-size: 10.5px; color: var(--fg-faint); line-height: 1.5; margin-top: 14px; max-width: 280px; margin-left: auto; margin-right: auto; }
+  .legal-micro a { color: var(--fg3); text-decoration: underline; }
+
+  /* ───── Pins ───── */
+  .pin { position: absolute; font-family: var(--hand); font-size: 16px; font-weight: 700; color: var(--ink); background: #FFE680; border: 1.5px solid var(--ink); border-radius: 999px; width: 26px; height: 26px; display: grid; place-items: center; transform: rotate(-4deg); box-shadow: 2px 2px 0 rgba(0,0,0,0.15); z-index: 20; }
+
+  /* ───── Notes ───── */
+  .notes { display: flex; flex-direction: column; gap: 18px; padding-top: 4px; }
+  .note { display: grid; grid-template-columns: 32px 1fr; gap: 14px; align-items: start; }
+  .note-num { font-family: var(--hand); font-weight: 700; font-size: 18px; color: var(--ink); background: #FFE680; border: 1.5px solid var(--ink); border-radius: 999px; width: 28px; height: 28px; display: grid; place-items: center; transform: rotate(-3deg); box-shadow: 2px 2px 0 rgba(0,0,0,0.12); }
+  .note-body { padding-top: 2px; }
+  .note-title { font-family: var(--hand); font-weight: 600; font-size: 22px; color: var(--ink); line-height: 1.1; margin: 0 0 4px; letter-spacing: -0.3px; }
+  .note-desc { font-family: var(--hand-2); font-size: 16px; color: var(--ink-2); line-height: 1.4; margin: 0 0 8px; }
+  .toks { display: flex; flex-wrap: wrap; gap: 5px; }
+  .tok { font-family: var(--font-mono); font-size: 11px; font-weight: 500; color: var(--accent); background: #1C2027; border: 1px solid #2A2F38; border-radius: 5px; padding: 2px 7px; }
+  .tok.muted { color: var(--fg2); }
+  .tok.semantic { color: #5FA978; }
+  .tok.danger { color: #D46A6A; }
+  .tok.note { color: var(--ink-3); background: transparent; border-color: var(--ink-3); }
+  .comp-pill { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.4px; color: var(--ink); background: #FFE680; border: 1.5px solid var(--ink); border-radius: 4px; padding: 2px 6px; transform: rotate(-1deg); margin: 0 2px; }
+
+  /* ───── Annexe ───── */
+  .annexe { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 36px; }
+  .ann-card { background: var(--bg); border: 1.5px solid var(--ink); border-radius: 16px; overflow: hidden; box-shadow: 4px 5px 0 rgba(0,0,0,0.12); color: var(--fg1); display: flex; flex-direction: column; }
+  .ann-title { font-family: var(--font-mono); font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--ink-3); margin: 12px 0 8px; text-align: center; }
+  .ann-card .inner { padding: 16px; min-height: 380px; display: flex; flex-direction: column; position: relative; }
+
+  /* publish-gate sheet */
+  .gate-bg { position: absolute; inset: 0; background: var(--bg); padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .gate-bg .grow { height: 12px; background: var(--surface); border-radius: 5px; }
+  .gate-scrim { position: absolute; inset: 0; background: rgba(11,13,16,0.7); z-index: 2; }
+  .gate-sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; background: var(--surface-high); border: 1.5px solid var(--border); border-bottom: 0; border-radius: 18px 18px 0 0; padding: 14px 16px 18px; }
+  .gate-grab { width: 32px; height: 4px; background: var(--fg-faint); border-radius: 999px; margin: 0 auto 14px; }
+  .gate-lock { width: 44px; height: 44px; border-radius: 999px; background: var(--accent-soft); display: grid; place-items: center; color: var(--accent); margin: 0 auto 12px; }
+  .gate-lock .lucide { width: 21px; height: 21px; }
+  .gate-title { font-size: 16px; font-weight: 600; color: var(--fg1); text-align: center; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .gate-sub { font-size: 12px; color: var(--fg2); text-align: center; line-height: 1.4; margin-bottom: 16px; }
+
+  .ann-note { font-family: var(--hand-2); font-size: 14px; color: var(--ink-2); line-height: 1.4; padding: 12px 14px 0; }
+  .ann-note b { font-family: var(--hand); color: var(--ink); }
+
+  /* reset screen */
+  .reset-pad { padding: 4px 4px; flex: 1; display: flex; flex-direction: column; }
+
+  /* ───── Constraints / legend ───── */
+  .constraints { margin-top: 56px; padding: 32px 28px; background: rgba(255,255,255,0.45); border: 1.5px dashed var(--ink-2); border-radius: 18px; }
+  .constraints h3 { font-family: var(--hand); font-size: 28px; font-weight: 700; margin: 0 0 18px; letter-spacing: -0.5px; color: var(--ink); }
+  .constraints ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 32px; }
+  .constraints li { font-family: var(--hand-2); font-size: 17px; color: var(--ink-2); line-height: 1.4; padding-left: 24px; position: relative; }
+  .constraints li::before { content: "✓"; position: absolute; left: 0; top: 0; color: var(--accent); font-weight: 700; font-family: var(--hand); font-size: 22px; line-height: 1; }
+  .constraints li.x::before { content: "✗"; color: var(--danger); }
+
+  .legend { margin-top: 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .legend-card { padding: 16px 18px; background: rgba(255,255,255,0.45); border: 1.5px dashed var(--ink-2); border-radius: 12px; }
+  .legend-name { font-family: var(--font-mono); font-size: 11px; color: var(--accent); letter-spacing: 0.4px; margin-bottom: 6px; }
+  .legend-desc { font-family: var(--hand-2); font-size: 16px; color: var(--ink-2); line-height: 1.35; }
+
+  .lucide { width: 22px; height: 22px; stroke-width: 1.75; }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+
+  <header class="doc-head">
+    <div>
+      <div class="doc-eyebrow">Tacticx · Spec · v01 · Auth & Profil déconnecté</div>
+      <h1 class="doc-title">Connexion — <em>wireframes annotés</em></h1>
+      <p class="doc-sub">L'app est accessible sans compte. Le profil déconnecté pousse vers la création de compte — la communauté (publier, liker, commenter) est la raison de se connecter. Connexion via Apple, Google ou email + mot de passe.</p>
+    </div>
+    <div class="doc-meta">
+      <strong>Fichiers</strong>&nbsp;·&nbsp;profile/guest.tsx · auth/*<br/>
+      <strong>Présentation</strong>&nbsp;·&nbsp;auth en modal plein écran<br/>
+      <strong>Tokens</strong>&nbsp;·&nbsp;theme.ts (DS Tacticx)<br/>
+      <strong>Providers</strong>&nbsp;·&nbsp;Apple · Google · email
+    </div>
+  </header>
+
+  <section class="flow">
+    <h2 class="flow-title">Le parcours documenté</h2>
+    <p class="flow-sub">Profil déconnecté → écran de connexion (modal) → création de compte. Boucle de retour : toute action communautaire bloquée ouvre le même écran de connexion.</p>
+
+    <div class="flow-rail">
+      <div class="flow-step">
+        <div class="flow-mini">
+          <div class="mav"></div>
+          <div class="mtitle" style="margin:0 auto 2px"></div>
+          <div class="mtitle sm" style="margin:0 auto 4px"></div>
+          <div class="mbtn"></div>
+          <div class="mrow"><i></i><span></span></div>
+          <div class="mrow"><i></i><span></span></div>
+          <div class="mlock"></div>
+        </div>
+        <div class="flow-num">A</div>
+        <div class="flow-label">Profil déconnecté<small>guest · push compte</small></div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-mini">
+          <div class="mtitle" style="margin-top:6px"></div>
+          <div class="mtitle sm"></div>
+          <div class="mbtn light" style="margin-top:6px"></div>
+          <div class="mbtn dark"></div>
+          <div class="mdiv"><i></i></div>
+          <div class="mfield"></div>
+          <div class="mfield"></div>
+          <div class="mbtn"></div>
+        </div>
+        <div class="flow-num">B</div>
+        <div class="flow-label">Connexion<small>Apple · Google · email</small></div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-mini">
+          <div class="mtitle" style="margin-top:6px"></div>
+          <div class="mbtn light" style="margin-top:6px"></div>
+          <div class="mbtn dark"></div>
+          <div class="mdiv"><i></i></div>
+          <div class="mfield"></div>
+          <div class="mfield"></div>
+          <div class="mfield"></div>
+          <div class="mbtn"></div>
+        </div>
+        <div class="flow-num">C</div>
+        <div class="flow-label">Créer un compte<small>pseudo · email · CGU</small></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ STATE A — PROFIL DÉCONNECTÉ ═════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">A</span>
+      <h2 class="spec-title">Profil — déconnecté</h2>
+      <span class="spec-eyebrow">profile/guest.tsx · sans compte</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status"><span>9:41</span><span class="status-icons"><i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i></span></div>
+
+          <div class="body">
+            <div class="guest-hero">
+              <div class="guest-av"><i data-lucide="user-round"></i></div>
+              <div class="guest-eyebrow">Compte</div>
+              <div class="guest-title">Rejoins la communauté</div>
+              <p class="guest-sub">Publie tes équipes, compare-les et échange avec les autres joueurs. C'est gratuit.</p>
+              <button class="btn-primary">Créer un compte</button>
+              <button class="btn-secondary-text">Tu as déjà un compte&nbsp;? <b>Se connecter</b></button>
+            </div>
+
+            <div class="section-title">Avec un compte</div>
+            <div class="card" style="padding:4px 16px">
+              <div class="ben-row">
+                <span class="ben-ico"><i data-lucide="upload"></i></span>
+                <span class="ben-main">
+                  <span class="ben-label">Publier tes équipes</span>
+                  <span class="ben-desc">Partage tes compos dans la communauté</span>
+                </span>
+              </div>
+              <div class="ben-row">
+                <span class="ben-ico"><i data-lucide="heart"></i></span>
+                <span class="ben-main">
+                  <span class="ben-label">Liker et commenter</span>
+                  <span class="ben-desc">Interagis avec les équipes des autres joueurs</span>
+                </span>
+              </div>
+              <div class="ben-row">
+                <span class="ben-ico"><i data-lucide="cloud"></i></span>
+                <span class="ben-main">
+                  <span class="ben-label">Synchroniser tes données</span>
+                  <span class="ben-desc">Équipes, scénarios et objectifs sur tous tes appareils</span>
+                </span>
+              </div>
+              <div class="ben-row">
+                <span class="ben-ico"><i data-lucide="trending-up"></i></span>
+                <span class="ben-main">
+                  <span class="ben-label">Suivre ton rang</span>
+                  <span class="ben-desc">Stats de saison et évolution dans le temps</span>
+                </span>
+              </div>
+            </div>
+
+            <div class="section-title">Ton profil</div>
+            <div class="card teaser">
+              <div class="teaser-veil">
+                <i data-lucide="lock"></i>
+                <span class="t">Connecte-toi pour voir tes stats</span>
+                <span class="s">Rang · winrate · Pokémon joués</span>
+              </div>
+              <div class="t-rank-name">Gold III</div>
+              <div class="t-pbar"><span></span></div>
+              <div class="t-wl">
+                <div><div class="v">142</div><div class="l">Victoires</div></div>
+                <div><div class="v">87</div><div class="l">Défaites</div></div>
+                <div><div class="v">62 %</div><div class="l">Winrate</div></div>
+              </div>
+            </div>
+
+            <div class="section-title">Réglages</div>
+            <div class="card" style="padding:2px 16px">
+              <div class="prow">
+                <span class="ico"><i data-lucide="git-branch"></i></span>
+                <span class="label">Format par défaut</span>
+                <span class="value">VGC</span>
+                <span class="chevron"><i data-lucide="chevron-right"></i></span>
+              </div>
+              <div class="prow">
+                <span class="ico"><i data-lucide="languages"></i></span>
+                <span class="label">Langue</span>
+                <span class="value">Français</span>
+                <span class="chevron"><i data-lucide="chevron-right"></i></span>
+              </div>
+              <div class="prow">
+                <span class="ico"><i data-lucide="moon"></i></span>
+                <span class="label">Apparence</span>
+                <span class="value">Sombre</span>
+                <span class="chevron"><i data-lucide="chevron-right"></i></span>
+              </div>
+            </div>
+
+            <div class="card" style="padding:2px 16px">
+              <div class="prow">
+                <span class="ico"><i data-lucide="life-buoy"></i></span>
+                <span class="label">Aide & support</span>
+                <span class="chevron"><i data-lucide="chevron-right"></i></span>
+              </div>
+              <div class="prow">
+                <span class="ico"><i data-lucide="shield"></i></span>
+                <span class="label">Confidentialité</span>
+                <span class="chevron"><i data-lucide="chevron-right"></i></span>
+              </div>
+              <div class="prow">
+                <span class="ico"><i data-lucide="file-text"></i></span>
+                <span class="label">Conditions d'utilisation</span>
+                <span class="chevron"><i data-lucide="chevron-right"></i></span>
+              </div>
+            </div>
+
+            <div class="footer-legal">
+              <p>Pokémon © Nintendo / Creatures Inc. / GAME FREAK inc.</p>
+              <p>Tacticx n'est pas affilié à Nintendo ou The Pokémon Company.</p>
+              <div class="links"><a href="#">Politique de confidentialité</a><span>·</span><a href="#">CGU</a></div>
+            </div>
+          </div>
+
+          <span class="pin" style="top: 70px; left: 14px;">1</span>
+          <span class="pin" style="top: 218px; right: 14px;">2</span>
+          <span class="pin" style="top: 290px; left: 14px;">3</span>
+          <span class="pin" style="top: 470px; right: 14px;">4</span>
+          <span class="pin" style="top: 600px; left: 14px;">5</span>
+        </div>
+        <div class="phone-dims">380 × 760 · guest · scroll vertical</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><div class="note-num">1</div><div class="note-body">
+        <h4 class="note-title">Hero invité — la conversion</h4>
+        <p class="note-desc">Avatar générique <span class="tok muted">user-round</span> dans un cercle <span class="tok muted">--surface-high</span> (jamais d'initiales : l'utilisateur n'a pas de nom). Carte <span class="tok">--r-xl</span> avec le seul dégradé autorisé du DS : <span class="tok note">radial-gradient(at top, --accent-soft) à ~30 %</span>. CTA primaire accent + lien secondaire "Se connecter". Pas de point d'exclamation, ton sobre.</p>
+        <div class="toks"><span class="tok">--accent (CTA)</span><span class="tok">--accent-soft (wash)</span><span class="tok">--r-xl</span><span class="comp-pill">Button primary</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">2</div><div class="note-body">
+        <h4 class="note-title">Bénéfices = la raison de se connecter</h4>
+        <p class="note-desc">4 lignes orientées communauté en premier (publier, liker/commenter) puis pratiques (sync, suivi rang). Tuile icône <span class="tok">--accent-soft</span> + icône <span class="tok">--accent</span>. Factuel, une ligne par valeur — pas de promesse marketing.</p>
+        <div class="toks"><span class="tok">--accent-soft (tuile)</span><span class="tok muted">upload · heart · cloud · trending-up</span><span class="comp-pill">List row</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">3</div><div class="note-body">
+        <h4 class="note-title">Aperçu verrouillé du profil</h4>
+        <p class="note-desc">La carte rang/stats réelle, mais voilée (<span class="tok note">backdrop-filter: blur(4px)</span> + scrim <span class="tok muted">rgba(11,13,16,0.5)</span>) avec <span class="tok muted">lock</span> + "Connecte-toi pour voir tes stats". On montre la valeur sans l'inventer — même pattern que le gating premium ailleurs dans l'app.</p>
+        <div class="toks"><span class="tok note">blur 4px</span><span class="tok muted">--fg2 (lock)</span><span class="tok note">gating</span><span class="comp-pill">Locked card</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">4</div><div class="note-body">
+        <h4 class="note-title">Réglages accessibles sans compte</h4>
+        <p class="note-desc">Format par défaut, langue, apparence : modifiables hors connexion (stockés en local, fusionnés au compte plus tard). Rows neutres, valeur en <span class="tok muted">--fg3</span> + chevron. Aucune action ici n'est gated.</p>
+        <div class="toks"><span class="tok muted">--surface-high (ico)</span><span class="tok muted">--fg2 (label)</span><span class="tok muted">--fg3 (value)</span><span class="comp-pill">Setting row</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">5</div><div class="note-body">
+        <h4 class="note-title">À propos + mentions légales</h4>
+        <p class="note-desc">Aide, confidentialité, CGU — toujours atteignables (exigence stores). Footer Pokémon/Nintendo obligatoire en <span class="tok muted">--fg-faint</span>, liens légaux en <span class="tok">--accent</span>.</p>
+        <div class="toks"><span class="tok muted">--fg-faint</span><span class="tok">--accent (liens)</span><span class="tok note">store compliance</span></div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ═════════ STATE B — CONNEXION ═════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">B</span>
+      <h2 class="spec-title">Connexion</h2>
+      <span class="spec-eyebrow">auth/sign-in.tsx · modal plein écran</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status"><span>9:41</span><span class="status-icons"><i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i></span></div>
+
+          <div class="auth-top">
+            <span class="auth-close"><i data-lucide="x"></i></span>
+            <span class="wordmark">Tac<b>ticx</b></span>
+            <span style="width:32px"></span>
+          </div>
+
+          <div class="auth-body">
+            <div class="auth-head">
+              <div class="auth-eyebrow">Bon retour</div>
+              <div class="auth-title">Connexion</div>
+              <p class="auth-desc">Connecte-toi pour retrouver tes équipes, tes stats et la communauté.</p>
+            </div>
+
+            <button class="auth-btn apple">
+              <svg class="brand" viewBox="0 0 24 24" aria-hidden="true"><path fill="#000" d="M16.365 1.43c0 1.14-.42 2.21-1.1 2.99-.74.85-1.96 1.51-3.05 1.42-.13-1.1.43-2.27 1.07-2.99.74-.83 2.02-1.45 3.08-1.42zM20.5 17.1c-.55 1.27-.82 1.84-1.53 2.97-.99 1.57-2.39 3.53-4.12 3.54-1.54.02-1.94-1.01-4.03-1-2.09.01-2.53 1.02-4.07 1.01-1.73-.02-3.05-1.78-4.04-3.35-2.77-4.39-3.06-9.55-1.35-12.29 1.21-1.95 3.13-3.09 4.93-3.09 1.84 0 2.99 1.01 4.51 1.01 1.47 0 2.37-1.01 4.5-1.01 1.6 0 3.3.87 4.51 2.37-3.97 2.18-3.32 7.85.71 9.84z"/></svg>
+              Continuer avec Apple
+            </button>
+            <button class="auth-btn google">
+              <svg class="brand" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
+              Continuer avec Google
+            </button>
+
+            <div class="auth-div"><span>ou</span></div>
+
+            <div class="field">
+              <div class="field-label">Email</div>
+              <div class="field-input"><span class="val">alex.l@email.com</span></div>
+            </div>
+            <div class="field">
+              <div class="field-label">Mot de passe</div>
+              <div class="field-input focus">
+                <span class="val">••••••••••</span><span class="caret"></span>
+                <span class="eye"><i data-lucide="eye-off"></i></span>
+              </div>
+            </div>
+            <div class="field-forgot"><a href="#">Mot de passe oublié&nbsp;?</a></div>
+
+            <button class="btn-primary">Se connecter</button>
+
+            <div class="auth-foot">
+              <div class="swap">Pas encore de compte&nbsp;? <a href="#">Créer un compte</a></div>
+              <p class="legal-micro">En continuant, tu acceptes les <a href="#">conditions d'utilisation</a> et la <a href="#">politique de confidentialité</a>.</p>
+            </div>
+          </div>
+
+          <span class="pin" style="top: 38px; left: 14px;">1</span>
+          <span class="pin" style="top: 192px; right: 14px;">2</span>
+          <span class="pin" style="top: 360px; left: 14px;">3</span>
+          <span class="pin" style="top: 430px; right: 14px;">4</span>
+          <span class="pin" style="bottom: 96px; left: 14px;">5</span>
+        </div>
+        <div class="phone-dims">380 × 760 · modal · sign-in</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><div class="note-num">1</div><div class="note-body">
+        <h4 class="note-title">Barre modale + wordmark</h4>
+        <p class="note-desc">L'écran s'ouvre en <span class="comp-pill">Sheet plein écran</span> (présentation modale iOS). <span class="tok muted">x</span> à gauche pour fermer et revenir à l'app en mode invité — la connexion n'est jamais un mur bloquant. Wordmark "Tacticx" centré, <em>ticx</em> en <span class="tok">--accent</span>.</p>
+        <div class="toks"><span class="tok muted">--surface (close)</span><span class="tok">--accent (wordmark)</span><span class="comp-pill">Modal sheet</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">2</div><div class="note-body">
+        <h4 class="note-title">Apple & Google en premier</h4>
+        <p class="note-desc">Boutons SSO 50pt avant l'email — c'est le chemin le plus rapide. <b>Apple</b> : fond blanc <span class="tok muted">#FFFFFF</span>, logo noir (guideline Apple sur fond sombre). <b>Google</b> : <span class="tok muted">--surface-high</span> + hairline, "G" multicolore officiel. Libellé "Continuer avec…" identique aux deux.</p>
+        <div class="toks"><span class="tok muted">Apple HIG</span><span class="tok muted">Google branding</span><span class="tok">--r-md</span><span class="comp-pill">SSO button</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">3</div><div class="note-body">
+        <h4 class="note-title">Séparateur + champs email</h4>
+        <p class="note-desc">Divider "ou" en hairlines <span class="tok muted">--border</span>. Champs sur <span class="tok muted">--surface-sunken</span>, focus = bord <span class="tok">--accent</span> 1.5px + halo <span class="tok">--accent-soft</span>. Le mot de passe est masqué par défaut (<span class="tok muted">eye-off</span> pour révéler). Curseur accent visible sur le champ actif.</p>
+        <div class="toks"><span class="tok muted">--surface-sunken (input)</span><span class="tok">--accent (focus)</span><span class="comp-pill">Text field</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">4</div><div class="note-body">
+        <h4 class="note-title">Mot de passe oublié</h4>
+        <p class="note-desc">Lien aligné à droite, <span class="tok">--accent</span>, sous le champ. Ouvre l'écran de réinitialisation par email (voir annexe). CTA principal "Se connecter" en accent, pleine largeur 48pt.</p>
+        <div class="toks"><span class="tok">--accent (lien)</span><span class="tok">--accent (CTA)</span><span class="comp-pill">Button primary</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">5</div><div class="note-body">
+        <h4 class="note-title">Bascule + légal</h4>
+        <p class="note-desc">"Pas encore de compte ? Créer un compte" bascule vers l'écran C sans empiler de navigation. Mention légale obligatoire en <span class="tok muted">--fg-faint</span> avec liens CGU / confidentialité soulignés.</p>
+        <div class="toks"><span class="tok">--accent (lien)</span><span class="tok muted">--fg-faint (légal)</span><span class="tok note">store compliance</span></div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- STATE_B -->
+  <!-- ═════════ STATE C — CRÉER UN COMPTE ═════════ -->
+  <section class="spec">
+    <div class="spec-head">
+      <span class="spec-step">C</span>
+      <h2 class="spec-title">Créer un compte</h2>
+      <span class="spec-eyebrow">auth/sign-up.tsx · modal plein écran</span>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="status"><span>9:41</span><span class="status-icons"><i data-lucide="signal"></i><i data-lucide="wifi"></i><i data-lucide="battery-full"></i></span></div>
+
+          <div class="auth-top">
+            <span class="auth-close"><i data-lucide="chevron-left"></i></span>
+            <span class="wordmark">Tac<b>ticx</b></span>
+            <span style="width:32px"></span>
+          </div>
+
+          <div class="auth-body">
+            <div class="auth-head">
+              <div class="auth-eyebrow">Gratuit</div>
+              <div class="auth-title">Créer un compte</div>
+              <p class="auth-desc">Choisis ton pseudo — il sera visible quand tu publies dans la communauté.</p>
+            </div>
+
+            <button class="auth-btn apple">
+              <svg class="brand" viewBox="0 0 24 24" aria-hidden="true"><path fill="#000" d="M16.365 1.43c0 1.14-.42 2.21-1.1 2.99-.74.85-1.96 1.51-3.05 1.42-.13-1.1.43-2.27 1.07-2.99.74-.83 2.02-1.45 3.08-1.42zM20.5 17.1c-.55 1.27-.82 1.84-1.53 2.97-.99 1.57-2.39 3.53-4.12 3.54-1.54.02-1.94-1.01-4.03-1-2.09.01-2.53 1.02-4.07 1.01-1.73-.02-3.05-1.78-4.04-3.35-2.77-4.39-3.06-9.55-1.35-12.29 1.21-1.95 3.13-3.09 4.93-3.09 1.84 0 2.99 1.01 4.51 1.01 1.47 0 2.37-1.01 4.5-1.01 1.6 0 3.3.87 4.51 2.37-3.97 2.18-3.32 7.85.71 9.84z"/></svg>
+              Continuer avec Apple
+            </button>
+            <button class="auth-btn google">
+              <svg class="brand" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
+              Continuer avec Google
+            </button>
+
+            <div class="auth-div"><span>ou avec ton email</span></div>
+
+            <div class="field">
+              <div class="field-label">Pseudo</div>
+              <div class="field-input"><span class="ph">Ton nom dans la communauté</span></div>
+            </div>
+            <div class="field">
+              <div class="field-label">Email</div>
+              <div class="field-input"><span class="ph">ton@email.com</span></div>
+            </div>
+            <div class="field">
+              <div class="field-label">Mot de passe</div>
+              <div class="field-input">
+                <span class="ph">••••••••</span>
+                <span class="eye"><i data-lucide="eye"></i></span>
+              </div>
+              <div class="field-help">8 caractères minimum.</div>
+            </div>
+
+            <label class="check-row">
+              <span class="check-box on"><i data-lucide="check"></i></span>
+              <span class="check-text">J'accepte les <a href="#">conditions d'utilisation</a> et la <a href="#">politique de confidentialité</a>.</span>
+            </label>
+
+            <button class="btn-primary">Créer mon compte</button>
+
+            <div class="auth-foot">
+              <div class="swap">Déjà un compte&nbsp;? <a href="#">Se connecter</a></div>
+            </div>
+          </div>
+
+          <span class="pin" style="top: 88px; right: 14px;">1</span>
+          <span class="pin" style="top: 360px; left: 14px;">2</span>
+          <span class="pin" style="top: 472px; right: 14px;">3</span>
+          <span class="pin" style="bottom: 138px; left: 14px;">4</span>
+        </div>
+        <div class="phone-dims">380 × 760 · modal · sign-up</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><div class="note-num">1</div><div class="note-body">
+        <h4 class="note-title">Même structure que la connexion</h4>
+        <p class="note-desc">Cohérence stricte avec l'écran B : SSO en haut, divider, champs en bas. Le retour se fait via <span class="tok muted">chevron-left</span> (on est arrivé depuis "Créer un compte"). Eyebrow "Gratuit" — factuel, pas de "rejoins-nous !".</p>
+        <div class="toks"><span class="tok muted">chevron-left</span><span class="tok muted">--fg3 (eyebrow)</span><span class="comp-pill">SSO button</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">2</div><div class="note-body">
+        <h4 class="note-title">Pseudo requis dès l'inscription</h4>
+        <p class="note-desc">Le pseudo est le seul vrai champ supplémentaire vs. la connexion : il est nécessaire pour publier/commenter. Helper "visible dans la communauté" dans le sous-titre. Validation d'unicité côté serveur → erreur inline si déjà pris.</p>
+        <div class="toks"><span class="tok muted">--surface-sunken</span><span class="tok danger">--danger (unicité)</span><span class="comp-pill">Text field</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">3</div><div class="note-body">
+        <h4 class="note-title">Mot de passe + règle visible</h4>
+        <p class="note-desc">Helper "8 caractères minimum" en <span class="tok muted">--fg3</span> sous le champ, toujours affiché (pas seulement en erreur). <span class="tok muted">eye</span> pour révéler. Voir l'annexe pour les états focus / erreur du champ.</p>
+        <div class="toks"><span class="tok muted">--fg3 (helper)</span><span class="tok danger">--danger (erreur)</span><span class="comp-pill">Password field</span></div>
+      </div></div>
+
+      <div class="note"><div class="note-num">4</div><div class="note-body">
+        <h4 class="note-title">Acceptation CGU explicite</h4>
+        <p class="note-desc">Checkbox <span class="tok">--accent</span> obligatoire pour la voie email (exigence RGPD). Désactive le CTA tant que non cochée. Les SSO Apple/Google valent acceptation au tap → pas de checkbox au-dessus d'eux. CTA "Créer mon compte" accent pleine largeur.</p>
+        <div class="toks"><span class="tok">--accent (check + CTA)</span><span class="tok muted">--border-strong (off)</span><span class="tok note">RGPD</span><span class="comp-pill">Checkbox</span></div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- STATE_C -->
+  <!-- ═════════ ANNEXE ═════════ -->
+  <section class="spec" style="display:block">
+    <div class="spec-head">
+      <span class="spec-step">D</span>
+      <h2 class="spec-title">Annexe — états & déclencheurs</h2>
+      <span class="spec-eyebrow">composants secondaires</span>
+    </div>
+
+    <div class="annexe">
+      <!-- Publish gate sheet -->
+      <div>
+        <div class="ann-title">Sheet · connecte-toi pour publier</div>
+        <div class="ann-card">
+          <div class="inner" style="padding:0">
+            <div class="gate-bg">
+              <div class="grow" style="width:55%"></div>
+              <div class="grow" style="height:60px"></div>
+              <div class="grow" style="height:60px"></div>
+              <div class="grow" style="height:60px"></div>
+            </div>
+            <div class="gate-scrim"></div>
+            <div class="gate-sheet">
+              <div class="gate-grab"></div>
+              <div class="gate-lock"><i data-lucide="lock"></i></div>
+              <div class="gate-title">Connecte-toi pour publier</div>
+              <p class="gate-sub">Publier une équipe, liker et commenter nécessite un compte. C'est gratuit.</p>
+              <button class="auth-btn apple" style="height:46px">
+                <svg class="brand" viewBox="0 0 24 24" aria-hidden="true"><path fill="#000" d="M16.365 1.43c0 1.14-.42 2.21-1.1 2.99-.74.85-1.96 1.51-3.05 1.42-.13-1.1.43-2.27 1.07-2.99.74-.83 2.02-1.45 3.08-1.42zM20.5 17.1c-.55 1.27-.82 1.84-1.53 2.97-.99 1.57-2.39 3.53-4.12 3.54-1.54.02-1.94-1.01-4.03-1-2.09.01-2.53 1.02-4.07 1.01-1.73-.02-3.05-1.78-4.04-3.35-2.77-4.39-3.06-9.55-1.35-12.29 1.21-1.95 3.13-3.09 4.93-3.09 1.84 0 2.99 1.01 4.51 1.01 1.47 0 2.37-1.01 4.5-1.01 1.6 0 3.3.87 4.51 2.37-3.97 2.18-3.32 7.85.71 9.84z"/></svg>
+                Continuer avec Apple
+              </button>
+              <button class="auth-btn email" style="height:46px;margin-bottom:0"><i data-lucide="mail"></i>Autres options</button>
+            </div>
+          </div>
+          <div class="ann-note"><b>Déclencheur.</b> Tap sur "Publier", le cœur ou le champ commentaire depuis la communauté en mode invité. Bottom-sheet, pas plein écran — le contexte reste visible derrière le scrim <span style="font-family:var(--font-mono);font-size:12px">0.7 + blur 20</span>.</div>
+        </div>
+      </div>
+
+      <!-- Password states -->
+      <div>
+        <div class="ann-title">Champ mot de passe · états</div>
+        <div class="ann-card">
+          <div class="inner">
+            <div class="field">
+              <div class="field-label">Défaut</div>
+              <div class="field-input"><span class="ph">••••••••</span><span class="eye"><i data-lucide="eye"></i></span></div>
+            </div>
+            <div class="field">
+              <div class="field-label" style="color:var(--accent)">Focus + révélé</div>
+              <div class="field-input focus"><span class="val">Tonk-2026</span><span class="caret"></span><span class="eye"><i data-lucide="eye-off"></i></span></div>
+            </div>
+            <div class="field">
+              <div class="field-label" style="color:var(--danger)">Erreur</div>
+              <div class="field-input error"><span class="val">••••</span><span class="eye"><i data-lucide="eye"></i></span></div>
+              <div class="field-help err"><i data-lucide="alert-circle"></i>Mot de passe incorrect.</div>
+            </div>
+            <div class="ann-note" style="padding:8px 0 0;margin-top:auto"><b>Bordures.</b> défaut <span style="font-family:var(--font-mono);font-size:12px">--border</span> · focus <span style="font-family:var(--font-mono);font-size:12px;color:var(--accent)">--accent</span> + halo · erreur <span style="font-family:var(--font-mono);font-size:12px;color:var(--danger)">--danger</span>. Message court, sans excuse ni emoji.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reset password -->
+      <div>
+        <div class="ann-title">Écran · mot de passe oublié</div>
+        <div class="ann-card">
+          <div class="inner">
+            <div class="reset-pad">
+              <span class="auth-close" style="margin-bottom:18px"><i data-lucide="chevron-left"></i></span>
+              <div class="auth-eyebrow">Réinitialisation</div>
+              <div class="auth-title" style="font-size:22px;margin-bottom:8px">Mot de passe oublié</div>
+              <p class="auth-desc" style="margin-bottom:20px">Entre ton email. On t'envoie un lien pour définir un nouveau mot de passe.</p>
+              <div class="field">
+                <div class="field-label">Email</div>
+                <div class="field-input focus"><span class="val">alex.l@email.com</span><span class="caret"></span></div>
+              </div>
+              <button class="btn-primary" style="margin-top:4px">Envoyer le lien</button>
+              <div class="ann-note" style="padding:14px 0 0;margin-top:auto"><b>Confirmation.</b> Au succès → toast "Email envoyé." puis retour à la connexion. Pas de révélation si l'email existe (sécurité).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="constraints">
+    <h3>Règles & garde-fous</h3>
+    <ul>
+      <li>L'app reste 100 % utilisable en invité — méta, Pokédex, calculateur. La connexion n'est jamais un mur d'entrée.</li>
+      <li>Le gating ne concerne que le social : publier, liker, commenter, et la sync/le suivi de rang.</li>
+      <li>Apple & Google avant l'email — chemin le plus rapide, SSO valant acceptation des CGU.</li>
+      <li>Le même écran de connexion s'ouvre depuis tout point bloqué (profil, communauté, sync).</li>
+      <li>Ton sobre : aucune injonction, aucun point d'exclamation, aucun emoji dans nos libellés.</li>
+      <li class="x">Pas de plein écran bloquant au lancement de l'app.</li>
+      <li class="x">Pas de stats inventées : l'aperçu profil est voilé, jamais rempli de fausses valeurs.</li>
+      <li class="x">Pas de dégradé décoratif — seul le radial --accent-soft du hero est autorisé.</li>
+    </ul>
+  </section>
+
+  <div class="legend">
+    <div class="legend-card">
+      <div class="legend-name">Boutons SSO</div>
+      <div class="legend-desc">Apple = fond blanc / logo noir. Google = surface-high + hairline / G multicolore. 50pt, radius md.</div>
+    </div>
+    <div class="legend-card">
+      <div class="legend-name">Champs</div>
+      <div class="legend-desc">Fond surface-sunken. Focus = bord accent 1.5px + halo accent-soft. Erreur = bord danger + message court.</div>
+    </div>
+    <div class="legend-card">
+      <div class="legend-name">Aperçu verrouillé</div>
+      <div class="legend-desc">Carte réelle voilée (blur 4px + scrim) avec cadenas — même langage que le gating premium ailleurs dans l'app.</div>
+    </div>
+  </div>
+
+  <!-- CONSTRAINTS_BLOCK -->
+
+  <!-- ANNEXE -->
+  <!-- CONSTRAINTS -->
+
+</div>
+
+<script>
+  if (window.lucide) lucide.createIcons();
+</script>
+</body>
+</html>

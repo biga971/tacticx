@@ -15,6 +15,7 @@ import { useToast } from '@/components/ui/toast'
 import { PokemonSprite } from '@/components/shared/PokemonSprite'
 import { useTeams, useDeleteTeam } from '@/lib/api/hooks/useTeams'
 import { useCommunityFeed } from '@/lib/api/hooks/useCommunity'
+import { useAuthStore } from '@/lib/store/authStore'
 import type { ApiTeam } from '@/lib/api/types'
 import { colors, radii, spacing } from '@/lib/theme'
 import { TAB_BAR_HEIGHT } from '@/components/ui/morphing-tabbar'
@@ -24,7 +25,13 @@ type View2 = 'mine' | 'community'
 export default function TeamsScreen() {
   const router = useRouter()
   const insets = useSafeAreaInsets()
+  const isGuest = useAuthStore((s) => s.isGuest)
+  const token = useAuthStore((s) => s.token)
   const [view, setView] = useState<View2>('mine')
+
+  // Publishing is gated behind an account; guests get pushed to sign-in.
+  const onPublish = () =>
+    isGuest || !token ? router.push('/(auth)/sign-in') : router.push('/(tabs)/teams/community/submit')
 
   return (
     <Screen padded>
@@ -49,7 +56,7 @@ export default function TeamsScreen() {
             label="Publier une équipe"
             icon="cloud-upload-outline"
             fullWidth
-            onPress={() => router.push('/(tabs)/teams/community/submit')}
+            onPress={onPublish}
           />
         )}
       </View>

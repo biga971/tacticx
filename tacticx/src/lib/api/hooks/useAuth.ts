@@ -44,6 +44,43 @@ export function useUpgradeAccount() {
   })
 }
 
+/** Requests a password-reset email. Never reveals whether the email exists. */
+export function useForgotPassword() {
+  return useMutation({
+    mutationFn: (input: { email: string }) =>
+      apiFetch<{ message: string }>('/user/forgot-password', {
+        method: 'POST',
+        body: input,
+        public: true,
+      }),
+  })
+}
+
+interface SocialInput {
+  /** Apple identityToken or Google idToken (JWT). */
+  token: string
+  /** Display name, only available from Apple on first sign-in. */
+  fullName?: string
+}
+
+/**
+ * Exchanges a native SSO token (Apple/Google) for a Tacticx access token.
+ * The server verifies the JWT against the provider JWKS, then finds or creates
+ * the matching account.
+ */
+export function useSocialSignIn(provider: 'apple' | 'google') {
+  const qc = useQueryClient()
+  const setAuth = useAuthStore((s) => s.setAuth)
+  return useMutation({
+    mutationFn: (input: SocialInput) =>
+      apiFetch<AuthResponse>(`/auth/${provider}`, { method: 'POST', body: input, public: true }),
+    onSuccess: (data) => {
+      setAuth(data.token.token, String(data.id), false)
+      qc.invalidateQueries()
+    },
+  })
+}
+
 export function useProfile() {
   const token = useAuthStore((s) => s.token)
   return useQuery({

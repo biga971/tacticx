@@ -49,6 +49,10 @@ router
           .post('upgrade', [controllers.auth.Auth, 'upgrade'])
           .use(middleware.auth({ guards: ['api'] }))
 
+        // Native SSO (mobile id-token exchange) — public + rate-limited.
+        router.post('apple', [controllers.auth.Auth, 'apple']).use(guestThrottle)
+        router.post('google', [controllers.auth.Auth, 'google']).use(guestThrottle)
+
         router.get('google/redirect', [controllers.auth.AuthGoogle, 'redirect'])
         router.get('google/signin/callback', [controllers.auth.AuthGoogle, 'handleCallback'])
 
