@@ -6,17 +6,14 @@ import { Screen } from '@/components/ui/screen'
 import { Text } from '@/components/ui/text'
 import { Button } from '@/components/ui/button'
 import { Shimmer } from '@/components/ui/shimmer'
-import { PremiumLock } from '@/components/shared/PremiumLock'
 import { PokemonSprite } from '@/components/shared/PokemonSprite'
 import { useToast } from '@/components/ui/toast'
 import { useTeams, usePublishTeam } from '@/lib/api/hooks/useTeams'
-import { useProfileStore } from '@/lib/store/profileStore'
 import { colors, radii, spacing } from '@/lib/theme'
 
 export default function SubmitScreen() {
   const router = useRouter()
   const toast = useToast()
-  const isPremium = useProfileStore((s) => s.isPremium)
   const { data: teams, isLoading } = useTeams()
   const publish = usePublishTeam()
   const [selected, setSelected] = useState<number | null>(null)
@@ -31,7 +28,7 @@ export default function SubmitScreen() {
         toast.show('Équipe publiée !', 'success')
         router.back()
       },
-      onError: () => toast.show('Premium requis pour publier', 'error'),
+      onError: () => toast.show('Échec de la publication', 'error'),
     })
   }
 
@@ -77,19 +74,9 @@ export default function SubmitScreen() {
         </Text>
       </View>
 
-      <View style={{ flex: 1, marginTop: spacing.md }}>
-        {isPremium ? (
-          Body
-        ) : (
-          <PremiumLock featureName="la publication d'équipes" featureIcon="cloud-upload-outline">
-            <View style={{ height: 360 }}>{Body}</View>
-          </PremiumLock>
-        )}
-      </View>
+      <View style={{ flex: 1, marginTop: spacing.md }}>{Body}</View>
 
-      {isPremium && (
-        <Button label="Publier l'équipe" icon="cloud-upload-outline" fullWidth loading={publish.isPending} onPress={submit} />
-      )}
+      <Button label="Publier l'équipe" icon="cloud-upload-outline" fullWidth loading={publish.isPending} onPress={submit} />
     </Screen>
   )
 }

@@ -114,7 +114,7 @@ export default class TeamController {
   }
 
   /**
-   * POST /teams/:id/publish — make team public (premium gated via middleware).
+   * POST /teams/:id/publish — make team public (open to all users).
    */
   async publish({ auth, params, response }: HttpContext) {
     const user = auth.getUserOrFail()

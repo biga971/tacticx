@@ -41,11 +41,18 @@ export default function TeamsScreen() {
         {view === 'mine' ? <MyTeams /> : <CommunityFeed />}
       </View>
 
-      {view === 'mine' && (
-        <View style={[styles.fab, { bottom: 0 }]}>
+      <View style={[styles.fab, { bottom: 0 }]}>
+        {view === 'mine' ? (
           <Button label="Nouvelle équipe" icon="add" fullWidth onPress={() => router.push('/(tabs)/teams/builder')} />
-        </View>
-      )}
+        ) : (
+          <Button
+            label="Publier une équipe"
+            icon="cloud-upload-outline"
+            fullWidth
+            onPress={() => router.push('/(tabs)/teams/community/submit')}
+          />
+        )}
+      </View>
     </Screen>
   )
 }
@@ -111,6 +118,7 @@ function MyTeams() {
 
 function CommunityFeed() {
   const router = useRouter()
+  const insets = useSafeAreaInsets()
   const { data, isLoading, fetchNextPage, hasNextPage } = useCommunityFeed({ sort: 'likes' })
   const items = useMemo<ApiTeam[]>(() => data?.pages.flatMap((p) => p.data) ?? [], [data])
 
@@ -127,7 +135,7 @@ function CommunityFeed() {
         <TeamCard team={item} community onPress={() => router.push(`/(tabs)/teams/community/${item.id}`)} />
       )}
       ItemSeparatorComponent={() => <View style={{ height: spacing.sm }} />}
-      contentContainerStyle={{ paddingBottom: spacing['3xl'] }}
+      contentContainerStyle={{ paddingBottom: insets.bottom + TAB_BAR_HEIGHT + 64 }}
       onEndReached={() => hasNextPage && fetchNextPage()}
       onEndReachedThreshold={0.5}
     />

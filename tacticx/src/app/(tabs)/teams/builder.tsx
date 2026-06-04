@@ -142,7 +142,7 @@ export default function BuilderScreen() {
     else createTeam.mutate(payload, handlers)
   }
 
-  const gridCols = format === 'vgc' ? 2 : 1
+  const gridCols = format === 'vgc' ? 2 : 3
 
   return (
     <Screen edges={['top']}>
@@ -167,11 +167,11 @@ export default function BuilderScreen() {
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 96 }]}
         showsVerticalScrollIndicator={false}
       >
-        <View style={[styles.grid, { flexDirection: gridCols === 2 ? 'row' : 'column' }]}>
+        <View style={styles.grid}>
           {slots.map((s, i) => (
             <Pressable
               key={i}
-              style={[styles.slot, gridCols === 2 && styles.slotHalf]}
+              style={[styles.slot, gridCols === 2 ? styles.slotHalf : styles.slotThird]}
               onPress={() => setEditIndex(i)}
             >
               <Pressable style={styles.remove} onPress={() => removeSlot(i)} hitSlop={8}>
@@ -189,7 +189,7 @@ export default function BuilderScreen() {
 
           {slots.length < 6 && (
             <Pressable
-              style={[styles.slot, styles.addSlot, gridCols === 2 && styles.slotHalf]}
+              style={[styles.slot, styles.addSlot, gridCols === 2 ? styles.slotHalf : styles.slotThird]}
               onPress={() => setPickerOpen(true)}
             >
               <Ionicons name="add" size={28} color={colors.fg3} />
@@ -248,19 +248,20 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   content: { paddingHorizontal: spacing.base, gap: spacing.lg, paddingTop: spacing.sm },
-  grid: { flexWrap: 'wrap', gap: spacing.sm },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   slot: {
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radii.lg,
-    padding: spacing.md,
+    padding: spacing.sm,
     alignItems: 'center',
     gap: 4,
     minHeight: 120,
     justifyContent: 'center',
   },
   slotHalf: { width: '48%' },
+  slotThird: { width: '31.5%' },
   addSlot: { borderStyle: 'dashed' },
   remove: { position: 'absolute', top: 6, right: 6, zIndex: 1 },
   section: { gap: spacing.sm },
