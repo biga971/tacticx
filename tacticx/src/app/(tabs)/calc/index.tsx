@@ -14,11 +14,13 @@ import { Dropdown } from '@/components/ui/dropdown'
 import { PokemonSprite } from '@/components/shared/PokemonSprite'
 import { TypeBadge } from '@/components/shared/TypeBadge'
 import { PokemonPickerSheet } from '@/components/teams/PokemonPickerSheet'
+import { MovePickerSheet } from '@/components/calc/MovePickerSheet'
+import { TeamPickerSheet } from '@/components/calc/TeamPickerSheet'
 import { calcAllStats } from '@/lib/calc/statFormula'
 import { calcAllRolls, calcKOChances, rollSummary, type DamageParams } from '@/lib/calc/damageFormula'
 import type { BaseStats, StatKey } from '@/lib/calc/types'
 import { NATURE_NAMES } from '@/lib/data/natures'
-import type { ApiPokemon } from '@/lib/api/types'
+import type { ApiPokemon, ApiMove, ApiTeamSlot } from '@/lib/api/types'
 import { TYPE_ORDER, typeColors, colors, radii, spacing, type PokemonType } from '@/lib/theme'
 
 type Category = 'physical' | 'special'
@@ -63,14 +65,17 @@ function spUsed(sp: BaseStats): number {
 }
 
 export default function CalcScreen() {
-  const [mode, setMode] = useState<Mode>('vgc')
+  const [mode] = useState<Mode>('vgc')
   const [attacker, setAttacker] = useState<ApiPokemon | null>(null)
   const [defender, setDefender] = useState<ApiPokemon | null>(null)
   const [atkCfg, setAtkCfg] = useState<SideConfig>(DEFAULT_SIDE)
   const [defCfg, setDefCfg] = useState<SideConfig>(DEFAULT_SIDE)
   const [picking, setPicking] = useState<null | 'attacker' | 'defender'>(null)
+  const [teamPicking, setTeamPicking] = useState<null | 'attacker' | 'defender'>(null)
+  const [movePicking, setMovePicking] = useState(false)
 
-  // Move (manual: no move DB wired — power + type + category).
+  // Move — picked from attacker learnset (power + type + category), tweakable.
+  const [moveName, setMoveName] = useState<string | null>(null)
   const [power, setPower] = useState('80')
   const [moveType, setMoveType] = useState<PokemonType>('normal')
   const [category, setCategory] = useState<Category>('physical')
@@ -175,46 +180,68 @@ export default function CalcScreen() {
           <CardEyebrow role="atk" label="Attaquant" />
           <PokeLine pokemon={attacker} fallback="Choisir l'attaquant" onPress={() => setPicking('attacker')} />
 
-          {/* Capacité (move) */}
+          {/* Capacité — picked from learnset */}
           <Text variant="eyebrow" color="fg3" style={styles.fieldLabel}>
             Capacité
           </Text>
-          <View style={styles.row}>
-            <View style={{ flex: 1 }}>
-              <SegmentedControl<Category>
-                value={category}
-                onChange={setCategory}
-                options={[
-                  { label: 'Physique', value: 'physical' },
-                  { label: 'Spéciale', value: 'special' },
-                ]}
-              />
+          <Pressable
+            style={[styles.moveField, !attacker && styles.moveFieldDisabled]}
+            disabled={!attacker}
+            onPress={() => setMovePicking(true)}
+          >
+            <View style={[styles.moveCat, { backgroundColor: colors.surfaceHigh }]}>
+              <Ionicons name={CATEGORY_ICON[category]} size={14} color={category === 'physical' ? colors.danger : colors.info} />
             </View>
-            <View style={styles.powerBox}>
-              <Text variant="caption" color="fg3">
-                Puiss.
+            <Text variant="body" color={moveName ? 'fg1' : 'fg3'} numberOfLines={1} style={{ flex: 1 }}>
+              {moveName ?? (attacker ? 'Choisir une capacité' : 'Choisis un attaquant')}
+            </Text>
+            {moveName ? <TypeBadge type={moveType} size="xs" /> : null}
+            {moveName ? (
+              <Text variant="caption" color="fg3" mono>
+                {power} pw
               </Text>
-              <TextInput value={power} onChangeText={setPower} keyboardType="number-pad" style={styles.powerInput} maxLength={3} />
+            ) : null}
+            <Ionicons name="chevron-down" size={16} color={colors.fgFaint} />
+          </Pressable>
+
+          {/* Ajustement manuel (catégorie · puissance · type) */}
+          <Accordion title="Ajustement manuel" icon="create-outline">
+            <View style={styles.row}>
+              <View style={{ flex: 1 }}>
+                <SegmentedControl<Category>
+                  value={category}
+                  onChange={setCategory}
+                  options={[
+                    { label: 'Physique', value: 'physical' },
+                    { label: 'Spéciale', value: 'special' },
+                  ]}
+                />
+              </View>
+              <View style={styles.powerBox}>
+                <Text variant="caption" color="fg3">
+                  Puiss.
+                </Text>
+                <TextInput value={power} onChangeText={setPower} keyboardType="number-pad" style={styles.powerInput} maxLength={3} />
+              </View>
             </View>
-            <Ionicons name={CATEGORY_ICON[category]} size={18} color={category === 'physical' ? colors.danger : colors.info} />
-          </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.typeChips}>
-            {TYPE_ORDER.map((t) => {
-              const active = t === moveType
-              const c = typeColors[t]
-              return (
-                <Pressable
-                  key={t}
-                  onPress={() => setMoveType(t)}
-                  style={[styles.typeChip, { borderColor: active ? c.fg : colors.border, backgroundColor: active ? c.bg : colors.surface }]}
-                >
-                  <Text variant="caption" weight="semibold" style={{ color: active ? c.fg : colors.fg3 }}>
-                    {t}
-                  </Text>
-                </Pressable>
-              )
-            })}
-          </ScrollView>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.typeChips}>
+              {TYPE_ORDER.map((t) => {
+                const active = t === moveType
+                const c = typeColors[t]
+                return (
+                  <Pressable
+                    key={t}
+                    onPress={() => setMoveType(t)}
+                    style={[styles.typeChip, { borderColor: active ? c.fg : colors.border, backgroundColor: active ? c.bg : colors.surface }]}
+                  >
+                    <Text variant="caption" weight="semibold" style={{ color: active ? c.fg : colors.fg3 }}>
+                      {t}
+                    </Text>
+                  </Pressable>
+                )
+              })}
+            </ScrollView>
+          </Accordion>
 
           {/* SP offensif (stat pertinente) */}
           {attacker ? (
@@ -245,7 +272,7 @@ export default function CalcScreen() {
           </Accordion>
         </View>
 
-        <Pressable style={styles.fromTeam} onPress={() => setPicking('attacker')}>
+        <Pressable style={styles.fromTeam} onPress={() => setTeamPicking('attacker')}>
           <Ionicons name="people-outline" size={15} color={colors.fg2} />
           <Text variant="caption" color="fg1">
             Choisir depuis mon équipe
@@ -283,6 +310,13 @@ export default function CalcScreen() {
             <StepperRow label="Boost de défense" value={defStage} onChange={setDefStage} />
           </Accordion>
         </View>
+
+        <Pressable style={styles.fromTeam} onPress={() => setTeamPicking('defender')}>
+          <Ionicons name="people-outline" size={15} color={colors.fg2} />
+          <Text variant="caption" color="fg1">
+            Choisir depuis mon équipe
+          </Text>
+        </Pressable>
 
         {/* ── Conditions de terrain ── */}
         <View style={styles.card}>
@@ -373,6 +407,34 @@ export default function CalcScreen() {
           } else if (picking === 'defender') {
             setDefender(p)
             setDefCfg(DEFAULT_SIDE)
+          }
+        }}
+      />
+
+      <MovePickerSheet
+        visible={movePicking}
+        pokemonId={attacker?.id ?? null}
+        onClose={() => setMovePicking(false)}
+        onSelect={(m: ApiMove) => {
+          setMoveName(m.nameFr)
+          setPower(String(m.power ?? 0))
+          setMoveType(m.type.toLowerCase() as PokemonType)
+          setCategory(m.category === 'special' ? 'special' : 'physical')
+        }}
+      />
+
+      <TeamPickerSheet
+        visible={teamPicking !== null}
+        onClose={() => setTeamPicking(null)}
+        onSelect={(pick, slot: ApiTeamSlot) => {
+          if (!slot.pokemon) return
+          const cfg: SideConfig = { sp: pick.sp, nature: pick.nature }
+          if (teamPicking === 'attacker') {
+            setAttacker(slot.pokemon)
+            setAtkCfg(cfg)
+          } else if (teamPicking === 'defender') {
+            setDefender(slot.pokemon)
+            setDefCfg(cfg)
           }
         }}
       />
@@ -704,6 +766,19 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs,
   },
   powerInput: { color: colors.fg1, fontSize: 16, fontWeight: '600', minWidth: 36, textAlign: 'center', padding: 0 },
+  moveField: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    minHeight: 44,
+    backgroundColor: colors.surfaceSunken,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radii.md,
+    paddingHorizontal: spacing.md,
+  },
+  moveFieldDisabled: { opacity: 0.5 },
+  moveCat: { width: 26, height: 26, borderRadius: radii.sm, alignItems: 'center', justifyContent: 'center' },
   typeChips: { gap: spacing.xs, paddingVertical: spacing.xs },
   typeChip: { borderWidth: 1, borderRadius: radii.pill, paddingHorizontal: spacing.md, paddingVertical: spacing.xs },
 
