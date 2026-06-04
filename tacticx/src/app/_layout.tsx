@@ -8,6 +8,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from '@/lib/api/queryClient'
 import { ToastProvider } from '@/components/ui/toast'
 import { initRevenueCat } from '@/lib/revenuecat'
+import { initAds } from '@/lib/ads'
 import { useAppFonts } from '@/lib/useAppFonts'
 import { useAuthStore } from '@/lib/store/authStore'
 import { ensureGuestSession } from '@/lib/store/ensureSession'
@@ -22,6 +23,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     initRevenueCat()
+    initAds()
   }, [])
 
   // Once secure-store has rehydrated, ensure a session exists (mint a guest

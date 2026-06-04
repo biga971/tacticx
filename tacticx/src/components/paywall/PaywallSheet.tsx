@@ -20,11 +20,17 @@ export interface PaywallSheetProps {
 
 type Plan = 'monthly' | 'annual'
 
+// Display prices — keep in sync with the App Store / Play Store products.
+const PRICE: Record<Plan, string> = {
+  monthly: '3,99 € / mois',
+  annual: '14,99 € / an',
+}
+
 const PERKS: { icon: keyof typeof Ionicons.glyphMap; label: string }[] = [
-  { icon: 'cloud-upload-outline', label: 'Publie tes équipes dans la communauté' },
-  { icon: 'chatbubbles-outline', label: 'Commente et échange avec les joueurs' },
-  { icon: 'trending-up-outline', label: 'Historique méta et stats avancées' },
-  { icon: 'infinite-outline', label: 'Objectifs et analyses illimités' },
+  { icon: 'ban-outline', label: 'Aucune publicité — jamais' },
+  { icon: 'flash-outline', label: 'App plus rapide, sans interruption' },
+  { icon: 'heart-outline', label: 'Soutiens le développement de Tacticx' },
+  { icon: 'sparkles-outline', label: 'Avantages VIP à venir' },
 ]
 
 export function PaywallSheet({ visible, onClose, featureName, featureIcon }: PaywallSheetProps) {
@@ -38,9 +44,7 @@ export function PaywallSheet({ visible, onClose, featureName, featureIcon }: Pay
     try {
       const packages = await getOfferingPackages()
       const pkg = packages.find((p) =>
-        plan === 'annual'
-          ? p.packageType === 'ANNUAL'
-          : p.packageType === 'MONTHLY'
+        plan === 'annual' ? p.packageType === 'ANNUAL' : p.packageType === 'MONTHLY'
       )
       if (!pkg) {
         toast.show('Abonnements indisponibles (clés RevenueCat manquantes)', 'error')
@@ -49,7 +53,7 @@ export function PaywallSheet({ visible, onClose, featureName, featureIcon }: Pay
       const ok = await purchasePackage(pkg)
       if (ok) {
         setPremium(true)
-        toast.show('Bienvenue dans Premium !', 'success')
+        toast.show('Bienvenue dans Tacticx VIP !', 'success')
         onClose()
       }
     } catch {
@@ -63,13 +67,13 @@ export function PaywallSheet({ visible, onClose, featureName, featureIcon }: Pay
     <BottomSheet visible={visible} onClose={onClose} heightRatio={0.85}>
       <View style={styles.hero}>
         <View style={styles.heroIcon}>
-          <Ionicons name={featureIcon ?? 'star-outline'} size={28} color={colors.accent} />
+          <Ionicons name={featureIcon ?? 'diamond-outline'} size={28} color={colors.accent} />
         </View>
         <Text variant="h2" center>
-          {featureName ? `Débloque ${featureName}` : 'Passe à Tacticx Premium'}
+          {featureName ? `Débloque ${featureName}` : 'Passe à Tacticx VIP'}
         </Text>
         <Text variant="body" color="fg3" center>
-          Tout l'arsenal compétitif, sans limite.
+          Retire la publicité et soutiens l'app.
         </Text>
       </View>
 
@@ -95,17 +99,19 @@ export function PaywallSheet({ visible, onClose, featureName, featureIcon }: Pay
             ]}
           />
         </View>
-        {plan === 'annual' && <Badge label="-37%" bg={colors.successSoft} fg={colors.success} />}
+        {plan === 'annual' && <Badge label="-69%" bg={colors.successSoft} fg={colors.success} />}
       </View>
 
-      <Button
-        label="Commencer"
-        size="lg"
-        fullWidth
-        loading={loading}
-        onPress={buy}
-        style={{ marginTop: spacing.base }}
-      />
+      <Text variant="title" center style={{ marginTop: spacing.base }}>
+        {PRICE[plan]}
+      </Text>
+      {plan === 'annual' ? (
+        <Text variant="caption" color="fg3" center>
+          soit 1,25 € / mois
+        </Text>
+      ) : null}
+
+      <Button label="Commencer" size="lg" fullWidth loading={loading} onPress={buy} style={{ marginTop: spacing.md }} />
       <Text variant="caption" color="fgFaint" center style={{ marginTop: spacing.sm }}>
         Sans engagement. Résiliable à tout moment.
       </Text>

@@ -118,7 +118,6 @@ router
         router
           .post('community/:id/comments', [controllers.Comment, 'store'])
           .use(middleware.registered())
-          .use(middleware.premium())
 
         router
           .get('subscription/status', [controllers.Subscription, 'status'])

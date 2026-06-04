@@ -7,7 +7,6 @@ import { SegmentedControl } from '@/components/ui/segmented-control'
 import { Tabs } from '@/components/ui/tabs'
 import { Shimmer } from '@/components/ui/shimmer'
 import { Text } from '@/components/ui/text'
-// import { PremiumLock } from '@/components/shared/PremiumLock' // Unused — premium card removed
 import { PokemonRow } from '@/components/shared/PokemonRow'
 import { useMeta } from '@/lib/api/hooks/useMeta'
 import { useFormatStore, type Format } from '@/lib/store/formatStore'

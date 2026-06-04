@@ -10,6 +10,7 @@ import { Ionicons } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
 import type { BottomTabBarProps } from 'expo-router/js-tabs'
 import { Text } from '@/components/ui/text'
+import { AdBanner } from '@/components/ads/AdBanner'
 import { colors, radii, spacing, shadows } from '@/lib/theme'
 
 /** icon name per route, set via options.tabBarIcon-less mapping. */
@@ -56,6 +57,7 @@ export function MorphingTabbar({
 
   return (
     <View style={[styles.wrap, { paddingBottom: insets.bottom || spacing.md }]}>
+      <AdBanner />
       <View style={styles.bar} onLayout={onLayout}>
         {segWidth > 0 && <Animated.View style={[styles.pill, pill]} />}
         {state.routes.map((route, i) => {

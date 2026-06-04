@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button'
 import { Accordion } from '@/components/ui/accordion'
 import { PokemonSprite } from '@/components/shared/PokemonSprite'
 import { TypeBadge } from '@/components/shared/TypeBadge'
-import { PremiumLock } from '@/components/shared/PremiumLock'
 import { useToast } from '@/components/ui/toast'
 import { useCommunityTeam, useToggleLike, useComments, useAddComment } from '@/lib/api/hooks/useCommunity'
 import { colors, radii, spacing } from '@/lib/theme'
@@ -32,7 +31,7 @@ export default function CommunityTeamScreen() {
         setDraft('')
         toast.show('Commentaire publié', 'success')
       },
-      onError: () => toast.show('Premium requis pour commenter', 'error'),
+      onError: () => toast.show('Connecte-toi pour commenter', 'error'),
     })
   }
 
@@ -91,19 +90,17 @@ export default function CommunityTeamScreen() {
           ) : null}
 
           <Accordion title={`Commentaires (${comments?.meta.total ?? 0})`} icon="chatbubbles-outline">
-            <PremiumLock featureName="les commentaires" featureIcon="chatbubbles-outline">
-              <View style={styles.commentBox}>
-                <TextInput
-                  value={draft}
-                  onChangeText={setDraft}
-                  placeholder="Ajouter un commentaire…"
-                  placeholderTextColor={colors.fg3}
-                  style={styles.commentInput}
-                  multiline
-                />
-                <Button label="Publier" size="sm" onPress={submitComment} loading={addComment.isPending} />
-              </View>
-            </PremiumLock>
+            <View style={styles.commentBox}>
+              <TextInput
+                value={draft}
+                onChangeText={setDraft}
+                placeholder="Ajouter un commentaire…"
+                placeholderTextColor={colors.fg3}
+                style={styles.commentInput}
+                multiline
+              />
+              <Button label="Publier" size="sm" onPress={submitComment} loading={addComment.isPending} />
+            </View>
             <View style={{ gap: spacing.sm, marginTop: spacing.md }}>
               {comments?.data.map((c) => (
                 <View key={c.id} style={styles.comment}>

@@ -156,10 +156,7 @@ export default function CalcScreen() {
               <Ionicons name="swap-vertical-outline" size={21} color={colors.fg2} />
             </Pressable>
             <Pressable hitSlop={8} style={styles.iconBtn}>
-              <Ionicons name="bookmark-outline" size={21} color={colors.fgFaint} />
-              <View style={styles.lockMini}>
-                <Ionicons name="lock-closed" size={8} color={colors.fg3} />
-              </View>
+              <Ionicons name="bookmark-outline" size={21} color={colors.fg2} />
             </Pressable>
           </View>
         }
@@ -712,17 +709,6 @@ const styles = StyleSheet.create({
   scroll: { gap: spacing.md, paddingBottom: spacing.xl, paddingTop: spacing.sm },
   headActions: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
   iconBtn: { width: 34, height: 34, alignItems: 'center', justifyContent: 'center' },
-  lockMini: {
-    position: 'absolute',
-    bottom: 2,
-    right: 2,
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: colors.surfaceHigh,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
 
   card: {
     backgroundColor: colors.surface,

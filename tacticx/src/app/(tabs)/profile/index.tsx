@@ -8,7 +8,6 @@ import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { SegmentedControl } from '@/components/ui/segmented-control'
 import { RollingCounter } from '@/components/ui/rolling-counter'
-import { PremiumLock } from '@/components/shared/PremiumLock'
 import { PaywallSheet } from '@/components/paywall/PaywallSheet'
 import { useFormatStore, type Format } from '@/lib/store/formatStore'
 import { useProfileStore } from '@/lib/store/profileStore'
@@ -67,7 +66,7 @@ export default function ProfileScreen() {
           <View style={{ flex: 1 }}>
             <Text variant="h3">Dresseur Tacticx</Text>
             {profile.isPremium ? (
-              <Badge label="PREMIUM" bg={colors.accentSoft} fg={colors.accent} size="sm" />
+              <Badge label="VIP" bg={colors.accentSoft} fg={colors.accent} size="sm" />
             ) : (
               <Text variant="caption" color="fg3">
                 Compte gratuit
@@ -106,18 +105,16 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        <PremiumLock featureName="l'historique de rang" featureIcon="trending-up-outline">
-          <View style={styles.sparkCard}>
-            <Text variant="eyebrow" color="fg3">
-              Progression
-            </Text>
-            <View style={styles.sparkline}>
-              {[10, 14, 12, 20, 18, 26, 22].map((h, i) => (
-                <View key={i} style={[styles.bar, { height: h }]} />
-              ))}
-            </View>
+        <View style={styles.sparkCard}>
+          <Text variant="eyebrow" color="fg3">
+            Progression
+          </Text>
+          <View style={styles.sparkline}>
+            {[10, 14, 12, 20, 18, 26, 22].map((h, i) => (
+              <View key={i} style={[styles.bar, { height: h }]} />
+            ))}
           </View>
-        </PremiumLock>
+        </View>
 
         <View style={{ gap: spacing.sm }}>
           <Text variant="eyebrow" color="fg3">
@@ -142,11 +139,11 @@ export default function ProfileScreen() {
             <View style={styles.subCard}>
               <Ionicons name="checkmark-circle" size={22} color={colors.success} />
               <Text variant="body" color="fg2" style={{ flex: 1 }}>
-                Tacticx Premium actif
+                Tacticx VIP actif — sans publicité
               </Text>
             </View>
           ) : (
-            <Button label="Passer à Premium" icon="star-outline" fullWidth onPress={() => setPaywall(true)} />
+            <Button label="Passer VIP — sans pub" icon="diamond-outline" fullWidth onPress={() => setPaywall(true)} />
           )}
           <Button label="Restaurer les achats" variant="ghost" fullWidth onPress={restore} />
         </View>
