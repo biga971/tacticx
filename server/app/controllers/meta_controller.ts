@@ -1,7 +1,18 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import MetaCache from '#models/meta_cache'
 import PokemonRoster from '#models/pokemon_roster'
+import MoveData from '#models/move_data'
+import { normalizePokemonName } from '#utils/pokemon_name'
 import type { MetaFormat, MetaSource } from '#services/meta/meta_types'
+
+/** Loose key for matching move display names against MoveData (no spaces/punct). */
+function moveKey(s: string): string {
+  return s
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]/g, '')
+}
 
 /** Shape a roster row like the Pokédex ApiPokemon so the app can reuse PokemonRow. */
 function toApiPokemon(r: PokemonRoster) {
@@ -125,6 +136,42 @@ export default class MetaController {
       .where('slug', name)
       .first()
 
+    // Enrich moves with type + category from move_data (match on loose key).
+    const allMoves = await MoveData.all()
+    const movesByKey = new Map<string, MoveData>()
+    for (const m of allMoves) {
+      movesByKey.set(moveKey(m.nameEn), m)
+      if (m.nameFr) movesByKey.set(moveKey(m.nameFr), m)
+    }
+    const moves = (row.moves ?? []).map((mv) => {
+      const md = movesByKey.get(moveKey(mv.name))
+      return {
+        name: mv.name,
+        nameFr: md?.nameFr ?? mv.name,
+        usageRate: mv.usageRate,
+        type: md?.type ?? null,
+        category: md?.category ?? null,
+      }
+    })
+
+    // Enrich teammates with sprite + display name from roster (match on slug).
+    const tmSlugs = (row.teammates ?? []).map((t) => normalizePokemonName(t.name))
+    const tmRoster = tmSlugs.length
+      ? await PokemonRoster.query().where('regulation', 'M-A').whereIn('slug', tmSlugs)
+      : []
+    const tmBySlug = new Map<string, PokemonRoster>()
+    for (const r of tmRoster) if (r.slug) tmBySlug.set(r.slug, r)
+    const teammates = (row.teammates ?? []).map((t) => {
+      const r = tmBySlug.get(normalizePokemonName(t.name))
+      return {
+        name: t.name,
+        nameFr: r?.nameFr ?? r?.nameEn ?? t.name,
+        usageRate: t.usageRate,
+        spriteUrl: r?.spriteUrl ?? null,
+        pokemonId: r?.pokemonId ?? null,
+      }
+    })
+
     return response.ok({
       source,
       data: {
@@ -132,10 +179,10 @@ export default class MetaController {
         rank: row.rank,
         usageRate: row.usageRate,
         winRate: row.winRate,
-        moves: row.moves,
+        moves,
         items: row.items,
         abilities: row.abilities,
-        teammates: row.teammates,
+        teammates,
         spreads: row.spreads,
         pokemon: match ? toApiPokemon(match) : null,
       },

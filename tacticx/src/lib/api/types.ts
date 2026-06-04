@@ -174,9 +174,38 @@ export interface ApiMetaResponse {
   data: ApiMetaEntry[]
 }
 
+export interface ApiMetaMove {
+  name: string
+  nameFr: string
+  usageRate: number
+  type: string | null
+  category: 'physical' | 'special' | 'status' | null
+}
+
+export interface ApiMetaTeammate {
+  name: string
+  nameFr: string
+  usageRate: number
+  spriteUrl: string | null
+  pokemonId: number | null
+}
+
+export interface ApiMetaDetail {
+  pokemonName: string
+  rank: number | null
+  usageRate: number | null
+  winRate: number | null
+  moves: ApiMetaMove[]
+  items: ApiUsageEntry[]
+  abilities: ApiUsageEntry[]
+  teammates: ApiMetaTeammate[]
+  spreads: ApiSpreadEntry[]
+  pokemon: ApiPokemon | null
+}
+
 export interface ApiMetaDetailResponse {
   source: string
-  data: ApiMetaEntry
+  data: ApiMetaDetail
 }
 
 export interface CommunityFilters {
