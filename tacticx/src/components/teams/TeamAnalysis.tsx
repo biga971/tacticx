@@ -3,9 +3,11 @@ import { StyleSheet, View } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { Text } from '@/components/ui/text'
 import { Tabs } from '@/components/ui/tabs'
+import { Button } from '@/components/ui/button'
 import { TypeBadge } from '@/components/shared/TypeBadge'
 import { PokemonSprite } from '@/components/shared/PokemonSprite'
 import { TypeCoverageTable } from '@/components/teams/TypeCoverageTable'
+import { SpeedComparison } from '@/components/teams/SpeedComparison'
 import { getOffensiveCoverage } from '@/lib/calc/typeCoverage'
 import { calcStat } from '@/lib/calc/statFormula'
 import type { PokemonSlot } from '@/lib/calc/types'
@@ -73,6 +75,7 @@ function OffensiveCoverage({ slots }: { slots: AnalysisSlot[] }) {
 
 /** Slots ranked by final Speed (Champions formula, level 50). */
 function SpeedTiers({ slots }: { slots: AnalysisSlot[] }) {
+  const [compareOpen, setCompareOpen] = useState(false)
   const ranked = useMemo(
     () =>
       slots
@@ -83,21 +86,42 @@ function SpeedTiers({ slots }: { slots: AnalysisSlot[] }) {
   if (ranked.length === 0) return <EmptyHint text="Ajoute des Pokémon pour voir les speed tiers." />
 
   return (
-    <View style={styles.table}>
-      {ranked.map((s, i) => (
-        <View key={`${s.pokemonId}-${i}`} style={[styles.speedRow, i > 0 && styles.speedBorder]}>
-          <PokemonSprite uri={s.spriteUrl ?? undefined} pokemonId={s.pokemonId} size={32} />
-          <Text variant="caption" weight="semibold" style={{ flex: 1 }} numberOfLines={1}>
-            {s.name}
-          </Text>
-          <Text variant="title" mono>
-            {s.spe}
-          </Text>
-          <Text variant="caption" color="fg3" style={{ width: 28 }}>
-            Vit
-          </Text>
-        </View>
-      ))}
+    <View style={{ gap: spacing.sm }}>
+      <View style={styles.table}>
+        {ranked.map((s, i) => (
+          <View key={`${s.pokemonId}-${i}`} style={[styles.speedRow, i > 0 && styles.speedBorder]}>
+            <PokemonSprite uri={s.spriteUrl ?? undefined} pokemonId={s.pokemonId} size={32} />
+            <Text variant="caption" weight="semibold" style={{ flex: 1 }} numberOfLines={1}>
+              {s.name}
+            </Text>
+            <Text variant="title" mono>
+              {s.spe}
+            </Text>
+            <Text variant="caption" color="fg3" style={{ width: 28 }}>
+              Vit
+            </Text>
+          </View>
+        ))}
+      </View>
+
+      <Button
+        label="Comparer au roster"
+        icon="swap-vertical"
+        variant="secondary"
+        size="sm"
+        onPress={() => setCompareOpen(true)}
+      />
+
+      <SpeedComparison
+        visible={compareOpen}
+        onClose={() => setCompareOpen(false)}
+        team={ranked.map((s) => ({
+          pokemonId: s.pokemonId,
+          name: s.name,
+          spriteUrl: s.spriteUrl,
+          spe: s.spe,
+        }))}
+      />
     </View>
   )
 }
