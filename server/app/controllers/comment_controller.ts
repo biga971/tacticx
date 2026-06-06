@@ -3,6 +3,9 @@ import Team from '#models/team'
 import Comment from '#models/comment'
 import { storeCommentValidator } from '#validators/team'
 
+/** Public projection of the commenter — never leak email or guest flag. */
+const PUBLIC_USER = { fields: ['id', 'fullName', 'initials'] }
+
 export default class CommentController {
   /**
    * GET /community/:id/comments — comments on a public team.
@@ -20,7 +23,7 @@ export default class CommentController {
       .orderBy('created_at', 'desc')
       .paginate(page, limit)
 
-    return response.ok(comments)
+    return response.ok(comments.serialize({ relations: { user: PUBLIC_USER } }))
   }
 
   /**
@@ -35,6 +38,6 @@ export default class CommentController {
     const comment = await Comment.create({ userId: user.id, teamId: team.id, content })
     await comment.load('user')
 
-    return response.created(comment)
+    return response.created(comment.serialize({ relations: { user: PUBLIC_USER } }))
   }
 }

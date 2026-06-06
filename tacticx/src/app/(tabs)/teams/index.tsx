@@ -16,6 +16,7 @@ import { PokemonSprite } from '@/components/shared/PokemonSprite'
 import { useTeams, useDeleteTeam } from '@/lib/api/hooks/useTeams'
 import { useCommunityFeed } from '@/lib/api/hooks/useCommunity'
 import { useAuthStore } from '@/lib/store/authStore'
+import { formatRelativeDate } from '@/lib/format/date'
 import type { ApiTeam } from '@/lib/api/types'
 import { colors, radii, spacing } from '@/lib/theme'
 import { TAB_BAR_HEIGHT } from '@/components/ui/morphing-tabbar'
@@ -186,9 +187,14 @@ function TeamCard({
           <Text variant="caption" color="fg3">
             {team.likesCount}
           </Text>
-          {team.user?.initials ? (
+          {team.user?.fullName || team.user?.initials ? (
             <Text variant="caption" color="fg3" style={{ marginLeft: spacing.sm }}>
-              par {team.user.initials}
+              par {team.user.fullName ?? team.user.initials}
+            </Text>
+          ) : null}
+          {team.createdAt ? (
+            <Text variant="caption" color="fg3" style={{ marginLeft: 'auto' }}>
+              {formatRelativeDate(team.createdAt)}
             </Text>
           ) : null}
         </View>

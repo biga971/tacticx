@@ -11,6 +11,8 @@ import { PokemonSprite } from '@/components/shared/PokemonSprite'
 import { TypeBadge } from '@/components/shared/TypeBadge'
 import { useToast } from '@/components/ui/toast'
 import { useCommunityTeam, useToggleLike, useComments, useAddComment } from '@/lib/api/hooks/useCommunity'
+import { useAuthStore } from '@/lib/store/authStore'
+import { formatRelativeDate, formatShortDate } from '@/lib/format/date'
 import { colors, radii, spacing } from '@/lib/theme'
 
 export default function CommunityTeamScreen() {
@@ -22,7 +24,19 @@ export default function CommunityTeamScreen() {
   const { data: comments } = useComments(teamId)
   const addComment = useAddComment(teamId)
   const toast = useToast()
+  const isGuest = useAuthStore((s) => s.isGuest)
+  const authToken = useAuthStore((s) => s.token)
   const [draft, setDraft] = useState('')
+
+  const onLike = () => {
+    if (isGuest || !authToken) {
+      toast.show('Connecte-toi pour liker une équipe', 'error')
+      return
+    }
+    toggleLike.mutate(teamId)
+  }
+
+  const author = team?.user?.fullName ?? team?.user?.initials ?? 'Anonyme'
 
   const submitComment = () => {
     if (!draft.trim()) return
@@ -44,8 +58,12 @@ export default function CommunityTeamScreen() {
         <Text variant="h2" style={{ flex: 1 }} numberOfLines={1}>
           {team?.name ?? 'Équipe'}
         </Text>
-        <Pressable onPress={() => toggleLike.mutate(teamId)} hitSlop={8} style={styles.like}>
-          <Ionicons name="heart-outline" size={20} color={colors.danger} />
+        <Pressable onPress={onLike} hitSlop={8} style={styles.like} disabled={toggleLike.isPending}>
+          <Ionicons
+            name={team?.liked ? 'heart' : 'heart-outline'}
+            size={20}
+            color={colors.danger}
+          />
           <Text variant="caption" color="fg2">
             {team?.likesCount ?? 0}
           </Text>
@@ -56,6 +74,18 @@ export default function CommunityTeamScreen() {
         <Shimmer height={260} radius={14} style={{ marginTop: spacing.md }} />
       ) : (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: spacing.lg, paddingBottom: spacing['3xl'] }}>
+          <View style={styles.meta}>
+            <Ionicons name="person-circle-outline" size={16} color={colors.fg3} />
+            <Text variant="caption" color="fg2">
+              {author}
+            </Text>
+            {team.createdAt ? (
+              <Text variant="caption" color="fg3">
+                · {formatShortDate(team.createdAt)}
+              </Text>
+            ) : null}
+          </View>
+
           <View style={styles.cards}>
             {team.slots.map((s) => (
               <View key={s.id} style={styles.card}>
@@ -104,9 +134,14 @@ export default function CommunityTeamScreen() {
             <View style={{ gap: spacing.sm, marginTop: spacing.md }}>
               {comments?.data.map((c) => (
                 <View key={c.id} style={styles.comment}>
-                  <Text variant="caption" weight="semibold" color="fg2">
-                    {c.user?.initials ?? '??'}
-                  </Text>
+                  <View style={styles.commentHead}>
+                    <Text variant="caption" weight="semibold" color="fg1">
+                      {c.user?.fullName ?? c.user?.initials ?? 'Anonyme'}
+                    </Text>
+                    <Text variant="caption" color="fg3">
+                      {formatRelativeDate(c.createdAt)}
+                    </Text>
+                  </View>
                   <Text variant="caption" color="fg2">
                     {c.content}
                   </Text>
@@ -138,6 +173,7 @@ export default function CommunityTeamScreen() {
 
 const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingVertical: spacing.sm },
+  meta: { flexDirection: 'row', alignItems: 'center', gap: 4, flexWrap: 'wrap' },
   like: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   cards: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, justifyContent: 'center' },
   card: {
@@ -162,11 +198,11 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   comment: {
-    flexDirection: 'row',
-    gap: spacing.sm,
+    gap: 4,
     backgroundColor: colors.surface,
     borderRadius: radii.md,
     padding: spacing.md,
   },
+  commentHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.sm },
   footer: { gap: spacing.sm },
 })
