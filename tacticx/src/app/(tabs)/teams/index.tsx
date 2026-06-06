@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useToast } from '@/components/ui/toast'
 import { PokemonSprite } from '@/components/shared/PokemonSprite'
+import { ImportTeamSheet } from '@/components/teams/ImportTeamSheet'
 import { useTeams, useDeleteTeam } from '@/lib/api/hooks/useTeams'
 import { useCommunityFeed } from '@/lib/api/hooks/useCommunity'
 import { useAuthStore } from '@/lib/store/authStore'
@@ -28,6 +29,7 @@ export default function TeamsScreen() {
   const isGuest = useAuthStore((s) => s.isGuest)
   const token = useAuthStore((s) => s.token)
   const [view, setView] = useState<View2>('mine')
+  const [importOpen, setImportOpen] = useState(false)
 
   // Publishing is gated behind an account; guests get pushed to sign-in.
   const onPublish = () =>
@@ -50,7 +52,20 @@ export default function TeamsScreen() {
 
       <View style={[styles.fab, { bottom: 0 }]}>
         {view === 'mine' ? (
-          <Button label="Nouvelle équipe" icon="add" fullWidth onPress={() => router.push('/(tabs)/teams/builder')} />
+          <View style={styles.fabRow}>
+            <Button
+              label="Nouvelle équipe"
+              icon="add"
+              style={{ flex: 1 }}
+              onPress={() => router.push('/(tabs)/teams/builder')}
+            />
+            <Button
+              label="Importer"
+              icon="download-outline"
+              variant="secondary"
+              onPress={() => setImportOpen(true)}
+            />
+          </View>
         ) : (
           <Button
             label="Publier une équipe"
@@ -60,6 +75,8 @@ export default function TeamsScreen() {
           />
         )}
       </View>
+
+      <ImportTeamSheet visible={importOpen} onClose={() => setImportOpen(false)} />
     </Screen>
   )
 }
@@ -234,4 +251,5 @@ const styles = StyleSheet.create({
   cardFooter: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
   empty: { alignItems: 'center', justifyContent: 'center', gap: spacing.sm, paddingTop: spacing['3xl'] },
   fab: { position: 'absolute', left: spacing.base, right: spacing.base },
+  fabRow: { flexDirection: 'row', gap: spacing.sm },
 })
