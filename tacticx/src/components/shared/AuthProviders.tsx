@@ -15,34 +15,20 @@ const GOOGLE_IOS = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID
 const GOOGLE_ANDROID = process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID
 const GOOGLE_WEB = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID
 
+// Google is only usable once the platform-specific client id exists, otherwise
+// `useIdTokenAuthRequest` throws. Gate the hook behind this per platform.
+const GOOGLE_CONFIGURED =
+  Platform.OS === 'ios' ? !!GOOGLE_IOS : Platform.OS === 'android' ? !!GOOGLE_ANDROID : !!GOOGLE_WEB
+
 /** Apple + Google native SSO buttons. Calls onDone() after a successful sign-in. */
 export function AuthProviders({ onDone }: { onDone?: () => void }) {
   const toast = useToast()
   const apple = useSocialSignIn('apple')
-  const google = useSocialSignIn('google')
   const [appleAvailable, setAppleAvailable] = useState(false)
-
-  const [, googleResponse, googlePrompt] = Google.useIdTokenAuthRequest({
-    iosClientId: GOOGLE_IOS,
-    androidClientId: GOOGLE_ANDROID,
-    webClientId: GOOGLE_WEB,
-  })
 
   useEffect(() => {
     AppleAuthentication.isAvailableAsync().then(setAppleAvailable).catch(() => {})
   }, [])
-
-  // Resolve the Google auth-session result into a server exchange.
-  useEffect(() => {
-    if (googleResponse?.type !== 'success') return
-    const idToken = googleResponse.params?.id_token
-    if (!idToken) return
-    google.mutate({ token: idToken }, {
-      onSuccess: () => onDone?.(),
-      onError: () => toast.show('Connexion Google échouée', 'error'),
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [googleResponse])
 
   const onApple = async () => {
     try {
@@ -75,8 +61,6 @@ export function AuthProviders({ onDone }: { onDone?: () => void }) {
     }
   }
 
-  const googleConfigured = !!(GOOGLE_IOS || GOOGLE_ANDROID || GOOGLE_WEB)
-
   return (
     <View style={{ gap: spacing.sm }}>
       {appleAvailable && Platform.OS === 'ios' && (
@@ -94,23 +78,60 @@ export function AuthProviders({ onDone }: { onDone?: () => void }) {
         </Pressable>
       )}
 
-      <Pressable
-        style={[styles.btn, styles.google]}
-        onPress={() => (googleConfigured ? googlePrompt() : toast.show('Google bientôt disponible', 'info'))}
-        disabled={google.isPending}
-      >
-        {google.isPending ? (
-          <ActivityIndicator color={colors.fg1} />
-        ) : (
-          <>
-            <Ionicons name="logo-google" size={18} color={colors.fg1} />
-            <Text weight="semibold" style={{ color: colors.fg1 }}>
-              Continuer avec Google
-            </Text>
-          </>
-        )}
-      </Pressable>
+      {GOOGLE_CONFIGURED ? (
+        <GoogleButton onDone={onDone} />
+      ) : (
+        <Pressable
+          style={[styles.btn, styles.google]}
+          onPress={() => toast.show('Google bientôt disponible', 'info')}
+        >
+          <Ionicons name="logo-google" size={18} color={colors.fg1} />
+          <Text weight="semibold" style={{ color: colors.fg1 }}>
+            Continuer avec Google
+          </Text>
+        </Pressable>
+      )}
     </View>
+  )
+}
+
+/** Google SSO button. Only mounted when a platform client id is configured. */
+function GoogleButton({ onDone }: { onDone?: () => void }) {
+  const toast = useToast()
+  const google = useSocialSignIn('google')
+  const [, response, promptAsync] = Google.useIdTokenAuthRequest({
+    iosClientId: GOOGLE_IOS,
+    androidClientId: GOOGLE_ANDROID,
+    webClientId: GOOGLE_WEB,
+  })
+
+  useEffect(() => {
+    if (response?.type !== 'success') return
+    const idToken = response.params?.id_token
+    if (!idToken) return
+    google.mutate(
+      { token: idToken },
+      {
+        onSuccess: () => onDone?.(),
+        onError: () => toast.show('Connexion Google échouée', 'error'),
+      }
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [response])
+
+  return (
+    <Pressable style={[styles.btn, styles.google]} onPress={() => promptAsync()} disabled={google.isPending}>
+      {google.isPending ? (
+        <ActivityIndicator color={colors.fg1} />
+      ) : (
+        <>
+          <Ionicons name="logo-google" size={18} color={colors.fg1} />
+          <Text weight="semibold" style={{ color: colors.fg1 }}>
+            Continuer avec Google
+          </Text>
+        </>
+      )}
+    </Pressable>
   )
 }
 

@@ -218,7 +218,7 @@ export default function BuilderScreen() {
         />
       </View>
 
-      <PokemonPickerSheet visible={pickerOpen} onClose={() => setPickerOpen(false)} onSelect={addPokemon} />
+      <PokemonPickerSheet visible={pickerOpen} onClose={() => setPickerOpen(false)} onSelect={addPokemon} source="roster" />
 
       {editIndex !== null && (
         <PokemonEditorSheet

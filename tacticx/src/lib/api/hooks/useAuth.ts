@@ -81,6 +81,24 @@ export function useSocialSignIn(provider: 'apple' | 'google') {
   })
 }
 
+export interface ApiMe {
+  id: number
+  email: string
+  fullName: string | null
+  isGuest: boolean
+}
+
+/** Current authenticated user (identity: pseudo + email). */
+export function useMe() {
+  const token = useAuthStore((s) => s.token)
+  const isGuest = useAuthStore((s) => s.isGuest)
+  return useQuery({
+    queryKey: ['me'],
+    queryFn: () => apiFetch<ApiMe>('/me'),
+    enabled: !!token && !isGuest,
+  })
+}
+
 export function useProfile() {
   const token = useAuthStore((s) => s.token)
   return useQuery({

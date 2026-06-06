@@ -8,12 +8,10 @@ import { Text } from '@/components/ui/text'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { SegmentedControl } from '@/components/ui/segmented-control'
-import { RollingCounter } from '@/components/ui/rolling-counter'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { PaywallSheet } from '@/components/paywall/PaywallSheet'
-import { useFormatStore, type Format } from '@/lib/store/formatStore'
 import { useProfileStore } from '@/lib/store/profileStore'
+import { useMe } from '@/lib/api/hooks/useAuth'
 import { useAuthStore } from '@/lib/store/authStore'
 import { ensureGuestSession } from '@/lib/store/ensureSession'
 import { restorePurchases } from '@/lib/revenuecat'
@@ -61,7 +59,6 @@ const BENEFITS = [
 
 function GuestProfile() {
   const router = useRouter()
-  const { format } = useFormatStore()
 
   return (
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: spacing['3xl'] }}>
@@ -139,12 +136,6 @@ function GuestProfile() {
         Réglages
       </Text>
       <View style={styles.card}>
-        <SettingRow icon="git-branch-outline" label="Format par défaut" value={LABELS[format] ?? format} />
-        <SettingRow icon="language-outline" label="Langue" value="Français" />
-        <SettingRow icon="moon-outline" label="Apparence" value="Sombre" last />
-      </View>
-
-      <View style={styles.card}>
         <SettingRow icon="help-buoy-outline" label="Aide & support" />
         <SettingRow icon="shield-outline" label="Confidentialité" />
         <SettingRow icon="document-text-outline" label="Conditions d'utilisation" last />
@@ -198,12 +189,15 @@ function SettingRow({
 /* ──────────────────────── Account (logged in) ──────────────────────── */
 
 function AccountProfile() {
-  const { format, setFormat } = useFormatStore()
   const profile = useProfileStore()
+  const { data: me } = useMe()
   const clearAuth = useAuthStore((s) => s.clearAuth)
   const toast = useToast()
   const [paywall, setPaywall] = useState(false)
   const [confirmLogout, setConfirmLogout] = useState(false)
+
+  const pseudo = me?.fullName?.trim() || 'Dresseur Tacticx'
+  const initials = initialsOf(pseudo)
 
   const rows = [
     { icon: 'ribbon-outline' as const, label: 'Niveau', value: profile.level },
@@ -237,11 +231,11 @@ function AccountProfile() {
         <View style={styles.identity}>
           <View style={styles.avatar}>
             <Text variant="h2" color="accent">
-              {(profile.level ?? 'TX').slice(0, 2).toUpperCase()}
+              {initials}
             </Text>
           </View>
           <View style={{ flex: 1 }}>
-            <Text variant="h3">Dresseur Tacticx</Text>
+            <Text variant="h3">{pseudo}</Text>
             {profile.isPremium ? (
               <Badge label="VIP" bg={colors.accentSoft} fg={colors.accent} size="sm" />
             ) : (
@@ -252,49 +246,28 @@ function AccountProfile() {
           </View>
         </View>
 
-        <SegmentedControl<Format>
-          value={format}
-          onChange={setFormat}
-          options={[
-            { label: 'VGC', value: 'vgc' },
-            { label: 'Singles', value: '3v3' },
-          ]}
-        />
-
-        <View style={styles.statsCard}>
-          <Stat label="Victoires" value={0} tone={colors.success} />
-          <Stat label="Défaites" value={0} tone={colors.danger} />
-          <Stat label="Winrate" value={0} suffix="%" tone={colors.accent} />
-        </View>
-
-        <View style={{ gap: spacing.sm }}>
-          <Text variant="eyebrow" color="fg3">
-            Rang
-          </Text>
-          <View style={styles.rankCard}>
-            <View style={styles.rankHead}>
-              <Text variant="title">Débutant</Text>
-              <Text variant="caption" color="fg3" mono>
-                0 / 100
-              </Text>
-            </View>
-            <Progress value={0} height={8} />
-          </View>
-        </View>
-
-        <View style={{ gap: spacing.sm }}>
-          <Text variant="eyebrow" color="fg3">
-            Préférences
-          </Text>
-          {rows.map((r) => (
-            <View key={r.label} style={styles.prefRow}>
-              <Ionicons name={r.icon} size={18} color={colors.fg2} />
-              <Text variant="body" color="fg2" style={{ flex: 1 }}>
-                {r.label}
-              </Text>
-              <Text variant="title">{r.value ? LABELS[r.value] ?? r.value : '—'}</Text>
-            </View>
+        <Text variant="eyebrow" color="fg3" style={styles.sectionLabel}>
+          Préférences
+        </Text>
+        <View style={styles.card}>
+          {rows.map((r, i) => (
+            <SettingRow
+              key={r.label}
+              icon={r.icon}
+              label={r.label}
+              value={r.value ? LABELS[r.value] ?? r.value : '—'}
+              last={i === rows.length - 1}
+            />
           ))}
+        </View>
+
+        <Text variant="eyebrow" color="fg3" style={styles.sectionLabel}>
+          Réglages
+        </Text>
+        <View style={styles.card}>
+          <SettingRow icon="help-buoy-outline" label="Aide & support" />
+          <SettingRow icon="shield-outline" label="Confidentialité" />
+          <SettingRow icon="document-text-outline" label="Conditions d'utilisation" last />
         </View>
 
         <View style={{ gap: spacing.sm }}>
@@ -332,15 +305,11 @@ function AccountProfile() {
   )
 }
 
-function Stat({ label, value, suffix, tone }: { label: string; value: number; suffix?: string; tone: string }) {
-  return (
-    <View style={styles.stat}>
-      <RollingCounter value={value} suffix={suffix} variant="h2" style={{ color: tone }} />
-      <Text variant="caption" color="fg3">
-        {label}
-      </Text>
-    </View>
-  )
+/** Two-letter initials from a pseudo (first letters of first two words). */
+function initialsOf(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean)
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase()
+  return name.trim().slice(0, 2).toUpperCase()
 }
 
 function Legal() {
@@ -452,34 +421,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.accentSoft,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  statsCard: {
-    flexDirection: 'row',
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radii.lg,
-    paddingVertical: spacing.base,
-  },
-  stat: { flex: 1, alignItems: 'center', gap: 2 },
-  rankCard: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radii.lg,
-    padding: spacing.base,
-    gap: spacing.sm,
-  },
-  rankHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  prefRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radii.md,
-    padding: spacing.base,
   },
   subCard: {
     flexDirection: 'row',
