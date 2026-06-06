@@ -120,7 +120,9 @@ export default function CommunityTeamScreen() {
               label="Ouvrir dans le builder"
               icon="construct-outline"
               fullWidth
-              onPress={() => router.push('/(tabs)/teams/builder')}
+              onPress={() =>
+                router.push({ pathname: '/(tabs)/teams/builder', params: { importId: String(teamId) } })
+              }
             />
             <Button
               label="Importer Pokepaste"

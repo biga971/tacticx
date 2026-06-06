@@ -13,7 +13,9 @@ import { PokemonPickerSheet } from '@/components/teams/PokemonPickerSheet'
 import { PokemonEditorSheet } from '@/components/teams/PokemonEditorSheet'
 import { useToast } from '@/components/ui/toast'
 import { useCreateTeam, useUpdateTeam, useTeam, type TeamSlotInput } from '@/lib/api/hooks/useTeams'
+import { useCommunityTeam } from '@/lib/api/hooks/useCommunity'
 import { useFormatStore, type Format } from '@/lib/store/formatStore'
+import type { ApiTeam } from '@/lib/api/types'
 import type { ApiPokemon } from '@/lib/api/types'
 import { colors, radii, spacing, type PokemonType } from '@/lib/theme'
 
@@ -51,9 +53,13 @@ export default function BuilderScreen() {
   const { format, setFormat } = useFormatStore()
 
   // Edit mode when an `id` param is present.
-  const { id } = useLocalSearchParams<{ id?: string }>()
+  // Import mode when an `importId` param is present: clone a community team
+  // into a brand-new draft (no teamId -> save creates a new team the user owns).
+  const { id, importId } = useLocalSearchParams<{ id?: string; importId?: string }>()
   const teamId = id ? Number(id) : null
+  const communityId = importId ? Number(importId) : null
   const { data: team } = useTeam(teamId)
+  const { data: communityTeam } = useCommunityTeam(communityId)
   const createTeam = useCreateTeam()
   const updateTeam = useUpdateTeam(teamId ?? 0)
 
@@ -63,13 +69,16 @@ export default function BuilderScreen() {
   const [editIndex, setEditIndex] = useState<number | null>(null)
   const [prefilled, setPrefilled] = useState(false)
 
-  // Hydrate the draft from the loaded team once (edit mode).
+  // Hydrate the draft once from either the edited team (`id`) or the imported
+  // community team (`importId`). Import keeps teamId null so save creates a copy.
   useEffect(() => {
-    if (!team || prefilled) return
-    setName(team.name)
-    setFormat(team.format)
+    const source: ApiTeam | undefined = team ?? communityTeam
+    if (!source || prefilled) return
+    const isImport = communityId != null && !teamId
+    setName(isImport ? `Copie de ${source.name}` : source.name)
+    setFormat(source.format)
     setSlots(
-      team.slots
+      source.slots
         .filter((s) => s.pokemon)
         .map((s) => ({
           pokemon: s.pokemon!,
@@ -92,7 +101,7 @@ export default function BuilderScreen() {
         }))
     )
     setPrefilled(true)
-  }, [team, prefilled, setFormat])
+  }, [team, communityTeam, communityId, teamId, prefilled, setFormat])
 
   const analysisSlots = useMemo<AnalysisSlot[]>(
     () =>
