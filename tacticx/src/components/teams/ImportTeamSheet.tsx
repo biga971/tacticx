@@ -7,6 +7,7 @@ import { Text } from '@/components/ui/text'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/toast'
 import { useCreateTeam } from '@/lib/api/hooks/useTeams'
+import { useRewardedGate } from '@/lib/hooks/useRewardedGate'
 import { useFormatStore } from '@/lib/store/formatStore'
 import { resolveShowdownTeam } from '@/lib/showdown/import'
 import { colors, radii, spacing } from '@/lib/theme'
@@ -34,6 +35,7 @@ export function ImportTeamSheet({ visible, onClose }: ImportTeamSheetProps) {
   const toast = useToast()
   const { format } = useFormatStore()
   const createTeam = useCreateTeam()
+  const runWithAd = useRewardedGate()
   const [text, setText] = useState('')
   const [busy, setBusy] = useState(false)
 
@@ -42,11 +44,15 @@ export function ImportTeamSheet({ visible, onClose }: ImportTeamSheetProps) {
     onClose()
   }
 
-  const onImport = async () => {
+  const onImport = () => {
     if (!text.trim()) {
       toast.show('Colle d’abord une équipe', 'error')
       return
     }
+    runWithAd(() => doImport())
+  }
+
+  const doImport = async () => {
     setBusy(true)
     try {
       const result = await resolveShowdownTeam(text)

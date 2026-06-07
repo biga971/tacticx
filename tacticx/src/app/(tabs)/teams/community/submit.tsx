@@ -9,6 +9,7 @@ import { Shimmer } from '@/components/ui/shimmer'
 import { PokemonSprite } from '@/components/shared/PokemonSprite'
 import { useToast } from '@/components/ui/toast'
 import { useTeams, usePublishTeam } from '@/lib/api/hooks/useTeams'
+import { useRewardedGate } from '@/lib/hooks/useRewardedGate'
 import { colors, radii, spacing } from '@/lib/theme'
 
 export default function SubmitScreen() {
@@ -16,6 +17,7 @@ export default function SubmitScreen() {
   const toast = useToast()
   const { data: teams, isLoading } = useTeams()
   const publish = usePublishTeam()
+  const runWithAd = useRewardedGate()
   const [selected, setSelected] = useState<number | null>(null)
 
   const submit = () => {
@@ -23,12 +25,14 @@ export default function SubmitScreen() {
       toast.show('Sélectionne une équipe', 'error')
       return
     }
-    publish.mutate(selected, {
-      onSuccess: () => {
-        toast.show('Équipe publiée !', 'success')
-        router.back()
-      },
-      onError: () => toast.show('Échec de la publication', 'error'),
+    runWithAd(() => {
+      publish.mutate(selected, {
+        onSuccess: () => {
+          toast.show('Équipe publiée !', 'success')
+          router.back()
+        },
+        onError: () => toast.show('Échec de la publication', 'error'),
+      })
     })
   }
 

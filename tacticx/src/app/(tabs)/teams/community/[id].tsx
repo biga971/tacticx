@@ -12,6 +12,7 @@ import { TypeBadge } from '@/components/shared/TypeBadge'
 import { useToast } from '@/components/ui/toast'
 import { useCommunityTeam, useToggleLike, useComments, useAddComment } from '@/lib/api/hooks/useCommunity'
 import { useAuthStore } from '@/lib/store/authStore'
+import { useRewardedGate } from '@/lib/hooks/useRewardedGate'
 import { formatRelativeDate, formatShortDate } from '@/lib/format/date'
 import { colors, radii, spacing } from '@/lib/theme'
 
@@ -26,6 +27,7 @@ export default function CommunityTeamScreen() {
   const toast = useToast()
   const isGuest = useAuthStore((s) => s.isGuest)
   const authToken = useAuthStore((s) => s.token)
+  const runWithAd = useRewardedGate()
   const [draft, setDraft] = useState('')
 
   const onLike = () => {
@@ -156,7 +158,9 @@ export default function CommunityTeamScreen() {
               icon="construct-outline"
               fullWidth
               onPress={() =>
-                router.push({ pathname: '/(tabs)/teams/builder', params: { importId: String(teamId) } })
+                runWithAd(() =>
+                  router.push({ pathname: '/(tabs)/teams/builder', params: { importId: String(teamId) } })
+                )
               }
             />
             <Button
