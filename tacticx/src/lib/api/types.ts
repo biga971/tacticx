@@ -93,6 +93,8 @@ export interface ApiTeam {
   style: string | null
   isPublic: boolean
   likesCount: number
+  /** Whether the current user has liked this team (present on detail fetch). */
+  liked?: boolean
   description: string | null
   regulation: string | null
   slots: ApiTeamSlot[]

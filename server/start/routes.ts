@@ -111,7 +111,9 @@ router
         router.get('teams/:id', [controllers.Team, 'show'])
         router.put('teams/:id', [controllers.Team, 'update'])
         router.delete('teams/:id', [controllers.Team, 'destroy'])
-        router.post('teams/:id/publish', [controllers.Team, 'publish'])
+        router
+          .post('teams/:id/publish', [controllers.Team, 'publish'])
+          .use(middleware.registered())
 
         router.get('community', [controllers.Community, 'index'])
         router.get('community/:id', [controllers.Community, 'show'])

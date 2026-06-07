@@ -3,6 +3,9 @@ import db from '@adonisjs/lucid/services/db'
 import Team from '#models/team'
 import TeamLike from '#models/team_like'
 
+/** Public projection of the author — never leak email or guest flag. */
+const PUBLIC_USER = { fields: ['id', 'fullName', 'initials'] }
+
 export default class CommunityController {
   /**
    * GET /community — public feed.
@@ -41,13 +44,14 @@ export default class CommunityController {
     }
 
     const teams = await query.paginate(page, limit)
-    return response.ok(teams)
+    return response.ok(teams.serialize({ relations: { user: PUBLIC_USER } }))
   }
 
   /**
-   * GET /community/:id — public team sheet.
+   * GET /community/:id — public team sheet. Includes whether the current
+   * user has liked it, so the client can render the heart state.
    */
-  async show({ params, response }: HttpContext) {
+  async show({ auth, params, response }: HttpContext) {
     const team = await Team.query()
       .where('id', params.id)
       .where('is_public', true)
@@ -56,7 +60,13 @@ export default class CommunityController {
       .first()
 
     if (!team) return response.notFound({ message: 'Team not found' })
-    return response.ok(team)
+
+    const user = auth.user
+    const liked = user
+      ? !!(await TeamLike.query().where('user_id', user.id).where('team_id', team.id).first())
+      : false
+
+    return response.ok({ ...team.serialize({ relations: { user: PUBLIC_USER } }), liked })
   }
 
   /**
