@@ -17,7 +17,7 @@ import type {
 } from '#services/meta/meta_types'
 
 export class UserSchema extends BaseModel {
-  static $columns = ['createdAt', 'email', 'fullName', 'id', 'password', 'updatedAt'] as const
+  static $columns = ['createdAt', 'email', 'fullName', 'id', 'isActivated', 'isGuest', 'password', 'provider', 'providerId', 'updatedAt'] as const
   $columns = UserSchema.$columns
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
@@ -27,8 +27,16 @@ export class UserSchema extends BaseModel {
   declare fullName: string | null
   @column({ isPrimary: true })
   declare id: number
+  @column()
+  declare isActivated: boolean
+  @column()
+  declare isGuest: boolean
   @column({ serializeAs: null })
   declare password: string
+  @column()
+  declare provider: string | null
+  @column()
+  declare providerId: string | null
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
 }
