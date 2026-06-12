@@ -7,7 +7,7 @@ import * as SplashScreen from 'expo-splash-screen'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from '@/lib/api/queryClient'
 import { ToastProvider } from '@/components/ui/toast'
-import { initRevenueCat } from '@/lib/revenuecat'
+import { initRevenueCat, identifyRevenueCat, syncEntitlement } from '@/lib/revenuecat'
 import { initAds } from '@/lib/ads'
 import { useAppFonts } from '@/lib/useAppFonts'
 import { useAuthStore } from '@/lib/store/authStore'
@@ -20,11 +20,19 @@ export default function RootLayout() {
   const fontsLoaded = useAppFonts()
   const hydrated = useAuthStore((s) => s.hydrated)
   const token = useAuthStore((s) => s.token)
+  const userId = useAuthStore((s) => s.userId)
 
   useEffect(() => {
     initRevenueCat()
     initAds()
+    syncEntitlement()
   }, [])
+
+  // Re-identify RevenueCat with the backend user id on login (guest → account)
+  // so webhook events map to the right user, then reconcile the VIP flag.
+  useEffect(() => {
+    if (userId) identifyRevenueCat(userId).then(syncEntitlement)
+  }, [userId])
 
   // Once secure-store has rehydrated, ensure a session exists (mint a guest
   // token on first launch so the app works without an account).
