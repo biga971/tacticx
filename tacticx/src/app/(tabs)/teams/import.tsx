@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { ScrollView, StyleSheet, TextInput, View } from 'react-native'
+import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native'
 import { useRouter } from 'expo-router'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
-import { BottomSheet } from '@/components/ui/bottom-sheet'
+import { Screen } from '@/components/ui/screen'
 import { Text } from '@/components/ui/text'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/toast'
@@ -24,25 +25,16 @@ Adamant Nature
 - Ice Spinner
 - Protect`
 
-export interface ImportTeamSheetProps {
-  visible: boolean
-  onClose: () => void
-}
-
 /** Paste-a-Showdown-team importer. Converts the paste into a saved team. */
-export function ImportTeamSheet({ visible, onClose }: ImportTeamSheetProps) {
+export default function ImportTeamScreen() {
   const router = useRouter()
+  const insets = useSafeAreaInsets()
   const toast = useToast()
   const { format } = useFormatStore()
   const createTeam = useCreateTeam()
   const runWithAd = useRewardedGate()
   const [text, setText] = useState('')
   const [busy, setBusy] = useState(false)
-
-  const close = () => {
-    setText('')
-    onClose()
-  }
 
   const onImport = () => {
     if (!text.trim()) {
@@ -67,8 +59,7 @@ export function ImportTeamSheet({ visible, onClose }: ImportTeamSheetProps) {
             ? `Équipe importée (${result.warnings.length} avertissement${result.warnings.length > 1 ? 's' : ''})`
             : 'Équipe importée'
           toast.show(msg, result.warnings.length ? 'info' : 'success')
-          close()
-          router.push(`/(tabs)/teams/builder?id=${team.id}`)
+          router.replace(`/(tabs)/teams/builder?id=${team.id}`)
         },
         onError: () => toast.show('Échec de la sauvegarde', 'error'),
         onSettled: () => setBusy(false),
@@ -80,11 +71,20 @@ export function ImportTeamSheet({ visible, onClose }: ImportTeamSheetProps) {
   }
 
   return (
-    <BottomSheet visible={visible} onClose={close} heightRatio={0.85} title="Importer depuis Showdown">
+    <Screen edges={['top']}>
+      <View style={styles.header}>
+        <Pressable onPress={() => router.back()} hitSlop={10}>
+          <Ionicons name="chevron-back" size={24} color={colors.fg1} />
+        </Pressable>
+        <Text variant="h3" style={{ flex: 1 }}>
+          Importer depuis Showdown
+        </Text>
+      </View>
+
       <ScrollView
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ gap: spacing.md, paddingBottom: spacing.lg }}
+        contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 96 }]}
       >
         <View style={styles.hint}>
           <Ionicons name="information-circle-outline" size={16} color={colors.fg3} />
@@ -105,7 +105,9 @@ export function ImportTeamSheet({ visible, onClose }: ImportTeamSheetProps) {
           autoCorrect={false}
           style={styles.input}
         />
+      </ScrollView>
 
+      <View style={[styles.footer, { bottom: 0, paddingBottom: insets.bottom + spacing.sm }]}>
         <Button
           label="Importer l’équipe"
           icon="download-outline"
@@ -113,19 +115,31 @@ export function ImportTeamSheet({ visible, onClose }: ImportTeamSheetProps) {
           loading={busy || createTeam.isPending}
           onPress={onImport}
         />
-      </ScrollView>
-    </BottomSheet>
+      </View>
+    </Screen>
   )
 }
 
 const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.base,
+    paddingVertical: spacing.sm,
+  },
+  content: {
+    paddingHorizontal: spacing.base,
+    paddingTop: spacing.sm,
+    gap: spacing.md,
+  },
   hint: {
     flexDirection: 'row',
     gap: spacing.sm,
     alignItems: 'flex-start',
   },
   input: {
-    minHeight: 260,
+    minHeight: 300,
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
@@ -134,5 +148,10 @@ const styles = StyleSheet.create({
     color: colors.fg1,
     fontSize: 13,
     fontFamily: 'monospace',
+  },
+  footer: {
+    position: 'absolute',
+    left: spacing.base,
+    right: spacing.base,
   },
 })

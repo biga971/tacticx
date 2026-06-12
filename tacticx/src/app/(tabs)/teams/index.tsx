@@ -13,7 +13,6 @@ import { Button } from '@/components/ui/button'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { useToast } from '@/components/ui/toast'
 import { PokemonSprite } from '@/components/shared/PokemonSprite'
-import { ImportTeamSheet } from '@/components/teams/ImportTeamSheet'
 import { useTeams, useDeleteTeam } from '@/lib/api/hooks/useTeams'
 import { useCommunityFeed } from '@/lib/api/hooks/useCommunity'
 import { useAuthStore } from '@/lib/store/authStore'
@@ -30,7 +29,6 @@ export default function TeamsScreen() {
   const isGuest = useAuthStore((s) => s.isGuest)
   const token = useAuthStore((s) => s.token)
   const [view, setView] = useState<View2>('mine')
-  const [importOpen, setImportOpen] = useState(false)
 
   // Publishing is gated behind an account; guests get pushed to sign-in.
   const onPublish = () =>
@@ -64,7 +62,7 @@ export default function TeamsScreen() {
               label="Importer"
               icon="download-outline"
               variant="secondary"
-              onPress={() => setImportOpen(true)}
+              onPress={() => router.push('/(tabs)/teams/import')}
             />
           </View>
         ) : (
@@ -76,8 +74,6 @@ export default function TeamsScreen() {
           />
         )}
       </View>
-
-      <ImportTeamSheet visible={importOpen} onClose={() => setImportOpen(false)} />
     </Screen>
   )
 }

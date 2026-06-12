@@ -68,26 +68,52 @@ function evsToSp(evs: Partial<Record<ShowdownStat, number>>): {
   return { sp, total }
 }
 
-/** Finds the in-app Pokémon for a Showdown species name. */
+/** Runs a `/pokemon?search=` query and returns the page rows. */
+async function searchPokemon(query: string): Promise<ApiPokemon[]> {
+  const page = await apiFetch<Paginated<ApiPokemon>>(
+    `/pokemon${qs({ search: query, limit: 20 })}`
+  )
+  return page.data
+}
+
+/**
+ * Finds the in-app Pokémon for a Showdown species name.
+ *
+ * Showdown species are English and often hyphenated forms — "Calyrex-Ice",
+ * "Urshifu-Rapid-Strike", "Ogerpon-Hearthflame". The backend rarely indexes the
+ * full hyphenated string, so a direct search returns nothing. When that happens
+ * we retry on the base species name (before the first '-') and then pick the row
+ * whose name carries all the form tokens, falling back to the base species.
+ */
 async function resolvePokemon(species: string): Promise<ApiPokemon | null> {
   const target = norm(species)
-  const page = await apiFetch<Paginated<ApiPokemon>>(
-    `/pokemon${qs({ search: species, limit: 20 })}`
-  )
-  const exact = page.data.find((p) => norm(p.nameEn) === target || norm(p.nameFr) === target)
+  let data = await searchPokemon(species)
+  const exact = data.find((p) => norm(p.nameEn) === target || norm(p.nameFr) === target)
   if (exact) return exact
 
-  // Forms like "Landorus-Therian" may be stored under the base species.
-  const base = species.split('-')[0]
-  if (base !== species) {
+  const parts = species.split('-')
+  const base = parts[0].trim()
+  if (norm(base) !== target) {
+    // Retry on the base name when the hyphenated form returned nothing.
+    if (data.length === 0) data = await searchPokemon(base)
+
+    const formTokens = parts.slice(1).map(norm).filter(Boolean)
+    if (formTokens.length) {
+      const formMatch = data.find((p) => {
+        const haystack = norm(p.nameEn) + '|' + norm(p.nameFr)
+        return formTokens.every((t) => haystack.includes(t))
+      })
+      if (formMatch) return formMatch
+    }
+
     const baseTarget = norm(base)
-    const baseMatch = page.data.find(
+    const baseMatch = data.find(
       (p) => norm(p.nameEn) === baseTarget || norm(p.nameFr) === baseTarget
     )
     if (baseMatch) return baseMatch
   }
 
-  return page.data[0] ?? null
+  return data[0] ?? null
 }
 
 /** Resolves one parsed set into a draft slot, pushing any warnings. */
