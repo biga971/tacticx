@@ -4,11 +4,11 @@
     "slug": "tacticx",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/logos/tactix_app_icon_square_1024.png",
     "scheme": "tacticx",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon",
+      "icon": "./assets/logos/tactix_app_icon_square_1024.png",
       "bundleIdentifier": "com.netzil.tacticx",
       "usesAppleSignIn": true,
       "infoPlist": {
@@ -17,10 +17,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "foregroundImage": "./assets/logos/tactix_app_icon_square_1024.png",
+        "backgroundColor": "#111827"
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.netzil.tacticx"
