@@ -47,7 +47,7 @@
         "react-native-google-mobile-ads",
         {
           "androidAppId": "ca-app-pub-3940256099942544~3347511713",
-          "iosAppId": "ca-app-pub-3940256099942544~1458002511",
+          "iosAppId": "ca-app-pub-4131804164425384~3711142735",
           "userTrackingUsageDescription": "Autorisation pour afficher des publicites pertinentes. Passe VIP pour retirer la publicite."
         }
       ]
@@ -65,7 +65,7 @@
   },
   "react-native-google-mobile-ads": {
     "android_app_id": "ca-app-pub-3940256099942544~3347511713",
-    "ios_app_id": "ca-app-pub-3940256099942544~1458002511",
+    "ios_app_id": "ca-app-pub-4131804164425384~3711142735",
     "user_tracking_usage_description": "Autorisation pour afficher des publicites pertinentes. Passe VIP pour retirer la publicite."
   }
 }
