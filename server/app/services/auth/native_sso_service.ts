@@ -1,5 +1,6 @@
 import { createRemoteJWKSet, jwtVerify, type JWTPayload } from 'jose'
 import { randomUUID } from 'node:crypto'
+import logger from '@adonisjs/core/services/logger'
 import User from '#models/user'
 import env from '#start/env'
 import { AuthProviders } from '#enums/auth-providers.enum'
@@ -68,7 +69,8 @@ class NativeSsoService {
         provider === AuthProviders.apple
           ? await this.verifyApple(token)
           : await this.verifyGoogle(token)
-    } catch {
+    } catch (error) {
+      logger.error({ err: error, provider }, 'Native SSO token verification failed')
       return 'Invalid or expired token'
     }
 
