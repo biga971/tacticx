@@ -9,10 +9,22 @@
       "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://tacticx.fr/api/v1",
+        "EXPO_PUBLIC_REVENUECAT_IOS_KEY": "appl_mSvcNPyYdNWQuGRHwrAXSUQyHHX",
+        "EXPO_PUBLIC_ADMOB_IOS_BANNER": "ca-app-pub-4131804164425384/9478474738",
+        "EXPO_PUBLIC_ADMOB_IOS_REWARDED": "ca-app-pub-4131804164425384/7365157140"
+      }
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://tacticx.fr/api/v1",
+        "EXPO_PUBLIC_REVENUECAT_IOS_KEY": "appl_mSvcNPyYdNWQuGRHwrAXSUQyHHX",
+        "EXPO_PUBLIC_ADMOB_IOS_BANNER": "ca-app-pub-4131804164425384/9478474738",
+        "EXPO_PUBLIC_ADMOB_IOS_REWARDED": "ca-app-pub-4131804164425384/7365157140"
+      }
     }
   },
   "submit": {
