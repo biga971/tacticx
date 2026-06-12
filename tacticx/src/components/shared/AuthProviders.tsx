@@ -25,12 +25,18 @@ export function AuthProviders({ onDone }: { onDone?: () => void }) {
   const toast = useToast()
   const apple = useSocialSignIn('apple')
   const [appleAvailable, setAppleAvailable] = useState(false)
+  // Guard set on tap, before the native sheet opens. `apple.isPending` only
+  // covers the network phase (after a token is returned), so without this a
+  // second tap opens a second ASAuthorizationController → AuthorizationError 1000.
+  const [appleBusy, setAppleBusy] = useState(false)
 
   useEffect(() => {
     AppleAuthentication.isAvailableAsync().then(setAppleAvailable).catch(() => {})
   }, [])
 
   const onApple = async () => {
+    if (appleBusy || apple.isPending) return
+    setAppleBusy(true)
     try {
       const cred = await AppleAuthentication.signInAsync({
         requestedScopes: [
@@ -58,14 +64,16 @@ export function AuthProviders({ onDone }: { onDone?: () => void }) {
       if ((e as { code?: string })?.code !== 'ERR_REQUEST_CANCELED') {
         toast.show('Connexion Apple échouée', 'error')
       }
+    } finally {
+      setAppleBusy(false)
     }
   }
 
   return (
     <View style={{ gap: spacing.sm }}>
       {appleAvailable && Platform.OS === 'ios' && (
-        <Pressable style={[styles.btn, styles.apple]} onPress={onApple} disabled={apple.isPending}>
-          {apple.isPending ? (
+        <Pressable style={[styles.btn, styles.apple]} onPress={onApple} disabled={apple.isPending || appleBusy}>
+          {apple.isPending || appleBusy ? (
             <ActivityIndicator color="#000" />
           ) : (
             <>
