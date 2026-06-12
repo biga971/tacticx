@@ -9,7 +9,7 @@
 
 import { middleware } from '#start/kernel'
 import { controllers } from '#generated/controllers'
-import { guestThrottle } from '#start/limiter'
+import { guestThrottle, ssoThrottle } from '#start/limiter'
 import router from '@adonisjs/core/services/router'
 
 router.on('/').renderInertia('home', {}).as('home')
@@ -50,8 +50,8 @@ router
           .use(middleware.auth({ guards: ['api'] }))
 
         // Native SSO (mobile id-token exchange) — public + rate-limited.
-        router.post('apple', [controllers.auth.Auth, 'apple']).use(guestThrottle)
-        router.post('google', [controllers.auth.Auth, 'google']).use(guestThrottle)
+        router.post('apple', [controllers.auth.Auth, 'apple']).use(ssoThrottle)
+        router.post('google', [controllers.auth.Auth, 'google']).use(ssoThrottle)
 
         router.get('google/redirect', [controllers.auth.AuthGoogle, 'redirect'])
         router.get('google/signin/callback', [controllers.auth.AuthGoogle, 'handleCallback'])
