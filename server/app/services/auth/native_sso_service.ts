@@ -117,8 +117,9 @@ class NativeSsoService {
       const accessToken = await User.accessTokens.create(user, ['*'], {
         expiresIn: env.get('JWT_EXPIRY') as string,
       })
+      const tokenValue = accessToken.value!.release()
       logger.info({ provider, userId: user.id }, '[SSO] 4/5 access token minted')
-      return { token: accessToken.toString(), user }
+      return { token: tokenValue, user }
     } catch (error) {
       logger.error({ err: error, provider, userId: user.id }, '[SSO] 4/5 access token mint FAILED')
       throw error

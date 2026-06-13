@@ -49,6 +49,7 @@ export async function apiFetch<T = unknown>(path: string, options: RequestOption
   })
 
   if (res.status === 401) {
+    console.log('[apiFetch] 401 -> clearAuth on', path)
     useAuthStore.getState().clearAuth()
     throw new ApiError('Unauthorized', 401)
   }

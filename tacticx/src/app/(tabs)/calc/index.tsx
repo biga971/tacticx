@@ -397,6 +397,7 @@ export default function CalcScreen() {
       <PokemonPickerSheet
         visible={picking !== null}
         onClose={() => setPicking(null)}
+        scopeToggle
         onSelect={(p) => {
           if (picking === 'attacker') {
             setAttacker(p)

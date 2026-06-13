@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { StyleSheet, View, type LayoutChangeEvent } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
@@ -32,8 +32,13 @@ export function Slider({
   const ratio = max > min ? (value - min) / (max - min) : 0
   const pos = useSharedValue(ratio * usable)
 
-  // keep position in sync when value changes externally
-  pos.value = ratio * usable
+  // Keep the thumb in sync with external value/width changes — in an effect, not
+  // during render. Writing a shared value during render makes Reanimated re-run
+  // worklets on every render, which (with several Sliders mounting at once)
+  // cascades into UI-thread jank.
+  useEffect(() => {
+    pos.value = ratio * usable
+  }, [ratio, usable, pos])
 
   const emit = (next: number) => {
     const clamped = Math.max(min, Math.min(max, next))
