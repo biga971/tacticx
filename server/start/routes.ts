@@ -9,7 +9,6 @@
 
 import { middleware } from '#start/kernel'
 import { controllers } from '#generated/controllers'
-import { guestThrottle } from '#start/limiter'
 import router from '@adonisjs/core/services/router'
 
 router.on('/').renderInertia('home', {}).as('home')
@@ -42,8 +41,10 @@ router
         router.post('register', [controllers.auth.Auth, 'register'])
         router.post('login', [controllers.auth.Auth, 'login'])
 
-        // Anonymous guest session — rate-limited, public.
-        router.post('guest', [controllers.auth.Auth, 'guest']).use(guestThrottle)
+        // Anonymous guest session — public. Not rate-limited: guests are
+        // read-mostly and the app mints one per install, so throttling here
+        // risks making a legitimate first launch look broken.
+        router.post('guest', [controllers.auth.Auth, 'guest'])
         // Promote the current guest (token required) to a full account.
         router
           .post('upgrade', [controllers.auth.Auth, 'upgrade'])
