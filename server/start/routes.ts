@@ -13,6 +13,11 @@ import router from '@adonisjs/core/services/router'
 
 router.on('/').renderInertia('home', {}).as('home')
 
+// Marketing / legal pages (full-bleed, own chrome)
+router.on('/confidentialite').renderInertia('legal/confidentialite', {}).as('legal.confidentialite')
+router.on('/privacy').renderInertia('legal/privacy', {}).as('legal.privacy')
+router.on('/support').renderInertia('legal/support', {}).as('legal.support')
+
 router
   .group(() => {
     router.get('signup', [controllers.NewAccount, 'create'])

@@ -4,13 +4,28 @@ import { usePage } from '@inertiajs/react'
 import { ReactElement, useEffect } from 'react'
 import { Form, Link } from '@adonisjs/inertia/react'
 
+// Pages that render their own full-bleed chrome (own nav + footer) and must
+// not be wrapped in the default app header.
+const FULL_BLEED = new Set(['home', 'legal/privacy', 'legal/confidentialite', 'legal/support'])
+
 export default function Layout({ children }: { children: ReactElement<Data.SharedProps> }) {
+  const { component } = usePage()
+
   useEffect(() => {
     toast.dismiss()
   }, [usePage().url])
 
   if (children.props.flash.error) {
     toast.error(children.props.flash.error)
+  }
+
+  if (FULL_BLEED.has(component)) {
+    return (
+      <>
+        {children}
+        <Toaster position="top-center" richColors />
+      </>
+    )
   }
 
   return (

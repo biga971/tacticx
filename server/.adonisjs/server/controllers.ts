@@ -18,12 +18,12 @@ export const controllers = {
   Item: () => import('#controllers/item_controller'),
   Meta: () => import('#controllers/meta_controller'),
   NewAccount: () => import('#controllers/new_account_controller'),
-  Roster: () => import('#controllers/roster_controller'),
   passwordReset: {
     PasswordResets: () => import('#controllers/password_reset/password_resets_controller'),
   },
   Pokemon: () => import('#controllers/pokemon_controller'),
   Profile: () => import('#controllers/profile_controller'),
+  Roster: () => import('#controllers/roster_controller'),
   Session: () => import('#controllers/session_controller'),
   Subscription: () => import('#controllers/subscription_controller'),
   Sync: () => import('#controllers/sync_controller'),
