@@ -14,8 +14,6 @@ import { parseShowdownTeam, type ParsedSet, type ShowdownStat } from '@/lib/show
 /** Per-stat SP cap and total budget, mirroring PokemonEditorSheet. */
 const SP_PER_STAT = 32
 const SP_BUDGET = 66
-/** 8 EVs ≈ 1 SP (510 EV total ≈ 64 SP, close to the 66 budget). */
-const EV_PER_SP = 8
 
 const SP_KEYS: Record<ShowdownStat, keyof TeamSlotInput> = {
   hp: 'spHp',
@@ -53,7 +51,12 @@ function resolveNature(raw: string | null): string {
   return NATURES[cap] ? cap : 'Hardy'
 }
 
-/** Converts Showdown EVs to the app's capped SP spread. */
+/**
+ * Maps Showdown EV numbers directly onto the app's SP spread (EV value = SP
+ * value), capping each stat at 32 and the running total at the 66-point budget.
+ * No 0–252→0–32 scaling: teams authored in the app's SP scale round-trip
+ * unchanged, and any per-stat overflow is simply clamped.
+ */
 function evsToSp(evs: Partial<Record<ShowdownStat, number>>): {
   sp: Pick<TeamSlotInput, 'spHp' | 'spAtk' | 'spDef' | 'spSpa' | 'spSpd' | 'spSpe'>
   total: number
@@ -61,7 +64,8 @@ function evsToSp(evs: Partial<Record<ShowdownStat, number>>): {
   const sp = { spHp: 0, spAtk: 0, spDef: 0, spSpa: 0, spSpd: 0, spSpe: 0 }
   let total = 0
   for (const stat of Object.keys(evs) as ShowdownStat[]) {
-    const value = Math.min(SP_PER_STAT, Math.round((evs[stat] ?? 0) / EV_PER_SP))
+    const raw = Math.max(0, Math.round(evs[stat] ?? 0))
+    const value = Math.min(SP_PER_STAT, raw, SP_BUDGET - total)
     sp[SP_KEYS[stat] as keyof typeof sp] = value
     total += value
   }

@@ -69,8 +69,12 @@ class NativeSsoService {
         provider === AuthProviders.apple
           ? await this.verifyApple(token)
           : await this.verifyGoogle(token)
+      logger.info(
+        { provider, sub: identity.sub, email: identity.email, name: identity.name },
+        '[SSO] 2/5 token verified'
+      )
     } catch (error) {
-      logger.error({ err: error, provider }, 'Native SSO token verification failed')
+      logger.error({ err: error, provider }, '[SSO] 2/5 token verification FAILED')
       return 'Invalid or expired token'
     }
 
@@ -79,30 +83,46 @@ class NativeSsoService {
       .where('provider', provider)
       .where('provider_id', identity.sub)
       .first()
+    logger.info({ provider, sub: identity.sub, found: !!user, userId: user?.id }, '[SSO] 3/5 user lookup')
 
     if (!user) {
       const email = identity.email ?? `${provider}_${identity.sub}@sso.tacticx.local`
       const ok = await isUniqueProvider(email, provider)
-      if (!ok) return 'Already exists on other provider'
+      if (!ok) {
+        logger.warn({ provider, email }, '[SSO] 3/5 email already used by other provider')
+        return 'Already exists on other provider'
+      }
 
-      user = await User.firstOrCreate(
-        { email },
-        {
-          email,
-          fullName: fullName ?? identity.name ?? null,
-          password: randomUUID() + randomUUID(),
-          provider,
-          providerId: identity.sub,
-          isGuest: false,
-          isActivated: true,
-        }
-      )
+      try {
+        user = await User.firstOrCreate(
+          { email },
+          {
+            email,
+            fullName: fullName ?? identity.name ?? null,
+            password: randomUUID() + randomUUID(),
+            provider,
+            providerId: identity.sub,
+            isGuest: false,
+            isActivated: true,
+          }
+        )
+        logger.info({ provider, userId: user.id, email }, '[SSO] 3/5 user created/fetched')
+      } catch (error) {
+        logger.error({ err: error, provider, email }, '[SSO] 3/5 firstOrCreate FAILED')
+        throw error
+      }
     }
 
-    const accessToken = await User.accessTokens.create(user, ['*'], {
-      expiresIn: env.get('JWT_EXPIRY') as string,
-    })
-    return { token: accessToken.toString(), user }
+    try {
+      const accessToken = await User.accessTokens.create(user, ['*'], {
+        expiresIn: env.get('JWT_EXPIRY') as string,
+      })
+      logger.info({ provider, userId: user.id }, '[SSO] 4/5 access token minted')
+      return { token: accessToken.toString(), user }
+    } catch (error) {
+      logger.error({ err: error, provider, userId: user.id }, '[SSO] 4/5 access token mint FAILED')
+      throw error
+    }
   }
 }
 

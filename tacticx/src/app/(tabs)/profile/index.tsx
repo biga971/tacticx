@@ -108,7 +108,7 @@ function GuestProfile() {
         ))}
       </View>
 
-      <Text variant="eyebrow" color="fg3" style={styles.sectionLabel}>
+     {/*  <Text variant="eyebrow" color="fg3" style={styles.sectionLabel}>
         Ton profil
       </Text>
       <View style={styles.lockedCard}>
@@ -130,7 +130,7 @@ function GuestProfile() {
             Rang · winrate · Pokémon joués
           </Text>
         </BlurView>
-      </View>
+      </View> */}
 
       <Text variant="eyebrow" color="fg3" style={styles.sectionLabel}>
         Réglages
