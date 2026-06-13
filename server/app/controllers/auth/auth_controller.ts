@@ -1,6 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import logger from '@adonisjs/core/services/logger'
-import { registerValidator, loginValidator } from '#validators/auth'
+import { registerValidator, loginValidator, updateMeValidator } from '#validators/auth'
 import AuthService from '#services/auth/auth_service'
 import NativeSsoService from '#services/auth/native_sso_service'
 import { AuthProviders } from '#enums/auth-providers.enum'
@@ -50,6 +49,15 @@ export default class AuthController {
     return response.ok(upgraded.serialize())
   }
 
+  /** Updates the authenticated user's display name. Body: { fullName }. */
+  async updateMe({ request, response, auth }: HttpContext) {
+    const user = auth.getUserOrFail()
+    const { fullName } = await request.validateUsing(updateMeValidator)
+    user.fullName = fullName
+    await user.save()
+    return response.ok(user.serialize())
+  }
+
   /** Native Apple Sign-In. Body: { token: identityToken, fullName? }. Public. */
   async apple({ request, response }: HttpContext) {
     return this.social(AuthProviders.apple, request, response)
@@ -67,27 +75,16 @@ export default class AuthController {
   ) {
     const token = request.input('token')
     const fullName = request.input('fullName')
-    logger.info(
-      { provider, hasToken: typeof token === 'string' && !!token, tokenLen: token?.length, fullName },
-      '[SSO] 1/5 controller received request'
-    )
     if (typeof token !== 'string' || !token) {
-      logger.warn({ provider }, '[SSO] aborted: missing token')
       return response.badRequest({ message: 'Missing token' })
     }
     const result = await NativeSsoService.signIn(provider, token, fullName)
     if (typeof result === 'string') {
-      logger.warn({ provider, reason: result }, '[SSO] 5/5 sign-in failed (known reason)')
       return response.unauthorized({ message: result })
     }
-    const payload = {
+    return response.ok({
       token: { type: 'bearer', token: result.token },
       ...result.user.serialize(),
-    }
-    logger.info(
-      { provider, userId: result.user.id, isGuest: result.user.isGuest, payloadKeys: Object.keys(payload) },
-      '[SSO] 5/5 controller responding 200'
-    )
-    return response.ok(payload)
+    })
   }
 }

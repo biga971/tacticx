@@ -1,0 +1,829 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tacticx — Le compagnon stratégique pour Pokémon Champions</title>
+<meta name="description" content="Méta en temps réel, team builder complet, calculateur de dégâts offline et feed communautaire. Tout l'arsenal compétitif VGC & Singles, sur mobile, en français." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  /* ════════════════════════════════════════════════════
+     TACTICX — Landing · tokens mirrored from theme.ts
+     Dark only · accent #5B8DEF
+     ════════════════════════════════════════════════════ */
+  :root {
+    --bg:#0B0D10; --surface:#13161B; --surface-high:#1C2027; --surface-sunken:#080A0D;
+    --border:#262A32; --border-strong:#363B45; --divider:#1B1E24;
+    --accent:#5B8DEF; --accent-muted:#3A5A99; --accent-soft:#1A2238;
+    --fg1:#ECEEF1; --fg2:#A1A8B3; --fg3:#6B7280; --fg-faint:#4A5260; --fg-inverse:#0B0D10;
+    --success:#5FA978; --success-soft:#15241C; --danger:#D46A6A; --danger-soft:#2A1818;
+    --warning:#D9A55A; --warning-soft:#2A2014;
+    /* types */
+    --t-fire:#D98C6A; --t-fire-bg:#2A1D17; --t-water:#6FA0CC; --t-water-bg:#172230;
+    --t-grass:#7FA978; --t-grass-bg:#1A241B; --t-electric:#D9C26A; --t-electric-bg:#2A2616;
+    --t-psychic:#D48BA8; --t-psychic-bg:#2A1A23; --t-dragon:#7B8FD9; --t-dragon-bg:#181D2E;
+    --t-steel:#9BA8B5; --t-steel-bg:#1D2127; --t-fairy:#D49AB8; --t-fairy-bg:#2A1D24;
+    --t-ghost:#9080B8; --t-ghost-bg:#1F1A2A; --t-fighting:#C77878; --t-fighting-bg:#2A1A1A;
+    --t-ground:#C29A6A; --t-ground-bg:#2A2117; --t-flying:#A0B0D4; --t-flying-bg:#1B1F2A;
+    --tier-s:#E0C58A;
+    /* spacing / radius */
+    --r-sm:6px; --r-md:10px; --r-lg:14px; --r-xl:20px; --r-pill:999px;
+    --shadow-md:0 4px 12px rgba(0,0,0,.5); --shadow-lg:0 24px 60px rgba(0,0,0,.65);
+    --display:"Space Grotesk", system-ui, sans-serif;
+    --sans:"Hanken Grotesk", -apple-system, system-ui, sans-serif;
+    --mono:"JetBrains Mono", ui-monospace, monospace;
+    --ease:cubic-bezier(.4,0,.2,1);
+    --maxw:1180px;
+  }
+
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    margin:0; background:var(--bg); color:var(--fg1);
+    font-family:var(--sans); font-size:16px; line-height:1.55;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  ::selection { background:var(--accent-soft); color:var(--fg1); }
+  a { color:inherit; text-decoration:none; }
+  h1,h2,h3,h4 { margin:0; font-family:var(--display); font-weight:600; letter-spacing:-.02em; line-height:1.08; }
+  p { margin:0; color:var(--fg2); }
+  .num { font-family:var(--mono); font-variant-numeric:tabular-nums; }
+  .eyebrow {
+    font-family:var(--mono); font-size:11px; font-weight:500;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--fg3);
+  }
+  .accent { color:var(--accent); }
+
+  /* ── grain overlay ── */
+  .grain {
+    position:fixed; inset:0; z-index:9999; pointer-events:none; opacity:.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode:overlay;
+  }
+
+  .wrap { max-width:var(--maxw); margin:0 auto; padding:0 24px; }
+
+  /* ════════ NAV ════════ */
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    transition:background .3s var(--ease), border-color .3s var(--ease), backdrop-filter .3s var(--ease);
+    border-bottom:1px solid transparent;
+  }
+  nav.scrolled {
+    background:rgba(11,13,16,.72); backdrop-filter:blur(20px) saturate(1.2);
+    -webkit-backdrop-filter:blur(20px) saturate(1.2); border-bottom-color:var(--border);
+  }
+  .nav-inner { max-width:var(--maxw); margin:0 auto; padding:16px 24px; display:flex; align-items:center; justify-content:space-between; }
+  .logo { font-family:var(--display); font-weight:700; font-size:22px; letter-spacing:-.03em; color:var(--fg1); }
+  .logo b { color:var(--accent); font-weight:700; }
+  .nav-links { display:flex; align-items:center; gap:32px; }
+  .nav-links a.link { font-size:14px; color:var(--fg2); transition:color .15s var(--ease); }
+  .nav-links a.link:hover { color:var(--fg1); }
+  .btn {
+    font-family:var(--sans); font-size:14px; font-weight:600; cursor:pointer;
+    border-radius:var(--r-md); padding:10px 16px; border:1px solid transparent;
+    transition:transform .12s var(--ease), background .15s var(--ease), border-color .15s var(--ease);
+    display:inline-flex; align-items:center; gap:8px; white-space:nowrap;
+  }
+  .btn-primary { background:var(--accent); color:var(--fg-inverse); }
+  .btn-primary:hover { background:#6E9DF5; }
+  .btn-primary:active { transform:scale(.98); }
+  .btn-ghost { background:transparent; color:var(--fg1); border-color:var(--border-strong); }
+  .btn-ghost:hover { background:var(--surface); }
+  .hamburger { display:none; background:none; border:0; color:var(--fg1); cursor:pointer; padding:8px; }
+  .hamburger svg { width:24px; height:24px; }
+  .mobile-menu { display:none; }
+
+  /* ════════ HERO ════════ */
+  .hero { position:relative; padding:160px 0 100px; overflow:hidden; }
+  .hero-glow {
+    position:absolute; top:-10%; left:50%; transform:translateX(-50%);
+    width:900px; height:600px; pointer-events:none;
+    background:radial-gradient(ellipse at top, var(--accent-soft) 0%, transparent 62%);
+    opacity:.55;
+  }
+  .hero-inner { position:relative; display:grid; grid-template-columns:1.05fr .95fr; gap:56px; align-items:center; }
+  .hero-badge {
+    display:inline-flex; align-items:center; gap:8px; padding:6px 12px;
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-pill);
+    font-family:var(--mono); font-size:11px; letter-spacing:.06em; color:var(--fg2); margin-bottom:28px;
+  }
+  .hero-badge .dot { width:6px; height:6px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); }
+  h1.hero-title { font-size:clamp(38px,5.4vw,68px); font-weight:700; letter-spacing:-.035em; line-height:1.02; color:var(--fg1); }
+  h1.hero-title .em { color:var(--accent); }
+  .hero-sub { margin-top:24px; font-size:18px; line-height:1.55; color:var(--fg2); max-width:520px; }
+  .hero-form { margin-top:36px; display:flex; gap:10px; max-width:440px; }
+  .hero-form input {
+    flex:1; background:var(--surface-sunken); border:1px solid var(--border); color:var(--fg1);
+    border-radius:var(--r-md); padding:13px 15px; font-family:var(--sans); font-size:15px; outline:none;
+    transition:border-color .15s var(--ease);
+  }
+  .hero-form input::placeholder { color:var(--fg3); }
+  .hero-form input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+  .hero-secondary { margin-top:18px; }
+  .hero-secondary a { font-size:14px; color:var(--fg3); transition:color .15s var(--ease); }
+  .hero-secondary a:hover { color:var(--accent); }
+  .hero-stats { margin-top:48px; display:flex; gap:0; border-top:1px solid var(--border); padding-top:28px; }
+  .hstat { flex:1; padding-right:20px; }
+  .hstat + .hstat { padding-left:24px; border-left:1px solid var(--border); }
+  .hstat .v { font-family:var(--display); font-weight:600; font-size:15px; color:var(--fg1); letter-spacing:-.01em; }
+  .hstat .l { margin-top:4px; font-size:12.5px; color:var(--fg3); line-height:1.35; }
+
+  /* ════════ PHONE MOCKUP ════════ */
+  .phone {
+    width:300px; margin:0 auto; background:#04060A; border-radius:42px; padding:10px;
+    border:1px solid var(--border-strong); box-shadow:var(--shadow-lg);
+    position:relative;
+  }
+  .phone::before { content:""; position:absolute; top:18px; left:50%; transform:translateX(-50%); width:96px; height:26px; background:#04060A; border-radius:var(--r-pill); z-index:5; }
+  .phone-screen { background:var(--bg); border-radius:33px; overflow:hidden; height:600px; display:flex; flex-direction:column; }
+  .ph-status { height:42px; display:flex; align-items:flex-end; justify-content:space-between; padding:0 22px 6px; font-family:var(--mono); font-size:12px; color:var(--fg1); }
+  .ph-status .si { display:flex; gap:5px; align-items:center; }
+  .ph-status svg { width:15px; height:13px; opacity:.85; }
+  .ph-head { padding:6px 18px 14px; }
+  .ph-h-row { display:flex; align-items:center; justify-content:space-between; }
+  .ph-h-row h4 { font-size:20px; font-weight:700; letter-spacing:-.02em; }
+  .ph-seg { display:flex; background:var(--surface-sunken); border:1px solid var(--border); border-radius:var(--r-pill); padding:2px; margin-top:14px; }
+  .ph-seg span { flex:1; text-align:center; font-size:12px; font-weight:500; padding:6px 0; border-radius:var(--r-pill); color:var(--fg3); }
+  .ph-seg span.on { background:var(--accent); color:var(--fg-inverse); font-weight:600; }
+  .ph-meta-eyebrow { display:flex; align-items:center; justify-content:space-between; padding:6px 18px; font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--fg3); }
+
+  /* meta list row */
+  .mrow { display:flex; align-items:center; gap:12px; padding:11px 18px; border-top:1px solid var(--divider); }
+  .mrank { font-family:var(--mono); font-size:12px; color:var(--fg3); width:16px; text-align:center; }
+  .sprite { width:38px; height:38px; border-radius:50%; background:radial-gradient(circle at 38% 32%, #2A3038, #14171C); border:1px solid var(--border); flex-shrink:0; position:relative; }
+  .sprite::after { content:""; position:absolute; inset:9px; border-radius:50%; border:1.5px solid rgba(255,255,255,.06); }
+  .mbody { flex:1; min-width:0; }
+  .mname { font-size:14px; font-weight:600; color:var(--fg1); letter-spacing:-.01em; }
+  .mmeta { font-size:11px; color:var(--fg3); margin-top:1px; font-family:var(--mono); }
+  .musage { text-align:right; white-space:nowrap; }
+  .musage .u { font-family:var(--mono); font-size:13px; font-weight:500; color:var(--fg1); white-space:nowrap; }
+  .mtrend { font-family:var(--mono); font-size:10px; margin-top:2px; display:inline-flex; gap:3px; align-items:center; white-space:nowrap; }
+  .mtrend.up { color:var(--success); } .mtrend.down { color:var(--danger); } .mtrend.flat { color:var(--fg3); }
+  .mbar { height:3px; margin:9px 18px 0; background:var(--surface-high); border-radius:var(--r-pill); overflow:hidden; }
+  .mbar i { display:block; height:100%; background:var(--accent); border-radius:var(--r-pill); }
+
+  /* ════════ SECTION SHELL ════════ */
+  section.block { padding:108px 0; position:relative; }
+  .sec-head { max-width:680px; margin-bottom:56px; }
+  .sec-head h2 { font-size:clamp(28px,3.6vw,42px); font-weight:600; letter-spacing:-.03em; line-height:1.06; color:var(--fg1); }
+  .sec-head h2 .dim { color:var(--fg3); }
+  .sec-head p { margin-top:18px; font-size:17px; color:var(--fg2); max-width:560px; }
+  .sec-eyebrow { display:block; margin-bottom:18px; }
+
+  /* ════════ POURQUOI (compare) ════════ */
+  .compare { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .cmp {
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg);
+    padding:24px; display:flex; flex-direction:column;
+  }
+  .cmp .cmp-name { font-family:var(--display); font-weight:600; font-size:17px; color:var(--fg1); }
+  .cmp .cmp-tag { margin-top:4px; font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--fg-faint); }
+  .cmp ul { list-style:none; padding:0; margin:20px 0 0; display:flex; flex-direction:column; gap:11px; }
+  .cmp li { display:flex; gap:10px; align-items:flex-start; font-size:13.5px; color:var(--fg2); line-height:1.4; }
+  .cmp li svg { width:16px; height:16px; flex-shrink:0; margin-top:2px; color:var(--danger); }
+  .cmp.win { background:linear-gradient(180deg,var(--accent-soft),var(--surface)); border-color:var(--accent-muted); }
+  .cmp.win .cmp-name { color:var(--accent); }
+  .cmp.win li svg { color:var(--success); }
+  .cmp.win li { color:var(--fg1); }
+
+  /* ════════ FEATURES ════════ */
+  .feat { display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center; padding:64px 0; }
+  .feat:nth-child(even) .feat-media { order:-1; }
+  .feat-num { font-family:var(--mono); font-size:12px; letter-spacing:.14em; color:var(--accent); }
+  .feat-text h3 { font-size:clamp(24px,3vw,34px); font-weight:600; letter-spacing:-.03em; margin-top:14px; color:var(--fg1); }
+  .feat-text p.lead { margin-top:16px; font-size:16px; color:var(--fg2); line-height:1.6; }
+  .feat-list { list-style:none; padding:0; margin:24px 0 0; display:flex; flex-direction:column; gap:13px; }
+  .feat-list li { display:flex; gap:12px; align-items:flex-start; font-size:14.5px; color:var(--fg1); }
+  .feat-list li svg { width:18px; height:18px; color:var(--accent); flex-shrink:0; margin-top:1px; }
+  .feat-media { display:flex; justify-content:center; }
+
+  /* generic device card (smaller) */
+  .device {
+    width:100%; max-width:420px; background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--r-xl); padding:22px; box-shadow:var(--shadow-md); position:relative; overflow:hidden;
+  }
+  .device-glow { position:absolute; top:-40%; right:-20%; width:300px; height:300px; background:radial-gradient(circle, var(--accent-soft), transparent 70%); opacity:.5; pointer-events:none; }
+  .device-eyebrow { font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--fg3); margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; position:relative; }
+  .device-eyebrow .pill { background:var(--accent-soft); color:var(--accent); padding:3px 8px; border-radius:var(--r-pill); font-size:9px; }
+
+  /* type badges */
+  .tbadge { display:inline-flex; align-items:center; font-family:var(--mono); font-size:10px; font-weight:500; padding:2px 7px; border-radius:var(--r-sm); letter-spacing:.02em; }
+  .t-fire{color:var(--t-fire);background:var(--t-fire-bg);} .t-water{color:var(--t-water);background:var(--t-water-bg);}
+  .t-grass{color:var(--t-grass);background:var(--t-grass-bg);} .t-electric{color:var(--t-electric);background:var(--t-electric-bg);}
+  .t-psychic{color:var(--t-psychic);background:var(--t-psychic-bg);} .t-dragon{color:var(--t-dragon);background:var(--t-dragon-bg);}
+  .t-steel{color:var(--t-steel);background:var(--t-steel-bg);} .t-fairy{color:var(--t-fairy);background:var(--t-fairy-bg);}
+  .t-ghost{color:var(--t-ghost);background:var(--t-ghost-bg);} .t-fighting{color:var(--t-fighting);background:var(--t-fighting-bg);}
+  .t-ground{color:var(--t-ground);background:var(--t-ground-bg);} .t-flying{color:var(--t-flying);background:var(--t-flying-bg);}
+
+  /* team builder 2x3 grid */
+  .tb-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; position:relative; }
+  .tb-slot { background:var(--surface-high); border:1px solid var(--border); border-radius:var(--r-md); padding:11px; display:flex; flex-direction:column; gap:8px; }
+  .tb-slot .top { display:flex; align-items:center; gap:9px; }
+  .tb-slot .sp { width:30px; height:30px; border-radius:50%; background:radial-gradient(circle at 38% 32%,#2A3038,#14171C); border:1px solid var(--border); flex-shrink:0; }
+  .tb-slot .nm { font-size:12px; font-weight:600; color:var(--fg1); letter-spacing:-.01em; }
+  .tb-slot .badges { display:flex; gap:4px; flex-wrap:wrap; }
+
+  /* coverage mini table */
+  .cov { margin-top:14px; }
+  .cov-label { font-family:var(--mono); font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--fg3); margin-bottom:7px; }
+  .cov-grid { display:grid; grid-template-columns:repeat(9,1fr); gap:3px; }
+  .cov-cell { aspect-ratio:1; border-radius:3px; }
+
+  /* calc mockup */
+  .calc-row { display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:18px; }
+  .calc-row .sp { width:48px; height:48px; border-radius:50%; background:radial-gradient(circle at 38% 32%,#2A3038,#14171C); border:1px solid var(--border); }
+  .calc-row .arrow { color:var(--fg3); font-family:var(--mono); font-size:22px; }
+  .calc-kobox { text-align:center; padding:14px 0; border:1px solid var(--border); border-radius:var(--r-md); background:var(--surface-sunken); }
+  .calc-kobox .big { font-family:var(--display); font-weight:700; font-size:40px; letter-spacing:-.03em; color:var(--fg1); line-height:1; }
+  .calc-kobox .big small { font-size:20px; color:var(--fg2); }
+  .calc-kobox .cap { font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--success); margin-top:7px; }
+  .histo { display:flex; align-items:flex-end; gap:3px; height:60px; margin-top:16px; }
+  .histo i { flex:1; background:var(--accent-muted); border-radius:2px 2px 0 0; min-height:4px; }
+  .histo i.peak { background:var(--accent); }
+  .calc-meta { display:flex; gap:6px; margin-top:14px; flex-wrap:wrap; }
+  .calc-chip { font-family:var(--mono); font-size:10px; color:var(--fg2); background:var(--surface-high); border:1px solid var(--border); border-radius:var(--r-sm); padding:3px 8px; }
+
+  /* community feed */
+  .feed-card { background:var(--surface-high); border:1px solid var(--border); border-radius:var(--r-md); padding:13px; margin-bottom:10px; }
+  .feed-card:last-child { margin-bottom:0; }
+  .feed-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .feed-top .ti { font-size:12.5px; font-weight:600; color:var(--fg1); }
+  .feed-top .vp { font-family:var(--mono); font-size:10px; color:var(--accent); background:var(--accent-soft); padding:2px 7px; border-radius:var(--r-pill); }
+  .feed-team { display:flex; gap:6px; }
+  .feed-team .sp { width:32px; height:32px; border-radius:50%; background:radial-gradient(circle at 38% 32%,#2A3038,#14171C); border:1px solid var(--border); }
+  .feed-foot { margin-top:10px; display:flex; align-items:center; gap:12px; font-family:var(--mono); font-size:10px; color:var(--fg3); }
+
+  /* ════════ TIMELINE ════════ */
+  .timeline { display:grid; grid-template-columns:repeat(3,1fr); gap:0; margin-top:8px; }
+  .tl-step { position:relative; padding:32px 28px 0; }
+  .tl-step::before { content:""; position:absolute; top:7px; left:0; right:0; height:1px; background:var(--border); }
+  .tl-step::after { content:""; position:absolute; top:1px; left:0; width:13px; height:13px; border-radius:50%; background:var(--bg); border:2px solid var(--border-strong); }
+  .tl-step.done::after { border-color:var(--success); background:var(--success); }
+  .tl-step.next::after { border-color:var(--accent); }
+  .tl-when { font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--fg3); }
+  .tl-step.done .tl-when { color:var(--success); }
+  .tl-step.next .tl-when { color:var(--accent); }
+  .tl-title { font-family:var(--display); font-weight:600; font-size:18px; color:var(--fg1); margin-top:10px; letter-spacing:-.02em; }
+  .tl-desc { margin-top:8px; font-size:14px; color:var(--fg2); line-height:1.5; }
+
+  /* ════════ CTA FINAL ════════ */
+  .cta-final { position:relative; overflow:hidden; }
+  .cta-card {
+    position:relative; background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--r-xl); padding:64px 48px; text-align:center; overflow:hidden;
+  }
+  .cta-card .glow { position:absolute; top:-60%; left:50%; transform:translateX(-50%); width:700px; height:500px; background:radial-gradient(ellipse at top, var(--accent-soft), transparent 60%); opacity:.6; pointer-events:none; }
+  .cta-card h2 { position:relative; font-size:clamp(28px,4vw,46px); font-weight:700; letter-spacing:-.03em; color:var(--fg1); }
+  .cta-card p { position:relative; margin-top:18px; font-size:17px; color:var(--fg2); max-width:480px; margin-left:auto; margin-right:auto; }
+  .cta-card form { position:relative; margin-top:34px; display:flex; gap:10px; max-width:440px; margin-left:auto; margin-right:auto; }
+  .cta-card form input { flex:1; background:var(--surface-sunken); border:1px solid var(--border); color:var(--fg1); border-radius:var(--r-md); padding:14px 16px; font-family:var(--sans); font-size:15px; outline:none; transition:border-color .15s var(--ease); }
+  .cta-card form input::placeholder { color:var(--fg3); }
+  .cta-card form input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+  .cta-note { position:relative; margin-top:16px; font-family:var(--mono); font-size:11px; color:var(--fg3); }
+  .trust { position:relative; margin-top:34px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  .trust .chip { display:inline-flex; align-items:center; gap:7px; font-size:12px; color:var(--fg2); background:var(--surface-high); border:1px solid var(--border); border-radius:var(--r-pill); padding:7px 14px; }
+  .trust .chip svg { width:14px; height:14px; color:var(--fg3); }
+
+  /* form success */
+  .form-success { display:none; position:relative; }
+  .form-success.show { display:block; }
+  .form-success .ok { display:inline-flex; align-items:center; gap:10px; background:var(--success-soft); border:1px solid #2C4636; color:var(--success); border-radius:var(--r-md); padding:14px 22px; font-size:15px; font-weight:600; }
+  .form-success .ok svg { width:20px; height:20px; }
+  .form-err { display:none; margin-top:10px; font-size:13px; color:var(--danger); font-family:var(--mono); }
+  .form-err.show { display:block; }
+
+  /* ════════ FOOTER ════════ */
+  footer { border-top:1px solid var(--border); padding:64px 0 48px; }
+  .foot-top { display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:40px; }
+  .foot-brand .logo { font-size:24px; }
+  .foot-brand p { margin-top:14px; font-size:14px; color:var(--fg3); max-width:300px; line-height:1.55; }
+  .foot-col h5 { font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--fg-faint); margin:0 0 16px; font-weight:500; }
+  .foot-col a { display:block; font-size:14px; color:var(--fg2); margin-bottom:11px; transition:color .15s var(--ease); }
+  .foot-col a:hover { color:var(--fg1); }
+  .foot-socials { display:flex; gap:12px; }
+  .foot-socials a { width:38px; height:38px; border-radius:var(--r-md); border:1px solid var(--border); display:grid; place-items:center; color:var(--fg2); transition:color .15s var(--ease), border-color .15s var(--ease); }
+  .foot-socials a:hover { color:var(--fg1); border-color:var(--border-strong); }
+  .foot-socials svg { width:18px; height:18px; }
+  .foot-legal { margin-top:48px; padding-top:28px; border-top:1px solid var(--divider); }
+  .foot-legal .mention { font-size:12px; color:var(--fg-faint); line-height:1.6; max-width:680px; }
+  .foot-legal .copy { margin-top:16px; font-family:var(--mono); font-size:11px; color:var(--fg-faint); }
+
+  /* ════════ REVEAL ════════ */
+  .reveal { opacity:0; transform:translateY(16px); transition:opacity .5s var(--ease), transform .5s var(--ease); }
+  .reveal.in { opacity:1; transform:none; }
+  /* no-JS / reduced-motion fallback — never leave content hidden */
+  .no-js .reveal { opacity:1; transform:none; }
+  @media (prefers-reduced-motion:reduce) { .reveal { opacity:1; transform:none; transition:none; } }
+
+  /* ════════ RESPONSIVE ════════ */
+  @media (max-width:980px) {
+    .hero-inner { grid-template-columns:1fr; gap:48px; }
+    .hero-media { order:-1; }
+    .feat { grid-template-columns:1fr; gap:32px; padding:48px 0; }
+    .feat:nth-child(even) .feat-media { order:0; }
+    .foot-top { grid-template-columns:1fr 1fr; }
+    .foot-brand { grid-column:1 / -1; }
+  }
+  @media (max-width:768px) {
+    .nav-links { display:none; }
+    .hamburger { display:block; }
+    .compare { grid-template-columns:1fr; }
+    .timeline { grid-template-columns:1fr; gap:8px; }
+    .tl-step { padding:24px 0 0 28px; }
+    .tl-step::before { left:6px; top:0; bottom:0; right:auto; width:1px; height:auto; }
+    .tl-step::after { left:0; top:6px; }
+    .hero { padding:128px 0 72px; }
+    section.block { padding:72px 0; }
+    .cta-card { padding:44px 24px; }
+    .hero-form, .cta-card form { flex-direction:column; }
+    .hero-stats { flex-direction:column; gap:20px; }
+    .hstat + .hstat { padding-left:0; border-left:0; padding-top:20px; border-top:1px solid var(--border); }
+    .mobile-menu.open { display:block; background:rgba(11,13,16,.96); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:16px 24px 24px; }
+    .mobile-menu.open a { display:block; padding:12px 0; font-size:16px; color:var(--fg1); border-bottom:1px solid var(--divider); }
+    .mobile-menu.open .btn { margin-top:16px; width:100%; justify-content:center; }
+  }
+  @media (min-width:1200px) { .wrap { padding:0 16px; } }
+</style>
+</head>
+<body class="no-js">
+<div class="grain"></div>
+
+<!-- ════════════════ NAV ════════════════ -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="#top" class="logo">Tactic<b>x</b></a>
+    <div class="nav-links">
+      <a href="#features" class="link">Features</a>
+      <a href="#apropos" class="link">À propos</a>
+      <a href="#waitlist" class="btn btn-primary">Rejoindre la liste</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#features">Features</a>
+    <a href="#apropos">À propos</a>
+    <a href="#waitlist" class="btn btn-primary">Rejoindre la liste</a>
+  </div>
+</nav>
+
+<span id="top"></span>
+
+<!-- ════════════════ HERO ════════════════ -->
+<header class="hero">
+  <div class="hero-glow"></div>
+  <div class="wrap hero-inner">
+    <div class="hero-copy">
+      <span class="hero-badge reveal"><span class="dot"></span>Pour Pokémon Champions · VGC &amp; Singles</span>
+      <h1 class="hero-title reveal">Le compagnon stratégique que les joueurs compétitifs <span class="em">attendaient.</span></h1>
+      <p class="hero-sub reveal">Méta en temps réel, team builder complet, calculateur de dégâts offline et feed communautaire. Tout l'arsenal compétitif, sur mobile, en français.</p>
+
+      <form class="hero-form reveal" id="heroForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" novalidate>
+        <input type="hidden" name="format" value="both" />
+        <input type="email" name="email" placeholder="ton@email.fr" aria-label="Adresse email" required />
+        <button type="submit" class="btn btn-primary">Rejoindre la liste</button>
+      </form>
+      <div class="form-success" id="heroSuccess"><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Tu es sur la liste — accès bêta prioritaire réservé.</span></div>
+      <div class="form-err" id="heroErr">Adresse email invalide. Vérifie et réessaie.</div>
+
+      <div class="hero-secondary reveal"><a href="#features">Voir les features ↓</a></div>
+
+      <div class="hero-stats reveal">
+        <div class="hstat"><div class="v">0</div><div class="l">app mobile sérieuse existante</div></div>
+        <div class="hstat"><div class="v">VGC &amp; Singles</div><div class="l">les deux formats couverts</div></div>
+        <div class="hstat"><div class="v">Gratuit</div><div class="l">au lancement</div></div>
+      </div>
+    </div>
+
+    <!-- phone mockup: méta -->
+    <div class="hero-media reveal">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="ph-status">
+            <span>9:41</span>
+            <span class="si">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zm5-4h3v8H7zm5-5h3v13h-3zm5-5h3v18h-3z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a15 15 0 0 1 20 0M5 13a9 9 0 0 1 14 0M8.5 16.5a4 4 0 0 1 7 0"/></svg>
+              <svg viewBox="0 0 26 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1.5" y="7" width="19" height="10" rx="2.5"/><rect x="3.5" y="9" width="13" height="6" rx="1" fill="currentColor"/><path d="M22 10v4" stroke-linecap="round"/></svg>
+            </span>
+          </div>
+          <div class="ph-head">
+            <div class="ph-h-row"><h4>Méta</h4><span class="eyebrow">S26 · sem. 3</span></div>
+            <div class="ph-seg"><span class="on">VGC</span><span>Singles</span></div>
+          </div>
+          <div class="ph-meta-eyebrow"><span>Top 20 · usage</span><span>tendance 7j</span></div>
+
+          <div class="mrow">
+            <span class="mrank">1</span><div class="sprite"></div>
+            <div class="mbody"><div class="mname">Flutter Mane</div><div class="mmeta">Fée · Spectre</div></div>
+            <div class="musage"><div class="u">41.2 %</div><div class="mtrend up">▲ 4.1</div></div>
+          </div>
+          <div class="mbar"><i style="width:92%"></i></div>
+
+          <div class="mrow">
+            <span class="mrank">2</span><div class="sprite"></div>
+            <div class="mbody"><div class="mname">Incinéroar</div><div class="mmeta">Feu · Ténèbres</div></div>
+            <div class="musage"><div class="u">38.7 %</div><div class="mtrend flat">— 0.3</div></div>
+          </div>
+          <div class="mbar"><i style="width:86%"></i></div>
+
+          <div class="mrow">
+            <span class="mrank">3</span><div class="sprite"></div>
+            <div class="mbody"><div class="mname">Ogerpon</div><div class="mmeta">Plante · Roche</div></div>
+            <div class="musage"><div class="u">33.5 %</div><div class="mtrend up">▲ 6.8</div></div>
+          </div>
+          <div class="mbar"><i style="width:74%"></i></div>
+
+          <div class="mrow">
+            <span class="mrank">4</span><div class="sprite"></div>
+            <div class="mbody"><div class="mname">Urshifu</div><div class="mmeta">Combat · Eau</div></div>
+            <div class="musage"><div class="u">29.1 %</div><div class="mtrend down">▼ 2.2</div></div>
+          </div>
+          <div class="mbar"><i style="width:65%"></i></div>
+
+          <div class="mrow">
+            <span class="mrank">5</span><div class="sprite"></div>
+            <div class="mbody"><div class="mname">Rillaboom</div><div class="mmeta">Plante</div></div>
+            <div class="musage"><div class="u">26.4 %</div><div class="mtrend up">▲ 1.5</div></div>
+          </div>
+          <div class="mbar"><i style="width:58%"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ════════════════ POURQUOI ════════════════ -->
+<section class="block" id="apropos">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow sec-eyebrow">Pourquoi Tacticx</span>
+      <h2>Les outils compétitifs existent. <span class="dim">Pas sur mobile.</span></h2>
+      <p>Préparer un tournoi VGC aujourd'hui, c'est jongler entre un site web figé en 2015, un logiciel desktop et des menus enfouis dans le jeu. Rien qui tienne dans une poche, rien en français.</p>
+    </div>
+
+    <div class="compare">
+      <div class="cmp reveal">
+        <div class="cmp-name">Pikalytics</div>
+        <div class="cmp-tag">données méta</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Web only, jamais pensé mobile</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>UX datée, navigation lourde</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Anglais uniquement</li>
+        </ul>
+      </div>
+      <div class="cmp reveal">
+        <div class="cmp-name">Coup Critique</div>
+        <div class="cmp-tag">calc de dégâts</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Desktop uniquement</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Inutilisable en tournoi, sur place</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Pas de team builder lié</li>
+        </ul>
+      </div>
+      <div class="cmp win reveal">
+        <div class="cmp-name">Tacticx</div>
+        <div class="cmp-tag">tout-en-un · mobile</div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Méta, builder &amp; calc dans une poche</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>En français, temps réel</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Calc 100 % offline, en tournoi</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ FEATURES ════════════════ -->
+<section class="block" id="features" style="padding-top:40px;">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow sec-eyebrow">Features</span>
+      <h2>Quatre outils. <span class="dim">Un seul réflexe.</span></h2>
+      <p>Chaque écran a été pensé pour un joueur qui connaît déjà le vocabulaire. Pas de tutoriel, pas de bruit — la donnée, directement.</p>
+    </div>
+
+    <!-- Feature 1 : Méta -->
+    <div class="feat">
+      <div class="feat-text reveal">
+        <span class="feat-num">01 · MÉTA</span>
+        <h3>La méta en temps réel</h3>
+        <p class="lead">Le top 20 des Pokémon avec usage, winrate et tendance hebdomadaire. Les données VGC et Singles sont séparées — jamais mélangées.</p>
+        <ul class="feat-list">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Usage &amp; winrate à la décimale, figures tabulaires</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Tendances 7 jours — présence en hausse ou en chute</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Bascule VGC / Singles en un geste</li>
+        </ul>
+      </div>
+      <div class="feat-media reveal">
+        <div class="device">
+          <div class="device-glow"></div>
+          <div class="device-eyebrow"><span>MÉTA · S26 · SEMAINE 3</span><span class="pill">VGC</span></div>
+          <div style="margin:0 -10px;">
+            <div class="mrow" style="padding-left:8px;padding-right:8px;"><span class="mrank">1</span><div class="sprite"></div><div class="mbody"><div class="mname">Flutter Mane</div><div class="mmeta">Fée · Spectre</div></div><div class="musage"><div class="u">41.2 %</div><div class="mtrend up">▲ 4.1</div></div></div>
+            <div class="mbar" style="margin-left:8px;margin-right:8px;"><i style="width:92%"></i></div>
+            <div class="mrow" style="padding-left:8px;padding-right:8px;"><span class="mrank">2</span><div class="sprite"></div><div class="mbody"><div class="mname">Ogerpon</div><div class="mmeta">Plante · Roche</div></div><div class="musage"><div class="u">33.5 %</div><div class="mtrend up">▲ 6.8</div></div></div>
+            <div class="mbar" style="margin-left:8px;margin-right:8px;"><i style="width:74%"></i></div>
+            <div class="mrow" style="padding-left:8px;padding-right:8px;"><span class="mrank">3</span><div class="sprite"></div><div class="mbody"><div class="mname">Urshifu</div><div class="mmeta">Combat · Eau</div></div><div class="musage"><div class="u">29.1 %</div><div class="mtrend down">▼ 2.2</div></div></div>
+            <div class="mbar" style="margin-left:8px;margin-right:8px;"><i style="width:65%"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 2 : Team Builder -->
+    <div class="feat">
+      <div class="feat-text reveal">
+        <span class="feat-num">02 · BUILDER</span>
+        <h3>Team builder complet</h3>
+        <p class="lead">Six slots, sliders d'EV, et une analyse de couverture sur les 18 types calculée en direct. Une équipe complète, exportable en Poképaste d'un tap.</p>
+        <ul class="feat-list">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Sliders d'EV avec total live sur 508</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Couverture offensive &amp; trous défensifs visibles</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Export Poképaste en un tap</li>
+        </ul>
+      </div>
+      <div class="feat-media reveal">
+        <div class="device">
+          <div class="device-glow"></div>
+          <div class="device-eyebrow"><span>TON ÉQUIPE · 6 / 6</span><span class="pill">508 EV</span></div>
+          <div class="tb-grid">
+            <div class="tb-slot"><div class="top"><div class="sp"></div><div class="nm">Flutter Mane</div></div><div class="badges"><span class="tbadge t-fairy">Fée</span><span class="tbadge t-ghost">Spectre</span></div></div>
+            <div class="tb-slot"><div class="top"><div class="sp"></div><div class="nm">Incinéroar</div></div><div class="badges"><span class="tbadge t-fire">Feu</span><span class="tbadge t-ground">Tén.</span></div></div>
+            <div class="tb-slot"><div class="top"><div class="sp"></div><div class="nm">Urshifu</div></div><div class="badges"><span class="tbadge t-fighting">Combat</span><span class="tbadge t-water">Eau</span></div></div>
+            <div class="tb-slot"><div class="top"><div class="sp"></div><div class="nm">Rillaboom</div></div><div class="badges"><span class="tbadge t-grass">Plante</span></div></div>
+            <div class="tb-slot"><div class="top"><div class="sp"></div><div class="nm">Amoonguss</div></div><div class="badges"><span class="tbadge t-grass">Plante</span><span class="tbadge t-psychic">Poison</span></div></div>
+            <div class="tb-slot"><div class="top"><div class="sp"></div><div class="nm">Landorus</div></div><div class="badges"><span class="tbadge t-ground">Sol</span><span class="tbadge t-flying">Vol</span></div></div>
+          </div>
+          <div class="cov">
+            <div class="cov-label">Couverture offensive · 18 types</div>
+            <div class="cov-grid">
+              <span class="cov-cell" style="background:var(--success);opacity:.85"></span>
+              <span class="cov-cell" style="background:var(--success);opacity:.55"></span>
+              <span class="cov-cell" style="background:var(--warning);opacity:.5"></span>
+              <span class="cov-cell" style="background:var(--success);opacity:.85"></span>
+              <span class="cov-cell" style="background:var(--success);opacity:.7"></span>
+              <span class="cov-cell" style="background:var(--danger);opacity:.6"></span>
+              <span class="cov-cell" style="background:var(--success);opacity:.85"></span>
+              <span class="cov-cell" style="background:var(--warning);opacity:.5"></span>
+              <span class="cov-cell" style="background:var(--success);opacity:.6"></span>
+              <span class="cov-cell" style="background:var(--success);opacity:.85"></span>
+              <span class="cov-cell" style="background:var(--success);opacity:.7"></span>
+              <span class="cov-cell" style="background:var(--warning);opacity:.55"></span>
+              <span class="cov-cell" style="background:var(--success);opacity:.85"></span>
+              <span class="cov-cell" style="background:var(--danger);opacity:.55"></span>
+              <span class="cov-cell" style="background:var(--success);opacity:.7"></span>
+              <span class="cov-cell" style="background:var(--success);opacity:.85"></span>
+              <span class="cov-cell" style="background:var(--warning);opacity:.5"></span>
+              <span class="cov-cell" style="background:var(--success);opacity:.8"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 3 : Calc -->
+    <div class="feat">
+      <div class="feat-text reveal">
+        <span class="feat-num">03 · CALC</span>
+        <h3>Calculateur de dégâts offline</h3>
+        <p class="lead">La formule exacte de Champions, 100 % hors-ligne. Les 16 rolls, les chances de KO et toutes les conditions de terrain — utilisable en plein tournoi, sans réseau.</p>
+        <ul class="feat-list">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>16 rolls détaillés + pourcentage de KO</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Météo, terrain, écrans, objets, talents</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Zéro réseau requis — tout embarqué</li>
+        </ul>
+      </div>
+      <div class="feat-media reveal">
+        <div class="device">
+          <div class="device-glow"></div>
+          <div class="device-eyebrow"><span>CALCUL DE DÉGÂTS</span><span class="pill">OFFLINE</span></div>
+          <div class="calc-row">
+            <div class="sp"></div>
+            <span class="arrow">→</span>
+            <div class="sp"></div>
+          </div>
+          <div class="calc-kobox">
+            <div class="big">87.5<small> %</small></div>
+            <div class="cap">2HKO garanti</div>
+          </div>
+          <div class="histo">
+            <i style="height:30%"></i><i style="height:38%"></i><i style="height:42%"></i><i style="height:48%"></i>
+            <i style="height:55%"></i><i style="height:62%"></i><i style="height:70%"></i><i class="peak" style="height:82%"></i>
+            <i class="peak" style="height:100%"></i><i class="peak" style="height:88%"></i><i style="height:74%"></i><i style="height:66%"></i>
+            <i style="height:58%"></i><i style="height:50%"></i><i style="height:44%"></i><i style="height:36%"></i>
+          </div>
+          <div class="calc-meta">
+            <span class="calc-chip">184 – 218 pv</span>
+            <span class="calc-chip">Pluie</span>
+            <span class="calc-chip">Tera Eau</span>
+            <span class="calc-chip">252 Atk Spé</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 4 : Communauté -->
+    <div class="feat">
+      <div class="feat-text reveal">
+        <span class="feat-num">04 · COMMUNAUTÉ</span>
+        <h3>Le feed de la communauté</h3>
+        <p class="lead">Les équipes publiées par les autres joueurs, recherchables par Pokémon et filtrables par budget VP. Ouvre n'importe quelle équipe directement dans ton builder.</p>
+        <ul class="feat-list">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Recherche par Pokémon, filtres budget VP</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Ouvrir une équipe dans le builder en un tap</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Compositions issues des tops tournois</li>
+        </ul>
+      </div>
+      <div class="feat-media reveal">
+        <div class="device">
+          <div class="device-glow"></div>
+          <div class="device-eyebrow"><span>COMMUNAUTÉ · 1 248 ÉQUIPES</span><span class="pill">VGC</span></div>
+          <div class="feed-card">
+            <div class="feed-top"><span class="ti">Sun offense · Top 8 Lyon</span><span class="vp">28 VP</span></div>
+            <div class="feed-team"><div class="sp"></div><div class="sp"></div><div class="sp"></div><div class="sp"></div><div class="sp"></div><div class="sp"></div></div>
+            <div class="feed-foot"><span>par @kanto_lab</span><span>·</span><span>312 ouvertures</span></div>
+          </div>
+          <div class="feed-card">
+            <div class="feed-top"><span class="ti">Trick Room balance</span><span class="vp">24 VP</span></div>
+            <div class="feed-team"><div class="sp"></div><div class="sp"></div><div class="sp"></div><div class="sp"></div><div class="sp"></div><div class="sp"></div></div>
+            <div class="feed-foot"><span>par @vgc_marie</span><span>·</span><span>197 ouvertures</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ TIMELINE ════════════════ -->
+<section class="block">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow sec-eyebrow">Calendrier</span>
+      <h2>Sois parmi les premiers.</h2>
+      <p>Tacticx avance au rythme de Pokémon Champions. La bêta fermée est déjà en cours — les places de lancement sont limitées.</p>
+    </div>
+    <div class="timeline">
+      <div class="tl-step done reveal">
+        <div class="tl-when">Maintenant</div>
+        <div class="tl-title">Bêta fermée VGC France</div>
+        <div class="tl-desc">Un premier cercle de joueurs compétitifs teste la méta et le builder en conditions réelles.</div>
+      </div>
+      <div class="tl-step next reveal">
+        <div class="tl-when">Juin 2026</div>
+        <div class="tl-title">Lancement mobile</div>
+        <div class="tl-desc">Tacticx sort en même temps que Pokémon Champions sur mobile. Gratuit au lancement.</div>
+      </div>
+      <div class="tl-step next reveal">
+        <div class="tl-when">Août 2026</div>
+        <div class="tl-title">Championnats du Monde</div>
+        <div class="tl-desc">Cap sur San Francisco — données live, scénarios de tournoi et feed dédié pour les Worlds.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ CTA FINAL ════════════════ -->
+<section class="block cta-final" id="waitlist">
+  <div class="wrap">
+    <div class="cta-card reveal">
+      <div class="glow"></div>
+      <h2>Prêt à passer au niveau supérieur ?</h2>
+      <p>Rejoins la liste d'attente. Accès bêta prioritaire pour les 500 premiers.</p>
+      <form id="ctaForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" novalidate>
+        <input type="hidden" name="format" value="both" />
+        <input type="email" name="email" placeholder="ton@email.fr" aria-label="Adresse email" required />
+        <button type="submit" class="btn btn-primary">Rejoindre</button>
+      </form>
+      <div class="form-success" id="ctaSuccess"><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Tu es sur la liste — on te contacte pour la bêta.</span></div>
+      <div class="form-err" id="ctaErr">Adresse email invalide. Vérifie et réessaie.</div>
+      <div class="cta-note">Pas de spam. Désabonnement en un clic.</div>
+      <div class="trust">
+        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-10a7 7 0 0 1 14 0c0 5.5-7 10-7 10z"/><circle cx="12" cy="11" r="2.5"/></svg>Fait en Guadeloupe</span>
+        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V6z"/></svg>Indépendant</span>
+        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12h6"/></svg>Pas affilié à Nintendo</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ FOOTER ════════════════ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <div class="logo">Tactic<b>x</b></div>
+        <p>Le compagnon stratégique pour Pokémon Champions. Méta, builder &amp; calc — sur mobile, en français.</p>
+        <div class="foot-socials" style="margin-top:22px;">
+          <a href="#" aria-label="X (Twitter)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82a4.28 4.28 0 0 1-1.01-2.82h-3.3v13.6a2.59 2.59 0 0 1-2.59 2.5 2.59 2.59 0 1 1 .76-5.06V8.66a5.88 5.88 0 0 0-.76-.05A5.89 5.89 0 1 0 15.6 14.5V8.36a7.5 7.5 0 0 0 4.4 1.41V6.5a4.28 4.28 0 0 1-3.4-.68z"/></svg></a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h5>Produit</h5>
+        <a href="#features">Features</a>
+        <a href="#apropos">Pourquoi Tacticx</a>
+        <a href="#waitlist">Liste d'attente</a>
+      </div>
+      <div class="foot-col">
+        <h5>Légal</h5>
+        <a href="#">Politique de confidentialité</a>
+        <a href="#">Conditions générales</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+    <div class="foot-legal">
+      <p class="mention">Pokémon © Nintendo / Creatures Inc. / GAME FREAK inc. Tacticx n'est pas affilié à Nintendo ou The Pokémon Company, ni soutenu par eux. Tous les noms de Pokémon et marques associées appartiennent à leurs détenteurs respectifs.</p>
+      <p class="copy">© 2026 Tacticx · Netzil · Enrick Bilba — Guadeloupe</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* JS available — hand reveal control to the observer */
+  document.body.classList.remove('no-js');
+
+  /* nav frosted on scroll */
+  var nav = document.getElementById('nav');
+  function onScroll(){ nav.classList.toggle('scrolled', window.scrollY > 12); }
+  window.addEventListener('scroll', onScroll, { passive:true }); onScroll();
+
+  /* mobile menu */
+  var burger = document.getElementById('hamburger');
+  var menu = document.getElementById('mobileMenu');
+  burger.addEventListener('click', function(){
+    var open = menu.classList.toggle('open');
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  menu.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){ menu.classList.remove('open'); burger.setAttribute('aria-expanded','false'); });
+  });
+
+  /* scroll reveal — staggered, fast. Robust: in-viewport elements
+     reveal immediately, a failsafe reveals everything, and the
+     observer animates the rest as they scroll in. */
+  var revealEls = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
+  function showNow(el){
+    if(el.classList.contains('in')) return;
+    var sibs = Array.prototype.slice.call(el.parentNode.children).filter(function(c){return c.classList.contains('reveal');});
+    el.style.transitionDelay = Math.min(sibs.indexOf(el),6) * 60 + 'ms';
+    el.classList.add('in');
+  }
+  /* anything already in the viewport on load → reveal instantly */
+  function revealInView(){
+    var h = window.innerHeight || document.documentElement.clientHeight;
+    revealEls.forEach(function(el){
+      if(el.getBoundingClientRect().top < h * 0.92) showNow(el);
+    });
+  }
+  revealInView();
+  /* failsafe: never leave content hidden. In throttled / non-painting
+     contexts CSS transitions can freeze at their start value (opacity 0),
+     so we also clear the transition to snap to the final state. For real
+     users the 0.56s entrance has long finished by now — no visible jump. */
+  setTimeout(function(){
+    revealEls.forEach(function(el){
+      showNow(el);
+      el.style.transition = 'none';
+    });
+  }, 900);
+
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        showNow(e.target);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold:0.12, rootMargin:'0px 0px -8% 0px' });
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+
+  /* waitlist forms — client validation + inline success */
+  function wireForm(formId, successId, errId){
+    var form = document.getElementById(formId);
+    var success = document.getElementById(successId);
+    var err = document.getElementById(errId);
+    if(!form) return;
+    form.addEventListener('submit', function(ev){
+      ev.preventDefault();
+      err.classList.remove('show');
+      var email = form.querySelector('input[type=email]').value.trim();
+      var valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      if(!valid){ err.classList.add('show'); return; }
+      var data = new FormData(form);
+      fetch(form.action, { method:'POST', body:data, headers:{ 'Accept':'application/json' } })
+        .then(function(r){ reveal(); })
+        .catch(function(){ reveal(); }); /* show success optimistically — placeholder endpoint */
+      function reveal(){ form.style.display='none'; success.classList.add('show'); }
+    });
+  }
+  wireForm('heroForm','heroSuccess','heroErr');
+  wireForm('ctaForm','ctaSuccess','ctaErr');
+</script>
+</body>
+</html>

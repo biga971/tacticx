@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native'
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native'
 import { useRouter } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import { BlurView } from 'expo-blur'
@@ -11,7 +11,7 @@ import { Progress } from '@/components/ui/progress'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { PaywallSheet } from '@/components/paywall/PaywallSheet'
 import { useProfileStore } from '@/lib/store/profileStore'
-import { useMe } from '@/lib/api/hooks/useAuth'
+import { useMe, useUpdateMe } from '@/lib/api/hooks/useAuth'
 import { useAuthStore } from '@/lib/store/authStore'
 import { ensureGuestSession } from '@/lib/store/ensureSession'
 import { restorePurchases } from '@/lib/revenuecat'
@@ -191,13 +191,43 @@ function SettingRow({
 function AccountProfile() {
   const profile = useProfileStore()
   const { data: me } = useMe()
+  const updateMe = useUpdateMe()
   const clearAuth = useAuthStore((s) => s.clearAuth)
   const toast = useToast()
   const [paywall, setPaywall] = useState(false)
   const [confirmLogout, setConfirmLogout] = useState(false)
+  const [editing, setEditing] = useState(false)
+  const [draftName, setDraftName] = useState('')
 
   const pseudo = me?.fullName?.trim() || 'Dresseur Tacticx'
   const initials = initialsOf(pseudo)
+
+  const startEdit = () => {
+    setDraftName(me?.fullName?.trim() ?? '')
+    setEditing(true)
+  }
+
+  const saveName = () => {
+    const name = draftName.trim()
+    if (name.length < 3) {
+      toast.show('Le pseudo doit faire au moins 3 caractères', 'error')
+      return
+    }
+    if (name === pseudo) {
+      setEditing(false)
+      return
+    }
+    updateMe.mutate(
+      { fullName: name },
+      {
+        onSuccess: () => {
+          setEditing(false)
+          toast.show('Pseudo mis à jour', 'success')
+        },
+        onError: () => toast.show('Échec de la mise à jour', 'error'),
+      }
+    )
+  }
 
   const rows = [
     { icon: 'ribbon-outline' as const, label: 'Niveau', value: profile.level },
@@ -235,7 +265,40 @@ function AccountProfile() {
             </Text>
           </View>
           <View style={{ flex: 1 }}>
-            <Text variant="h3">{pseudo}</Text>
+            {editing ? (
+              <View style={styles.editRow}>
+                <TextInput
+                  value={draftName}
+                  onChangeText={setDraftName}
+                  autoFocus
+                  maxLength={64}
+                  selectTextOnFocus
+                  editable={!updateMe.isPending}
+                  placeholder="Ton pseudo"
+                  placeholderTextColor={colors.fg3}
+                  style={styles.nameInput}
+                  onSubmitEditing={saveName}
+                  returnKeyType="done"
+                />
+                {updateMe.isPending ? (
+                  <ActivityIndicator color={colors.accent} style={styles.editBtn} />
+                ) : (
+                  <>
+                    <Pressable onPress={saveName} hitSlop={8} style={styles.editBtn}>
+                      <Ionicons name="checkmark" size={20} color={colors.success} />
+                    </Pressable>
+                    <Pressable onPress={() => setEditing(false)} hitSlop={8} style={styles.editBtn}>
+                      <Ionicons name="close" size={20} color={colors.fg3} />
+                    </Pressable>
+                  </>
+                )}
+              </View>
+            ) : (
+              <Pressable onPress={startEdit} style={styles.nameRow} hitSlop={6}>
+                <Text variant="h3">{pseudo}</Text>
+                <Ionicons name="pencil" size={15} color={colors.fg3} />
+              </Pressable>
+            )}
             {profile.isPremium ? (
               <Badge label="VIP" bg={colors.accentSoft} fg={colors.accent} size="sm" />
             ) : (
@@ -414,6 +477,23 @@ const styles = StyleSheet.create({
   },
   /* account */
   identity: { flexDirection: 'row', alignItems: 'center', gap: spacing.base },
+  nameRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  editRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  nameInput: {
+    flex: 1,
+    color: colors.fg1,
+    fontSize: 20,
+    fontWeight: '700',
+    paddingVertical: 2,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderStrong,
+  },
+  editBtn: {
+    width: 28,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   avatar: {
     width: 60,
     height: 60,

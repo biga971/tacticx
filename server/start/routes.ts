@@ -76,6 +76,10 @@ router
       .use(middleware.auth({ guards: ['api'] }))
 
     router
+      .patch('me', [controllers.auth.Auth, 'updateMe'])
+      .use(middleware.auth({ guards: ['api'] }))
+
+    router
       .group(() => {
         router.post('activate', [controllers.activation.Activations, 'activate'])
         router.post('forgot-password', [controllers.passwordReset.PasswordResets, 'forgot'])

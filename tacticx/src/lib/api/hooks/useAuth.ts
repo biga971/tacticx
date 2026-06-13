@@ -75,20 +75,8 @@ export function useSocialSignIn(provider: 'apple' | 'google') {
     mutationFn: (input: SocialInput) =>
       apiFetch<AuthResponse>(`/auth/${provider}`, { method: 'POST', body: input, public: true }),
     onSuccess: (data) => {
-      console.log('[SSO mobile] onSuccess', {
-        provider,
-        hasToken: !!data?.token?.token,
-        id: data?.id,
-      })
       setAuth(data.token.token, String(data.id), false)
-      console.log('[SSO mobile] after setAuth', {
-        token: useAuthStore.getState().token?.slice(0, 12),
-        isGuest: useAuthStore.getState().isGuest,
-      })
       qc.invalidateQueries()
-    },
-    onError: (err) => {
-      console.log('[SSO mobile] onError', err)
     },
   })
 }
@@ -108,6 +96,19 @@ export function useMe() {
     queryKey: ['me'],
     queryFn: () => apiFetch<ApiMe>('/me'),
     enabled: !!token && !isGuest,
+  })
+}
+
+/** Updates the authenticated user's display name (pseudo). */
+export function useUpdateMe() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (input: { fullName: string }) =>
+      apiFetch<ApiMe>('/me', { method: 'PATCH', body: input }),
+    onSuccess: (data) => {
+      qc.setQueryData(['me'], data)
+      qc.invalidateQueries({ queryKey: ['me'] })
+    },
   })
 }
 
