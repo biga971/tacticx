@@ -1,4 +1,5 @@
 import { Platform } from 'react-native'
+import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency'
 import mobileAds, {
   AdEventType,
   MaxAdContentRating,
@@ -9,6 +10,23 @@ import mobileAds, {
 
 let initialized = false
 
+// Whether the user allows personalised ads. iOS requires ATT consent; other
+// platforms default to allowed (no ATT gate). Banner/rewarded requests use this
+// to decide `requestNonPersonalizedAdsOnly`.
+let personalizedAllowed = Platform.OS !== 'ios'
+
+/** True once the user has granted tracking (iOS ATT) — drives personalised ads. */
+export function personalizedAdsAllowed(): boolean {
+  return personalizedAllowed
+}
+
+// Optional AdMob test-device hash. When set, this physical device receives
+// Google *test* ads even in a release/TestFlight build — useful to confirm the
+// integration works when real units are returning no-fill. The SDK logs the
+// value to use at launch: `<GADMobileAds> To get test ads on this device set
+// requestConfiguration.testDeviceIdentifiers = @[ @"<hash>" ];`.
+const TEST_DEVICE = process.env.EXPO_PUBLIC_ADMOB_TEST_DEVICE
+
 /**
  * Initialise the Google Mobile Ads SDK once at startup.
  * No-op when the native module is unavailable (e.g. Expo Go / web).
@@ -16,9 +34,17 @@ let initialized = false
 export async function initAds(): Promise<void> {
   if (initialized) return
   try {
+    // iOS: ask for App Tracking Transparency before the first ad request. The
+    // prompt only shows once; declining is fine — ads still serve (non-perso).
+    // Granting it unlocks personalised ads (higher eCPM).
+    if (Platform.OS === 'ios') {
+      const res = await requestTrackingPermissionsAsync().catch(() => undefined)
+      personalizedAllowed = res?.status === 'granted'
+    }
     await mobileAds().setRequestConfiguration({
       maxAdContentRating: MaxAdContentRating.T,
       tagForChildDirectedTreatment: false,
+      testDeviceIdentifiers: TEST_DEVICE ? [TEST_DEVICE] : undefined,
     })
     await mobileAds().initialize()
     initialized = true
@@ -77,7 +103,7 @@ export async function showRewardedAd(): Promise<void> {
 
       try {
         const ad = RewardedAd.createForAdRequest(REWARDED_UNIT_ID, {
-          requestNonPersonalizedAdsOnly: true,
+          requestNonPersonalizedAdsOnly: !personalizedAllowed,
         })
         unsubs.push(
           ad.addAdEventListener(RewardedAdEventType.LOADED, () => {

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads'
 import { useProfileStore } from '@/lib/store/profileStore'
-import { BANNER_UNIT_ID } from '@/lib/ads'
+import { BANNER_UNIT_ID, personalizedAdsAllowed } from '@/lib/ads'
 import { spacing } from '@/lib/theme'
 
 /**
@@ -20,7 +20,7 @@ export function AdBanner() {
       <BannerAd
         unitId={BANNER_UNIT_ID}
         size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-        requestOptions={{ requestNonPersonalizedAdsOnly: true }}
+        requestOptions={{ requestNonPersonalizedAdsOnly: !personalizedAdsAllowed() }}
         onAdFailedToLoad={() => setFailed(true)}
       />
     </View>
