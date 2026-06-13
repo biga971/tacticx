@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native'
+import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native'
 import { useRouter } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import { BlurView } from 'expo-blur'
@@ -18,6 +18,13 @@ import { restorePurchases } from '@/lib/revenuecat'
 import { useToast } from '@/components/ui/toast'
 import { queryClient } from '@/lib/api/queryClient'
 import { colors, radii, spacing } from '@/lib/theme'
+
+const SITE_URL = 'https://tacticx.fr'
+const LEGAL_URLS = {
+  support: `${SITE_URL}/support`,
+  privacy: `${SITE_URL}/confidentialite`,
+  terms: `${SITE_URL}/privacy`,
+}
 
 const LABELS: Record<string, string> = {
   casual: 'Casual',
@@ -136,9 +143,9 @@ function GuestProfile() {
         Réglages
       </Text>
       <View style={styles.card}>
-        <SettingRow icon="help-buoy-outline" label="Aide & support" />
-        <SettingRow icon="shield-outline" label="Confidentialité" />
-        <SettingRow icon="document-text-outline" label="Conditions d'utilisation" last />
+        <SettingRow icon="help-buoy-outline" label="Aide & support" href={LEGAL_URLS.support} />
+        <SettingRow icon="shield-outline" label="Confidentialité" href={LEGAL_URLS.privacy} />
+        <SettingRow icon="document-text-outline" label="Conditions d'utilisation" href={LEGAL_URLS.terms} last />
       </View>
 
       <Legal />
@@ -161,15 +168,24 @@ function SettingRow({
   icon,
   label,
   value,
+  href,
+  onPress,
   last,
 }: {
   icon: keyof typeof Ionicons.glyphMap
   label: string
   value?: string
+  href?: string
+  onPress?: () => void
   last?: boolean
 }) {
+  const handlePress = onPress ?? (href ? () => Linking.openURL(href) : undefined)
+  const Row = handlePress ? Pressable : View
   return (
-    <View style={[styles.prow, !last && styles.benBorder]}>
+    <Row
+      style={[styles.prow, !last && styles.benBorder]}
+      {...(handlePress ? { onPress: handlePress } : {})}
+    >
       <View style={styles.prowIco}>
         <Ionicons name={icon} size={15} color={colors.fg2} />
       </View>
@@ -182,7 +198,7 @@ function SettingRow({
         </Text>
       ) : null}
       <Ionicons name="chevron-forward" size={16} color={colors.fgFaint} />
-    </View>
+    </Row>
   )
 }
 
@@ -328,9 +344,9 @@ function AccountProfile() {
           Réglages
         </Text>
         <View style={styles.card}>
-          <SettingRow icon="help-buoy-outline" label="Aide & support" />
-          <SettingRow icon="shield-outline" label="Confidentialité" />
-          <SettingRow icon="document-text-outline" label="Conditions d'utilisation" last />
+          <SettingRow icon="help-buoy-outline" label="Aide & support" href={LEGAL_URLS.support} />
+          <SettingRow icon="shield-outline" label="Confidentialité" href={LEGAL_URLS.privacy} />
+          <SettingRow icon="document-text-outline" label="Conditions d'utilisation" href={LEGAL_URLS.terms} last />
         </View>
 
         <View style={{ gap: spacing.sm }}>

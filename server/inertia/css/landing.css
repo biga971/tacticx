@@ -1304,6 +1304,16 @@
 }
 
 /* ════════ LEGAL / DOC PAGES ════════ */
+/* Reset the global app.css `main { background:#fff; max-width; border }` rule
+   so the dark landing chrome shows through on legal/support pages. */
+.lp main {
+  max-width: none;
+  margin: 0;
+  display: block;
+  background: transparent;
+  border: 0;
+  min-height: 0;
+}
 .lp .doc {
   position: relative;
   padding: 132px 0 96px;
