@@ -185,6 +185,34 @@ export class CommentSchema extends BaseModel {
   declare userId: number
 }
 
+export class CommentReportSchema extends BaseModel {
+  static $columns = ['commentId', 'createdAt', 'id', 'reason', 'reporterId'] as const
+  $columns = CommentReportSchema.$columns
+  @column()
+  declare commentId: number
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare reason: string
+  @column()
+  declare reporterId: number
+}
+
+export class UserBlockSchema extends BaseModel {
+  static $columns = ['blockedId', 'blockerId', 'createdAt', 'id'] as const
+  $columns = UserBlockSchema.$columns
+  @column()
+  declare blockedId: number
+  @column()
+  declare blockerId: number
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+}
+
 export class SubscriptionSchema extends BaseModel {
   static $columns = ['createdAt', 'expiresAt', 'id', 'plan', 'revenuecatUserId', 'status', 'updatedAt', 'userId'] as const
   $columns = SubscriptionSchema.$columns

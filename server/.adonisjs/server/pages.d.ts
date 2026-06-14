@@ -18,6 +18,7 @@ declare module '@adonisjs/inertia/types' {
     'errors/server_error': ExtractProps<(typeof import('../../inertia/pages/errors/server_error.tsx'))['default']>
     'home': ExtractProps<(typeof import('../../inertia/pages/home.tsx'))['default']>
     'legal/confidentialite': ExtractProps<(typeof import('../../inertia/pages/legal/confidentialite.tsx'))['default']>
+    'legal/delete_account': ExtractProps<(typeof import('../../inertia/pages/legal/delete_account.tsx'))['default']>
     'legal/privacy': ExtractProps<(typeof import('../../inertia/pages/legal/privacy.tsx'))['default']>
     'legal/support': ExtractProps<(typeof import('../../inertia/pages/legal/support.tsx'))['default']>
   }

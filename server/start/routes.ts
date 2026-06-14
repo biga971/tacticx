@@ -17,6 +17,7 @@ router.on('/').renderInertia('home', {}).as('home')
 router.on('/confidentialite').renderInertia('legal/confidentialite', {}).as('legal.confidentialite')
 router.on('/privacy').renderInertia('legal/privacy', {}).as('legal.privacy')
 router.on('/support').renderInertia('legal/support', {}).as('legal.support')
+router.on('/delete-account').renderInertia('legal/delete_account', {}).as('legal.delete_account')
 
 router
   .group(() => {
@@ -134,6 +135,11 @@ router
         router
           .post('community/:id/comments', [controllers.Comment, 'store'])
           .use(middleware.registered())
+
+        // Moderation — UGC compliance (report a comment, block a user).
+        router.post('comments/:commentId/report', [controllers.CommentReports, 'store'])
+        router.post('users/:userId/block', [controllers.UserBlocks, 'store'])
+        router.delete('users/:userId/block', [controllers.UserBlocks, 'destroy'])
 
         router
           .get('subscription/status', [controllers.Subscription, 'status'])

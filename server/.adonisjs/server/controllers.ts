@@ -14,6 +14,7 @@ export const controllers = {
     AuthGoogle: () => import('#controllers/auth/auth_google_controller'),
   },
   Comment: () => import('#controllers/comment_controller'),
+  CommentReports: () => import('#controllers/comment_reports_controller'),
   Community: () => import('#controllers/community_controller'),
   Item: () => import('#controllers/item_controller'),
   Meta: () => import('#controllers/meta_controller'),
@@ -28,5 +29,6 @@ export const controllers = {
   Subscription: () => import('#controllers/subscription_controller'),
   Sync: () => import('#controllers/sync_controller'),
   Team: () => import('#controllers/team_controller'),
+  UserBlocks: () => import('#controllers/user_blocks_controller'),
   Webhook: () => import('#controllers/webhook_controller'),
 }
