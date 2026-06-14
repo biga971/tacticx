@@ -6,7 +6,13 @@ import { Form, Link } from '@adonisjs/inertia/react'
 
 // Pages that render their own full-bleed chrome (own nav + footer) and must
 // not be wrapped in the default app header.
-const FULL_BLEED = new Set(['home', 'legal/privacy', 'legal/confidentialite', 'legal/support'])
+const FULL_BLEED = new Set([
+  'home',
+  'legal/privacy',
+  'legal/confidentialite',
+  'legal/support',
+  'legal/delete_account',
+])
 
 export default function Layout({ children }: { children: ReactElement<Data.SharedProps> }) {
   const { component } = usePage()
