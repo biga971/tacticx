@@ -7,10 +7,21 @@ import { Text } from '@/components/ui/text'
 import { Shimmer } from '@/components/ui/shimmer'
 import { Button } from '@/components/ui/button'
 import { Accordion } from '@/components/ui/accordion'
+import { ActionSheet } from '@/components/ui/action-sheet'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { PokemonSprite } from '@/components/shared/PokemonSprite'
 import { TypeBadge } from '@/components/shared/TypeBadge'
 import { useToast } from '@/components/ui/toast'
-import { useCommunityTeam, useToggleLike, useComments, useAddComment } from '@/lib/api/hooks/useCommunity'
+import {
+  useCommunityTeam,
+  useToggleLike,
+  useComments,
+  useAddComment,
+  useReportComment,
+  useBlockUser,
+  type ReportReason,
+} from '@/lib/api/hooks/useCommunity'
+import { useMe } from '@/lib/api/hooks/useAuth'
 import { useAuthStore } from '@/lib/store/authStore'
 import { useRewardedGate } from '@/lib/hooks/useRewardedGate'
 import { formatRelativeDate, formatShortDate } from '@/lib/format/date'
@@ -24,11 +35,16 @@ export default function CommunityTeamScreen() {
   const toggleLike = useToggleLike()
   const { data: comments } = useComments(teamId)
   const addComment = useAddComment(teamId)
+  const { data: me } = useMe()
   const toast = useToast()
   const isGuest = useAuthStore((s) => s.isGuest)
   const authToken = useAuthStore((s) => s.token)
   const runWithAd = useRewardedGate()
   const [draft, setDraft] = useState('')
+  // Users blocked during this session — filtered out locally without a reload.
+  const [blockedIds, setBlockedIds] = useState<Set<number>>(new Set())
+
+  const visibleComments = comments?.data.filter((c) => !blockedIds.has(c.userId)) ?? []
 
   const onLike = () => {
     if (isGuest || !authToken) {
@@ -134,21 +150,37 @@ export default function CommunityTeamScreen() {
               <Button label="Publier" size="sm" onPress={submitComment} loading={addComment.isPending} />
             </View>
             <View style={{ gap: spacing.sm, marginTop: spacing.md }}>
-              {comments?.data.map((c) => (
-                <View key={c.id} style={styles.comment}>
-                  <View style={styles.commentHead}>
-                    <Text variant="caption" weight="semibold" color="fg1">
-                      {c.user?.fullName ?? c.user?.initials ?? 'Anonyme'}
-                    </Text>
-                    <Text variant="caption" color="fg3">
-                      {formatRelativeDate(c.createdAt)}
+              {visibleComments.map((c) => {
+                const isMine = me?.id != null && c.userId === me.id
+                return (
+                  <View key={c.id} style={styles.comment}>
+                    <View style={styles.commentHead}>
+                      <Text variant="caption" weight="semibold" color="fg1">
+                        {c.user?.fullName ?? c.user?.initials ?? 'Anonyme'}
+                      </Text>
+                      <View style={styles.commentMeta}>
+                        <Text variant="caption" color="fg3">
+                          {formatRelativeDate(c.createdAt)}
+                        </Text>
+                        {!isMine ? (
+                          <CommentMenu
+                            commentId={c.id}
+                            authorId={c.userId}
+                            authorName={c.user?.fullName ?? c.user?.initials ?? 'cet utilisateur'}
+                            teamId={teamId}
+                            onBlocked={(uid) =>
+                              setBlockedIds((prev) => new Set(prev).add(uid))
+                            }
+                          />
+                        ) : null}
+                      </View>
+                    </View>
+                    <Text variant="caption" color="fg2">
+                      {c.content}
                     </Text>
                   </View>
-                  <Text variant="caption" color="fg2">
-                    {c.content}
-                  </Text>
-                </View>
-              ))}
+                )
+              })}
             </View>
           </Accordion>
 
@@ -174,6 +206,106 @@ export default function CommunityTeamScreen() {
         </ScrollView>
       )}
     </Screen>
+  )
+}
+
+/** Per-comment "…" menu: report (with reason) or block the author. */
+function CommentMenu({
+  commentId,
+  authorId,
+  authorName,
+  teamId,
+  onBlocked,
+}: {
+  commentId: number
+  authorId: number
+  authorName: string
+  teamId: number
+  onBlocked: (userId: number) => void
+}) {
+  const toast = useToast()
+  const report = useReportComment()
+  const block = useBlockUser(teamId)
+  const [menu, setMenu] = useState(false)
+  const [reasons, setReasons] = useState(false)
+  const [confirmBlock, setConfirmBlock] = useState(false)
+
+  const doReport = (reason: ReportReason) => {
+    setReasons(false)
+    report.mutate(
+      { commentId, reason },
+      {
+        onSuccess: () => toast.show('Commentaire signalé', 'success'),
+        onError: () => toast.show('Échec du signalement', 'error'),
+      }
+    )
+  }
+
+  const doBlock = () => {
+    setConfirmBlock(false)
+    block.mutate(authorId, {
+      onSuccess: () => {
+        onBlocked(authorId)
+        toast.show('Utilisateur bloqué', 'info')
+      },
+      onError: () => toast.show('Échec du blocage', 'error'),
+    })
+  }
+
+  return (
+    <>
+      <Pressable onPress={() => setMenu(true)} hitSlop={8}>
+        <Ionicons name="ellipsis-horizontal" size={18} color={colors.fg3} />
+      </Pressable>
+
+      <ActionSheet
+        visible={menu}
+        onClose={() => setMenu(false)}
+        options={[
+          {
+            label: 'Signaler ce commentaire',
+            icon: 'flag-outline',
+            onPress: () => {
+              setMenu(false)
+              setReasons(true)
+            },
+          },
+          {
+            label: 'Bloquer cet utilisateur',
+            icon: 'person-remove-outline',
+            destructive: true,
+            onPress: () => {
+              setMenu(false)
+              setConfirmBlock(true)
+            },
+          },
+        ]}
+      />
+
+      <ActionSheet
+        visible={reasons}
+        title="Signaler le commentaire"
+        message="Pour quelle raison ?"
+        onClose={() => setReasons(false)}
+        options={[
+          { label: 'Spam', icon: 'mail-unread-outline', onPress: () => doReport('spam') },
+          { label: 'Harcèlement', icon: 'sad-outline', onPress: () => doReport('harassment') },
+          { label: 'Contenu inapproprié', icon: 'warning-outline', onPress: () => doReport('inappropriate') },
+          { label: 'Autre', icon: 'help-circle-outline', onPress: () => doReport('other') },
+        ]}
+      />
+
+      <ConfirmDialog
+        visible={confirmBlock}
+        title={`Bloquer ${authorName} ?`}
+        message="Ses commentaires ne seront plus visibles."
+        confirmLabel="Bloquer"
+        destructive
+        loading={block.isPending}
+        onConfirm={doBlock}
+        onCancel={() => setConfirmBlock(false)}
+      />
+    </>
   )
 }
 
@@ -210,5 +342,6 @@ const styles = StyleSheet.create({
     padding: spacing.md,
   },
   commentHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.sm },
+  commentMeta: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   footer: { gap: spacing.sm },
 })

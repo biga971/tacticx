@@ -68,3 +68,26 @@ export function useAddComment(teamId: number) {
     onSuccess: () => qc.invalidateQueries({ queryKey: communityKeys.comments(teamId) }),
   })
 }
+
+export type ReportReason = 'spam' | 'harassment' | 'inappropriate' | 'other'
+
+/** Flags a comment as inappropriate. Idempotent server-side. */
+export function useReportComment() {
+  return useMutation({
+    mutationFn: (input: { commentId: number; reason: ReportReason }) =>
+      apiFetch<{ reported: boolean }>(`/comments/${input.commentId}/report`, {
+        method: 'POST',
+        body: { reason: input.reason },
+      }),
+  })
+}
+
+/** Blocks a user so their comments stop showing for the current viewer. */
+export function useBlockUser(teamId: number) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (userId: number) =>
+      apiFetch<{ blocked: boolean }>(`/users/${userId}/block`, { method: 'POST' }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: communityKeys.comments(teamId) }),
+  })
+}
